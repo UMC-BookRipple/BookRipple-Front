@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+/* 굵은 거 (Bold, 700) */
+@font-face {
+  font-family: "Freesentation";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-7Bold.woff2")
+    format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+/* 보통 (Regular, 400) */
+@font-face {
+  font-family: "Freesentation";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2")
+    format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+/* 중간 (Medium, 500) */
+@font-face {
+  font-family: "Freesentation";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-5Medium.woff2")
+    format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+/* (Gmarket Sans Bold) */
+@font-face {
+  font-family: "GmarketSansBold";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff")
+    format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Freesentation", sans-serif;
+}
