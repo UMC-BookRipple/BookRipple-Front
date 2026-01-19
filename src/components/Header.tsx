@@ -11,17 +11,23 @@ const Header = () => {
   };
 
   return (
-    <header className="flex w-full justify-between p-4 bg-[#F7F5F1] border-b border-[#58534E]">
-      <button onClick={handleMenu} className="menu-button">
-        <img src={menuIcon} alt="Menu" className="w-6 h-6 menu-icon" />
-      </button>
+    <>
+      {/* 가로 전체 채우는 영역 */}
+      <div className="w-full border-b border-[#58534E] bg-[#F7F5F1]">
+        {/* 가운데 정렬 + 고정폭은 이 안에 */}
+        <header className="h-16 max-w-screen-xl mx-auto flex justify-between items-center px-4">
+          <button onClick={handleMenu} className="menu-button">
+            <img src={menuIcon} alt="Menu" className="w-6 h-6 menu-icon" />
+          </button>
 
-      <h1 className="text-base font-semibold text-[#58534E]">BookRipple</h1>
+          <h1 className="text-base font-semibold text-[#58534E]">BookRipple</h1>
 
-      <button onClick={handleSearch}>
-        <img src={profileIcon} alt="Profile" className="w-6 h-6" />
-      </button>
-    </header>
+          <button onClick={handleSearch}>
+            <img src={profileIcon} alt="Profile" className="w-6 h-6" />
+          </button>
+        </header>
+      </div>
+    </>
   );
 };
 
