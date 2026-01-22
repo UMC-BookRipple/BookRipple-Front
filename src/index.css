@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 /* 굵은 거 (Bold, 700) */
 @font-face {
   font-family: 'Freesentation';
@@ -31,10 +33,17 @@
   font-style: normal;
 }
 
+/*
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+*/
+@theme {
+  --font-sans: 'Freesentation', sans-serif;
+  --font-gmarket: 'GmarketSansBold', sans-serif;
+}
 
 body {
-  font-family: 'Freesentation', sans-serif;
+  /* font-family: 'Freesentation', sans-serif; */
+  font-family: var(--font-sans);
 }
