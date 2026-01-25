@@ -54,6 +54,16 @@ const MyPageMenuPage = () => {
                 <span>질문 답변 전체 기록 관리</span>
             </div>
 
+            <div className="w-full flex flex-col items-center justify-center py-[4px] px-[10px] gap-[8px]">
+                <Divider />
+                <span>
+                    약관 및 정보
+                </span>
+                <span>
+                    회원 탈퇴
+                </span>
+            </div>
+
         </div>
     )
 }
