@@ -53,9 +53,9 @@ const SignupPage2 = () => {
 
       <div
         className="w-full px-[20px] pb-[10px] flex items-center text-[#BDB7B2]">
-        <span>영문 포함</span>
-        <span>숫자 포함</span>
-        <span>8-12자 이내</span>
+        <span><img src={checkIcon} alt="" />영문 포함</span>
+        <span><img src={checkIcon} alt="" />숫자 포함</span>
+        <span><img src={checkIcon} alt="" />8-12자 이내</span>
       </div>
 
       <div className="w-full px-[16px] pt-[4px] pb-[6px]">
@@ -71,15 +71,15 @@ const SignupPage2 = () => {
       </div>
 
       <div className="w-full h-[90px] px-[20px] py-[10px] flex flex-col justify-center gap-[10px]">
-        <p className="text-[16px] text-[#58534E] flex items-center justify-between">
-          서비스 사용 설명서 동의
+        <p className="text-[16px] text-[#58534E] flex items-center justify-between gap-[8px]">
+          <img src={policyCheckIcon} alt="" />서비스 사용 설명서 동의
           <span className="text-[16px] text-[#58534E] underline"
             onClick={() => { }}>
             자세히 보기
           </span>
         </p>
-        <p className="text-[16px] text-[#58534E]">
-          생년월일 정보 수집(선택)
+        <p className="text-[16px] text-[#58534E] flex items-center gap-[8px]">
+          <img src={policyCheckIcon} alt="" />생년월일 정보 수집(선택)
         </p>
       </div>
 
