@@ -1,3 +1,5 @@
+import React, { useLayoutEffect, useRef, useState } from 'react';
+
 interface TextInputProps {
   placeholder: string;
   value: string;
@@ -6,24 +8,65 @@ interface TextInputProps {
   className?: string;
 }
 
-const TextInput = ({
-  placeholder,
-  value,
-  onChange,
-  type = "text",
-  className = "w-full h-[45px] rounded-[100px] border border-black/25 bg-[#FFFFFF] flex items-center px-[10px] py-[12px] gap-[10px]",
-}: TextInputProps) => {
+export default function TextInput({
+  onSubmit,
+  className = '',
+}: TextInputProps) {
+  const [value, setValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useLayoutEffect(() => {
+    if (!textareaRef.current) {
+      return;
+    }
+    textareaRef.current.style.height = 'auto';
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  }, [value]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (value.trim().length === 0) return;
+
+    if (onSubmit) {
+      onSubmit(value);
+      setValue('');
+    }
+  };
+
   return (
-    <div
-      className="flex flex-col items-center justify-center w-full">
-      <input
-        type={type}
-        placeholder={placeholder}
+    <form
+      onSubmit={handleSubmit}
+      className={`flex w-full items-end justify-between gap-[5px] rounded-[20px] bg-white py-[10px] pr-[10px] pl-[15px] ${className}`}
+    >
+      <textarea
+        ref={textareaRef}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={className}
+        onChange={(e) => setValue(e.target.value)}
+        rows={1}
+        className="max-h-[140px] flex-1 resize-none bg-transparent text-[16px] font-normal text-[#58534E] outline-none"
       />
-    </div>
+      <button
+        type="submit"
+        className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full bg-[#827A74] transition-colors duration-200 active:bg-[#58534E]"
+      >
+        <svg
+          width="14.55"
+          height="14.55"
+          viewBox="0 0 14.55 14.55"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.275 1.275V13.275M1.275 7.275H13.275"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
+    </form>
   );
 };
 
