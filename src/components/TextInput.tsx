@@ -1,7 +1,10 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 
 interface TextInputProps {
-  onSubmit?: (value: string) => void;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: React.HTMLInputTypeAttribute;
   className?: string;
 }
 
@@ -65,4 +68,6 @@ export default function TextInput({
       </button>
     </form>
   );
-}
+};
+
+export default TextInput;

@@ -4,7 +4,7 @@ import MenuBarItems from "../components/MenuBarItems"
 import MyPageTopBar from "../components/MyPageTopBar"
 import QuestionBox from "../components/QuestionBox"
 
-const RandomQuestionPage = () => {
+const ReadingQuestionPage = () => {
     // 👉 나중에 API로 대체될 mock 데이터
     const questions = [
         {
@@ -46,11 +46,6 @@ const RandomQuestionPage = () => {
                 <Divider />
             </div>
 
-            {/* 상단 토글 */}
-            <div className="h-[39px] w-full flex items-center justify-end px-[20px]">
-                <span className="text-[16px]">독서질문 보기</span>
-            </div>
-
             <BookTitleLabel BookTitle="브람스를 좋아하세요..." />
 
             {/* 질문 리스트 */}
@@ -78,4 +73,4 @@ const RandomQuestionPage = () => {
     )
 }
 
-export default RandomQuestionPage
+export default ReadingQuestionPage
