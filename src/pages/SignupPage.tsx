@@ -5,8 +5,84 @@ import FormLabel from "../components/FormLabel";
 import InputWithButton from "../components/InputWithButton";
 import EmailInput from "../components/EmailInput";
 import Divider from "../components/Divider";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useSignupStore } from "../stores/signupStore";
 
 const SignupPage = () => {
+
+  const navigate = useNavigate();
+  const { setSignupData } = useSignupStore();
+
+  const [loginId, setLoginId] = useState("");
+  const [localValue, setLocalValue] = useState("");
+  const [domainValue, setDomainValue] = useState("");
+  const [authCode, setAuthCode] = useState("");
+
+  const [idCheckStatus, setIdCheckStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [emailAuthStatus, setEmailAuthStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const verifyId = async () => {
+    try {
+      const response = await axios.get(
+        "http://bookripple.site/api/v1/auth/check-id",
+        { params: { loginId } }
+      );
+
+      const { isSuccess, code, message } = response.data;
+
+      if (isSuccess) {
+        setIdCheckStatus('success');
+      } else {
+        console.log(`코드:${code}, 메시지:${message}`);
+        setIdCheckStatus('error');
+      }
+    } catch (error) {
+      console.error("아이디 중복 확인 실패:", error);
+    }
+  };
+
+  const sendEmail = async () => {
+    try {
+      const response = await axios.post(
+        "http://bookripple.site/api/v1/auth/email/send",
+        { email: `${localValue}${domainValue}` }
+      );
+
+      const { isSuccess, code, message, result } = response.data;
+
+      if (isSuccess) {
+        console.log("이메일 전송 성공", result);
+      } else {
+        console.log(`코드:${code}, 메시지:${message}`);
+      }
+    } catch (error) {
+      console.error("이메일 중복 확인 실패:", error);
+    }
+  };
+
+  const verifyEmailCode = async () => {
+    try {
+      const response = await axios.post(
+        "http://bookripple.site/api/v1/auth/email/verify",
+        { email: `${localValue}${domainValue}`, authCode: authCode }
+      );
+
+      const { isSuccess } = response.data;
+
+      if (isSuccess) {
+        setEmailAuthStatus('success');
+      } else {
+        setEmailAuthStatus('error');
+      }
+    } catch (error) {
+      console.error("이메일 인증 실패:", error);
+      setEmailAuthStatus('error');
+    }
+  };
+
+
 
   return (
     <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
@@ -24,11 +100,28 @@ const SignupPage = () => {
         <div className="w-full p-[16px] py-[4px]">
           <InputWithButton
             placeholder="아이디를 입력하세요"
-            value={""}
-            onChange={() => { }}
+            value={loginId}
+            onChange={(val: string) => {
+              setLoginId(val);
+              setIdCheckStatus("idle");
+            }}
             buttonLabel="중복확인"
-            onButtonClick={() => { }}
+            onButtonClick={verifyId}
+            active={loginId.trim().length > 0}
           />
+
+          {idCheckStatus === 'success' && (
+            <p className="text-[14px] text-[#28A745] flex items-center gap-[4px] mt-[4px] px-[4px]">
+              <span className="flex items-center justify-center w-[16px] h-[16px] border border-[#28A745] rounded-full text-[10px]">✓</span>
+              사용할 수 있는 아이디입니다.
+            </p>
+          )}
+          {idCheckStatus === 'error' && (
+            <p className="text-[14px] text-[#DC3545] flex items-center gap-[4px] mt-[4px] px-[4px]">
+              <span className="flex items-center justify-center w-[16px] h-[16px] border border-[#DC3545] rounded-full text-[10px]">✕</span>
+              사용할 수 없는 아이디입니다.
+            </p>
+          )}
         </div>
 
         <div className="w-full px-[20px] pt-[20px] pb-[10px]">
@@ -37,18 +130,23 @@ const SignupPage = () => {
 
         <div className="w-full px-[16px] py-[4px]">
           <EmailInput
-            localValue={""}
-            domainValue={""}
-            onLocalChange={() => { }}
-            onDomainChange={() => { }}
+            localValue={localValue}
+            domainValue={domainValue}
+            onLocalChange={setLocalValue}
+            onDomainChange={setDomainValue}
           />
         </div>
 
 
-        {/* email code 없는 경우 */}
-        <div className="w-full h-[95px] px-[16px] py-[10px] gap-[10px] flex flex-col items-center justify-center">
-          <LoginButton label="이메일 인증하기" onClick={() => { }} variant="lightBrown" />
-          <div className="w-full px-[16px] py-[10px]">
+        <div className="w-full h-auto min-h-[95px] px-[16px] py-[10px] gap-[10px] flex flex-col items-start justify-center">
+          <LoginButton label="이메일 인증하기" onClick={verifyEmailCode} variant="lightBrown" />
+          {emailAuthStatus === 'success' && (
+            <p className="text-[16px] text-[#28A745] mt-[4px] px-[4px]">인증이 완료되었습니다.</p>
+          )}
+          {emailAuthStatus === 'error' && (
+            <p className="text-[16px] text-[#DC3545] mt-[4px] px-[4px]">인증에 실패했습니다.</p>
+          )}
+          <div className="w-full px-[4px] py-[10px]">
             <Divider />
           </div>
         </div>
@@ -56,7 +154,7 @@ const SignupPage = () => {
 
         {/* {emailCode && (
           <div className="w-full h-[95px] px-[16px] py-[10px] gap-[10px] flex flex-col items-center justify-center">
-            <TextInput placeholder="인증코드를 입력하세요" value={emailCode} onChange={setEmailCode} />
+            <LoginTextInput placeholder="인증코드를 입력하세요" value={emailCode} onChange={setEmailCode} />
             <LoginButton label="이메일 인증하기" onClick={emailVerify} variant="brown" />
             <div className="w-full px-[16px] py-[10px]">
               <Divider />
@@ -65,7 +163,16 @@ const SignupPage = () => {
         )} */}
 
         <div className="w-full h-[114px] px-[16px] pt-[45px] pb-[20px] flex flex-col items-center">
-          <LoginButton label="비밀번호 설정하기" onClick={() => { }} />
+          <LoginButton
+            label="비밀번호 설정하기"
+            onClick={() => {
+              setSignupData({
+                loginId,
+                email: `${localValue}${domainValue}`
+              });
+              navigate("/signup/step2");
+            }}
+          />
         </div>
       </div>
     </div>

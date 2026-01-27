@@ -1,11 +1,11 @@
 import { useState } from "react"
 import BookTitleLabel from "../components/BookTitleLabel"
-import CommentUnderBar from "../components/CommentUnderBar"
 import Divider from "../components/Divider"
 import EditUnderBar from "../components/EditUnderBar"
 import MenuBarItems from "../components/MenuBarItems"
-import MyPageTopBar from "../components/MyPageTopBar"
+import Header from "../components/Header"
 import ReviewCommentBox from "../components/ReviewCommentBox"
+import TextInput from "../components/TextInput"
 
 const MyReadingMemoPage = () => {
     // 👉 추후 API로 교체될 mock 데이터
@@ -31,7 +31,7 @@ const MyReadingMemoPage = () => {
 
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
-            <MyPageTopBar />
+            <Header />
 
             {/* MY PAGE */}
             <div className="w-full flex items-center px-[14px] pt-[30px]">
@@ -63,7 +63,7 @@ const MyReadingMemoPage = () => {
                 ))}
             </div>
             {!isDelete && (
-                <CommentUnderBar />
+                <TextInput />
             )}
             {isDelete && (
                 <EditUnderBar />

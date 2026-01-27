@@ -4,13 +4,13 @@ import FormLabel from "../components/FormLabel"
 import InputWithButton from "../components/InputWithButton"
 import LoginButton from "../components/LoginButton"
 import EditLabel from "../components/EditLabel"
-import MyPageTopBar from "../components/MyPageTopBar"
+import Header from "../components/Header";
 
 const IdEditPage = () => {
     return (
         <div
             className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-            <MyPageTopBar />
+            <Header />
             <EditLabel mainLabel="프로필 수정" subLabel="아이디 수정" />
 
             <div className="w-full flex flex-col items-center justify-center pt-[20px] pb-[10px] px-[20px]">
