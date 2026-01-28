@@ -1,5 +1,5 @@
 import FormLabel from "./FormLabel";
-import TextInput from "./TextInput";
+import LoginTextInput from "./LoginTextInput";
 import Divider from "./Divider";
 
 type LoginFormBodyProps = {
@@ -7,6 +7,8 @@ type LoginFormBodyProps = {
   password: string;
   onChangeUserId: (value: string) => void;
   onChangePassword: (value: string) => void;
+  wrongId?: boolean;
+  wrongPassword?: boolean;
 };
 
 const LoginFormBody = ({
@@ -14,6 +16,8 @@ const LoginFormBody = ({
   password,
   onChangeUserId,
   onChangePassword,
+  wrongId = false,
+  wrongPassword = false,
 }: LoginFormBodyProps) => {
   return (
     <div className="w-full flex flex-col items-center bg-[#F7F5F1]">
@@ -34,11 +38,16 @@ const LoginFormBody = ({
         <FormLabel label="아이디" />
       </div>
       <div className="w-full px-[16px] py-[4px]">
-        <TextInput
+        <LoginTextInput
           placeholder="아이디를 입력하세요"
           value={userId}
           onChange={onChangeUserId}
         />
+        {wrongId && (
+          <p className="ml-[4px] mt-[6px] text-red-500 text-[16px]">
+            잘못된 아이디입니다
+          </p>
+        )}
       </div>
 
       {/* 비밀번호 */}
@@ -46,12 +55,17 @@ const LoginFormBody = ({
         <FormLabel label="비밀번호" />
       </div>
       <div className="w-full px-[16px] py-[4px]">
-        <TextInput
+        <LoginTextInput
           type="password"
           placeholder="비밀번호를 입력하세요"
           value={password}
           onChange={onChangePassword}
         />
+        {wrongPassword && (
+          <p className="ml-[4px] mt-[6px] text-red-500 text-[16px]">
+            잘못된 비밀번호입니다
+          </p>
+        )}
       </div>
 
       {/* 하단 구분선 */}

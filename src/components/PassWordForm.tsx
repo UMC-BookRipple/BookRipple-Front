@@ -1,6 +1,6 @@
 import React from "react";
 import FormLabel from "./FormLabel";
-import TextInput from "./TextInput";
+import LoginTextInput from "./LoginTextInput";
 
 type PassWordFormProps = {
   label: string;
@@ -23,7 +23,7 @@ const PassWordForm = ({
         <div className="w-full flex flex-col items-center justify-center pt-[20px] pb-[10px] px-[4px]">
           <FormLabel label={label} />
         </div>)}
-      <TextInput
+      <LoginTextInput
         type={type}
         placeholder={placeholder}
         value={value}

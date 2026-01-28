@@ -7,7 +7,7 @@ const MyPageLabel = ({ label }: { label: string }) => {
                 className="px-[14px] pt-[30px]">
                 <span
                     className="h-[50px] py-[12px] px-[5px] gap-[10px] flex items-center whitespace-nowrap font-[GmarketSansBold] text-[20px] text-[#58534E]">
-                    <img src={arrowIcon} />MY PAGE</span>
+                    <img src={arrowIcon} className="mb-[3px]" />MY PAGE</span>
             </div>
             <div
                 className="w-full flex flex-row items-center px-[20px] py-[10px] gap-[10px]">

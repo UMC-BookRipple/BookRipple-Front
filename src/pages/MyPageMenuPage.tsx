@@ -1,12 +1,13 @@
 import Divider from "../components/Divider";
 import MenuBarItems from "../components/MenuBarItems";
-import MyPageTopBar from "../components/MyPageTopBar";
+import Header from "../components/Header";
+import arrowIcon from "../assets/icons/arrowIcon.svg";
 
 const MyPageMenuPage = () => {
     return (
         <div
             className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] font-weight-[500] text-[#58534E]">
-            <MyPageTopBar />
+            <Header />
 
             {/* MyPageLabel */}
             <div
@@ -54,14 +55,13 @@ const MyPageMenuPage = () => {
                 <span>질문 답변 전체 기록 관리</span>
             </div>
 
-            <div className="w-full flex flex-col items-center justify-center py-[4px] px-[10px] gap-[8px]">
+            <div className="w-full flex flex-col items-center justify-center py-[4px] px-[10px] pb-[20px]">
                 <Divider />
-                <span>
-                    약관 및 정보
-                </span>
-                <span>
-                    회원 탈퇴
-                </span>
+                <div className="h-[189px]" />
+                <div className="w-full flex flex-col items-center gap-[8px]">
+                    <span>약관 및 정보</span>
+                    <span>회원 탈퇴</span>
+                </div>
             </div>
 
         </div>

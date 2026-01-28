@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import socialLoginIcon from "../assets/socialLoginIcon.svg";
+import socialLoginIcon from "../assets/icons/socialLoginIcon.svg"
+import kakaoLoginIcon from "../assets/icons/kakaoLoginIcon.svg";
+import logo from "../assets/icons/logo.svg";
 
 const StartPage = () => {
   const navigate = useNavigate();
@@ -19,9 +21,9 @@ const StartPage = () => {
     <div className="min-h-dvh w-full bg-[#F7F5F1] flex flex-col items-center">
       <div className="w-full h-[562px] flex flex-col items-center justify-center mt-[50px]">
         <img
-          src=""
+          src={logo}
           alt="BookRipple Logo"
-          className="w-full max-w-[382px] h-auto"
+          className="w-[382px] h-[95.6px]"
         />
       </div>
       <div className="w-full flex flex-col items-center gap-[12px] pb-[20px] px-[64.5px]">
