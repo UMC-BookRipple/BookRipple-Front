@@ -1,4 +1,4 @@
-import QnACard from "../QnAcard";
+import QnACard from "../QnAcard_community";
 
 interface Answer {
     id: number;

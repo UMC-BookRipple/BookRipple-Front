@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
-import QnACard from "../QnAcard";
+import QnACard from "../QnAcard_community";
 import QnASearchTab from "./QnASearchTab";
 import QnAInputTab from "./QnAInputTab"; // QnAInputTab 컴포넌트 추가
 import { dummyQnA } from "../../data/dummyQnA";

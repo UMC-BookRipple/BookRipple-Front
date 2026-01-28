@@ -1,6 +1,6 @@
 //import React, { useState } from "react";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
-import QnACard from "../QnAcard";
+import QnACard from "../QnAcard_community";
 import TextInput from "../TextInput"; // TextInput 컴포넌트 불러오기
 import { dummyQnA } from "../../data/dummyQnA"; // 예시 데이터
 

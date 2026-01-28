@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../../components/Header.tsx";
-import SearchBar from "../../components/SearchBar.tsx"; // 검색바 컴포넌트
+import SearchBar from "../../components/SearchBar_deleteButton.tsx"; // 검색바 컴포넌트
 import { dummyBooks } from "../../data/dummyBooks.ts"; // 더미 데이터 (도서)
 import SearchEmpty from "../../components/Search/SearchEmpty.tsx"; // 검색 결과 없을 때
 import SearchResult from "../../components/Recommend/RecommendResult.tsx"; // 검색 결과 리스트

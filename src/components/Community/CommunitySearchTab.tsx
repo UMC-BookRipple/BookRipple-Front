@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
-import SearchBar from "../../components/SearchBar"; // 검색바 컴포넌트
+import SearchBar from "../SearchBar_deleteButton"; // 검색바 컴포넌트
 import { dummyBooks } from "../../data/dummyBooks"; // 더미 데이터 (도서)
 import SearchEmpty from "../Search/SearchEmpty"; // 검색 결과 없을 때
 import SearchResult from "../../components/Search/SearchResult";

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SearchBar from "../SearchBar";
+import SearchBar from "../SearchBar_deleteButton";
 import { dummyQnA } from "../../data/dummyQnA";
 import QnAList from "./QnAList";
 import SearchEmpty from "../Search/SearchEmpty";
