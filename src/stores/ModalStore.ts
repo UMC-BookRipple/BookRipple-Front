@@ -1,19 +1,32 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-interface ModalState {
-    isOpen: boolean;
-    open: () => void;
-    close: () => void;
+type ModalStoreState = {
+  isOpen: boolean;
+  title: string;
 
-    title?: string;
-}
+  confirmAction: null | (() => void);
 
-export const useModalStore = create<ModalState>((set) => ({
-    isOpen: false,
-    open: () => set({ isOpen: true }),
-    close: () => set({ isOpen: false }),
+  open: (title: string, confirmAction?: () => void) => void;
+  close: () => void;
+};
 
-    title: "삭제하시겠습니까?"
-})
-);
+export const useModalStore = create<ModalStoreState>((set) => ({
+  isOpen: false,
+  title: '',
 
+  confirmAction: null,
+
+  open: (title, confirmAction) =>
+    set({
+      isOpen: true,
+      title,
+      confirmAction: confirmAction ?? null,
+    }),
+
+  close: () =>
+    set({
+      isOpen: false,
+      title: '',
+      confirmAction: null,
+    }),
+}));
