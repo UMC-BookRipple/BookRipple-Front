@@ -9,6 +9,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSignupStore } from "../stores/signupStore";
+import CheckIcon from "../assets/icons/checkIcon.svg";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -21,6 +22,19 @@ const SignupPage = () => {
   const [localValue, setLocalValue] = useState("");
   const [domainValue, setDomainValue] = useState("");
   const [authCode, setAuthCode] = useState("");
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+
+    setTimeout(() => {
+    setToastVisible(false);
+    }, 2000); 
+  };
+
 
   const [idCheckStatus, setIdCheckStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [emailAuthStatus, setEmailAuthStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -56,6 +70,7 @@ const SignupPage = () => {
 
       if (isSuccess) {
         console.log("이메일 전송 성공", result);
+        showToast("메일을 전송하였습니다");
       } else {
         console.log(`코드:${code}, 메시지:${message}`);
       }
@@ -113,14 +128,14 @@ const SignupPage = () => {
           />
 
           {idCheckStatus === 'success' && (
-            <p className="text-[14px] text-[#28A745] flex items-center gap-[4px] mt-[4px] px-[4px]">
-              <span className="flex items-center justify-center w-[16px] h-[16px] border border-[#28A745] rounded-full text-[10px]">✓</span>
+            <p className="text-[14px] text-[#28A745] flex flex-row items-center mt-[4px] px-[4px]">
+              <img src={CheckIcon} alt="" className="mb-[2px]" />
               사용할 수 있는 아이디입니다.
             </p>
           )}
           {idCheckStatus === 'error' && (
-            <p className="text-[14px] text-[#DC3545] flex items-center gap-[4px] mt-[4px] px-[4px]">
-              <span className="flex items-center justify-center w-[16px] h-[16px] border border-[#DC3545] rounded-full text-[10px]">✕</span>
+            <p className="text-[14px] text-[#DC3545] flex flex-row items-center mt-[4px] px-[4px]">
+              <img src={CheckIcon} alt="" className="mb-[2px]" />
               사용할 수 없는 아이디입니다.
             </p>
           )}

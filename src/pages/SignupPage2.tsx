@@ -90,29 +90,26 @@ const SignupPage2 = () => {
       <div className="w-full px-[20px] pb-[10px] flex items-center gap-[14px]">
 
         {/* 영문 포함 */}
-        <span className={`flex items-center gap-[2px] text-[14px] ${ruleColor(hasLetter)}`}>
-          <div className="w-[16px] h-[16px]">
+        <span className={`flex flex-row items-center text-[14px] ${ruleColor(hasLetter)}`}>
+          <div className="w-[16px] h-[16px] mb-[2px]">
             <img src={CheckIcon} alt="" />
           </div>
-
           영문 포함
         </span>
 
         {/* 숫자 포함 */}
-        <span className={`flex items-center gap-[2px] text-[14px] ${ruleColor(hasNumber)}`}>
-          <div className="w-[16px] h-[16px]">
+        <span className={`flex flex-row items-center text-[14px] ${ruleColor(hasNumber)}`}>
+          <div className="w-[16px] h-[16px] mb-[2px]">
             <img src={CheckIcon} alt="" />
           </div>
-
           숫자 포함
         </span>
 
         {/* 8~12자 */}
-        <span className={`flex items-center gap-[2px] text-[14px] ${ruleColor(hasLength)}`}>
-          <div className="w-[16px] h-[16px]">
+        <span className={`flex flex-row items-center text-[14px] ${ruleColor(hasLength)}`}>
+          <div className="w-[16px] h-[16px] mb-[2px]">
             <img src={CheckIcon} alt="" />
           </div>
-
           8-12자 이내
         </span>
 
