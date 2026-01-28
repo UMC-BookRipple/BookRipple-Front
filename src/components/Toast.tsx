@@ -9,7 +9,7 @@ const Toast = ({
 }: ToastProps) => {
   return (
     <div
-      className={`flex h-[29px] items-center justify-center rounded-[20px] bg-[#827A74]/90 px-[10px] py-[4px] ${
+      className={`inline-flex h-[29px] items-center justify-center rounded-[20px] bg-[#827A74]/90 px-[10px] py-[4px] ${
         visible
           ? 'animate-[fadeIn_0.3s_ease-out_forwards]'
           : 'animate-[fadeOut_0.3s_ease-in_forwards]'
