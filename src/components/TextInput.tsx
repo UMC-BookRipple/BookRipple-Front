@@ -1,15 +1,27 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from 'react';
 
 interface TextInputProps {
-  onSubmit?: (value: string) => void;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: React.HTMLInputTypeAttribute;
   className?: string;
 }
 
 export default function TextInput({
   onSubmit,
-  className = "",
+  className = '',
 }: TextInputProps) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useLayoutEffect(() => {
+    if (!textareaRef.current) {
+      return;
+    }
+    textareaRef.current.style.height = 'auto';
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  }, [value]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,24 +30,25 @@ export default function TextInput({
 
     if (onSubmit) {
       onSubmit(value);
-      setValue("");
+      setValue('');
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className={`w-full h-[40px] bg-white rounded-full flex items-center justify-between pl-[15px] pr-[10px] py-[5px] gap-[5px] ${className}`}
+      className={`flex w-full items-end justify-between gap-[5px] rounded-[20px] bg-white py-[10px] pr-[10px] pl-[15px] ${className}`}
     >
-      <input
-        type="text"
+      <textarea
+        ref={textareaRef}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="flex-1 bg-transparent outline-none font-normal text-[16px] text-[#58534E]"
+        rows={1}
+        className="max-h-[140px] flex-1 resize-none bg-transparent text-[16px] font-normal text-[#58534E] outline-none"
       />
       <button
         type="submit"
-        className="w-[30px] h-[30px] bg-[#827A74] rounded-full flex items-center justify-center transition-colors duration-200 flex-shrink-0 active:bg-[#58534E]"
+        className="flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full bg-[#827A74] transition-colors duration-200 active:bg-[#58534E]"
       >
         <svg
           width="14.55"
@@ -55,4 +68,6 @@ export default function TextInput({
       </button>
     </form>
   );
-}
+};
+
+export default TextInput;
