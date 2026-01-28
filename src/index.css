@@ -8,7 +8,7 @@
     font-style: normal;
 }
 
-/* 보통 (Regular, 400) */
+/* (normal, 400) */
 @font-face {
     font-family: "Freesentation";
     src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/2404@1.0/Freesentation-4Regular.woff2") format("woff2");
@@ -38,4 +38,10 @@
 
 body {
     font-family: "Freesentation", sans-serif;
+}
+
+@layer utilities {
+    .rotate-y-180 {
+        transform: rotateY(180deg);
+    }
 }
