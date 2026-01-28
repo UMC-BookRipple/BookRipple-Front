@@ -40,10 +40,16 @@ export default function BookCard({
         />
 
         {!(isEditMode && isSelected) && (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={onToggleLike}
-            className="absolute top-[5px] left-[5px] z-10 flex items-center justify-center transition-opacity active:scale-95"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                onToggleLike(e as unknown as React.MouseEvent);
+              }
+            }}
+            className="absolute top-[5px] left-[5px] z-10 flex cursor-pointer items-center justify-center transition-opacity active:scale-95"
           >
             <img
               src={book.isLiked ? likeOn : likeOff}
@@ -51,7 +57,7 @@ export default function BookCard({
               className="h-7 w-7 drop-shadow-sm"
               style={{ filter: 'brightness(0) invert(1)' }}
             />
-          </button>
+          </div>
         )}
 
         {isEditMode && (

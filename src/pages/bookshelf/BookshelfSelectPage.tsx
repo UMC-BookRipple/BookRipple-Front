@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import logo from '/src/assets/icons/logo.svg';
-import writeIcon from '/src/assets/icons/M-write.svg';
 import likeIcon from '/src/assets/icons/M-like1.svg';
 import likedIcon from '/src/assets/icons/M-like2.svg';
 
 import Header from '../../components/Header';
 import ReadingProgress from '../../components/ReadingProgress';
 import Button from '../../components/Button';
+import BookshelfSection from './_components/BookshelfSection';
 
 import type { BookshelfTabKey } from './_types/bookshelf.type';
 import { isBookshelfTabKey } from './_utils/bookshelf.utils';
@@ -143,26 +143,18 @@ export default function BookshelfSelectPage() {
                 />
               </div>
 
-              {!isFinishedView && (
-                <div className="mt-[6px] flex-[1_0_0] font-[Freesentation] text-[14px] leading-normal font-medium text-[#827A74]">
-                  5일 후 완독 가능
-                </div>
-              )}
+              <div className="mt-[6px] flex-[1_0_0] font-[Freesentation] text-[14px] leading-normal font-medium text-[#827A74]">
+                5일 후 완독 가능
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="mt-[10px] flex flex-col items-center justify-center gap-[10px] self-stretch px-[16px] py-[10px]">
+        {/* Buttons */}
+        <div className="mt-[15px] flex flex-col items-center justify-center gap-[10px] self-stretch px-[16px] py-0">
           {isFinishedView ? (
             <>
-              <button
-                type="button"
-                className="flex h-[48px] w-full items-center justify-center gap-[8px] self-stretch rounded-[8px] bg-white font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E] shadow-[0px_2px_4px_0px_rgba(0,0,0,0.10)]"
-              >
-                <img src={writeIcon} alt="" className="h-[20px] w-[20px]" />
-                감상평 작성
-              </button>
+              <Button variant="secondary">감상평 작성</Button>
               <Button variant="secondary">추천 도서 보기</Button>
             </>
           ) : (
@@ -171,101 +163,73 @@ export default function BookshelfSelectPage() {
         </div>
 
         {/* Detail Sections */}
-        <div className="mt-[20px] flex w-full max-w-[402px] flex-col items-start justify-center gap-[10px] px-[14px] py-[10px]">
+        <div className="mt-[10px] flex w-full max-w-[402px] flex-col items-start justify-center gap-[3px] px-[14px] py-[10px]">
           {/* 독서메모 - Toggle */}
-          <div className="w-full">
+          <BookshelfSection
+            title="독서메모"
+            type="toggle"
+            isOpen={isMemoOpen}
+            onToggle={() => setIsMemoOpen((prev) => !prev)}
+          >
+            {/* Mock memo data - 추후 API 연동 */}
+            {[
+              {
+                id: '1',
+                title: '제목',
+                content:
+                  '물결이 잔잔한 오후, 창가에 앉아 커피를 한 모금 마셨다. 오래 미뤄둔 메모장을 펼치자 머릿속에 흩어져 있던 생각들이 천천히 줄을 맞추기 시작했다. 오늘은 거창한 목표 대신, 작은 일을 하나씩 끝내는 날로 정했다.',
+              },
+            ].map((memo) => (
+              <button
+                key={memo.id}
+                type="button"
+                onClick={() => {
+                  // 메모 페이지 라우팅 필요
+                  console.log('Navigate to memo:', memo.id);
+                }}
+                className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[16px] py-[10px]"
+              >
+                <div className="flex-1 text-left font-[Freesentation] text-[16px] leading-snug font-[500] text-[#58534E]">
+                  {memo.title}
+                  <br />
+                  <br />
+                  {memo.content}
+                </div>
+              </button>
+            ))}
+
+            {/* Write button */}
             <button
               type="button"
-              onClick={() => setIsMemoOpen((prev) => !prev)}
-              className="flex w-full flex-col items-start justify-center gap-[10px] self-stretch border-b border-[#58534E] px-[14px] py-[10px] font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E]"
+              onClick={() => {
+                // 메모 작성 페이지 라우팅
+                console.log('Navigate to write memo');
+              }}
+              className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[12px] py-[14px]"
             >
-              <div className="flex w-full items-center justify-between">
-                <span>독서메모</span>
-                <svg
-                  width="17"
-                  height="8"
-                  viewBox="0 0 17 8"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`shrink-0 transition-transform duration-200 ${isMemoOpen ? 'rotate-180' : ''}`}
-                >
-                  <path
-                    d="M1 1L8.5 7L16 1"
-                    stroke="#58534E"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
+              <span className="flex-1 text-center font-[Freesentation] text-[16px] leading-normal font-[500] text-[#58534E]">
+                작성하기
+              </span>
             </button>
-            {isMemoOpen && (
-              <div className="flex w-full max-w-[393px] flex-col items-center gap-[10px] px-[14px] py-[10px]">
-                {/* Mock memo data - replace with actual data later */}
-                {[
-                  {
-                    id: '1',
-                    title: '제목',
-                    content:
-                      '물결이 잔잔한 오후, 창가에 앉아 커피를 한 모금 마셨다. 오래 미뤄둔 메모장을 펼치자 머릿속에 흩어져 있던 생각들이 천천히 줄을 맞추기 시작했다. 오늘은 거창한 목표 대신, 작은 일을 하나씩 끝내는 날로 정했다.',
-                  },
-                ].map((memo) => (
-                  <button
-                    key={memo.id}
-                    type="button"
-                    onClick={() => {
-                      // TODO: Navigate to memo detail/edit page
-                      console.log('Navigate to memo:', memo.id);
-                    }}
-                    className="flex flex-col items-start justify-center gap-[10px] self-stretch rounded-[10px] bg-white px-[14px] py-[10px]"
-                  >
-                    <div className="self-stretch text-left font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E]">
-                      {memo.title}
-                    </div>
-                    <div className="line-clamp-2 self-stretch text-left font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E]">
-                      {memo.content}
-                    </div>
-                  </button>
-                ))}
-
-                {/* Write button */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    // TODO: Navigate to memo write page
-                    console.log('Navigate to write memo');
-                  }}
-                  className="flex items-center justify-center gap-[10px] self-stretch rounded-[10px] bg-white px-[12px] py-[14px] font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E]"
-                >
-                  작성하기
-                </button>
-              </div>
-            )}
-          </div>
+          </BookshelfSection>
 
           {/* 질문답변 - Navigation */}
-          <button
-            type="button"
+          <BookshelfSection
+            title="질문답변"
+            type="navigation"
             onClick={() => {
-              // TODO: Navigate to Q&A page
               console.log('Navigate to Q&A');
             }}
-            className="flex w-full flex-col items-start justify-center gap-[10px] self-stretch border-b border-[#58534E] px-[14px] py-[10px] font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E]"
-          >
-            질문답변
-          </button>
+          />
 
           {/* 사람들의 질문 답변 - Navigation */}
-          <button
-            type="button"
+          <BookshelfSection
+            title="사람들의 질문 답변"
+            type="navigation"
             onClick={() => {
-              // TODO: Navigate to community Q&A page
               console.log('Navigate to community Q&A');
             }}
-            className="flex w-full flex-col items-start justify-center gap-[10px] self-stretch border-b border-[#58534E] px-[14px] py-[10px] font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E]"
-          >
-            사람들의 질문 답변
-          </button>
+          />
         </div>
       </div>
     </div>
