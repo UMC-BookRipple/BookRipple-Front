@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSignupStore } from "../stores/signupStore";
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const SignupPage = () => {
 
   const navigate = useNavigate();
@@ -26,7 +28,7 @@ const SignupPage = () => {
   const verifyId = async () => {
     try {
       const response = await axios.get(
-        "http://bookripple.site/api/v1/auth/check-id",
+        `${API_BASE_URL}/auth/check-id`,
         { params: { loginId } }
       );
 
@@ -46,7 +48,7 @@ const SignupPage = () => {
   const sendEmail = async () => {
     try {
       const response = await axios.post(
-        "http://bookripple.site/api/v1/auth/email/send",
+        `${API_BASE_URL}/auth/email/send`,
         { email: `${localValue}${domainValue}` }
       );
 
@@ -65,7 +67,7 @@ const SignupPage = () => {
   const verifyEmailCode = async () => {
     try {
       const response = await axios.post(
-        "http://bookripple.site/api/v1/auth/email/verify",
+        `${API_BASE_URL}/auth/email/verify`,
         { email: `${localValue}${domainValue}`, authCode: authCode }
       );
 
