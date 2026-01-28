@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useSignupStore } from "../stores/signupStore";
 import CheckIcon from "../assets/icons/checkIcon.svg";
+import LoginTextInput from "../components/LoginTextInput";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -145,13 +146,18 @@ const SignupPage = () => {
           <FormLabel label="이메일 인증" />
         </div>
 
-        <div className="w-full px-[16px] py-[4px]">
+        <div className="w-full px-[16px] py-[4px] gap-[10px] flex flex-col">
           <EmailInput
             localValue={localValue}
             domainValue={domainValue}
             onLocalChange={setLocalValue}
             onDomainChange={setDomainValue}
           />
+          <LoginTextInput 
+          placeholder="인증 코드 입력" 
+          value={authCode} 
+          onChange={setAuthCode} 
+          type="text" />
         </div>
 
 
@@ -164,20 +170,11 @@ const SignupPage = () => {
             <p className="text-[16px] text-[#DC3545] mt-[4px] px-[4px]">인증에 실패했습니다.</p>
           )}
           <div className="w-full px-[4px] py-[10px]">
+
             <Divider />
           </div>
         </div>
 
-
-        {/* {emailCode && (
-          <div className="w-full h-[95px] px-[16px] py-[10px] gap-[10px] flex flex-col items-center justify-center">
-            <LoginTextInput placeholder="인증코드를 입력하세요" value={emailCode} onChange={setEmailCode} />
-            <LoginButton label="이메일 인증하기" onClick={emailVerify} variant="brown" />
-            <div className="w-full px-[16px] py-[10px]">
-              <Divider />
-            </div>
-          </div>
-        )} */}
 
         <div className="w-full h-[114px] px-[16px] pt-[45px] pb-[20px] flex flex-col items-center">
           <LoginButton
