@@ -1,5 +1,5 @@
-import M_trash from "../../assets/icons/M_trash.svg"
-import M_write from "../../assets/icons/M_write.svg"
+import penIcon from "../assets/icons/penIcon.svg"
+import trashIcon from "../assets/icons/trashIcon.svg"
 
 interface QuestionBoxProps {
     question: string
@@ -30,7 +30,7 @@ const QuestionBox = ({
                     <span className="text-[20px] font-[GmarketSansBold] text-[#58534E]">Q</span>
                     {canDelete && (
                         <button onClick={onDeleteQuestion}>
-                            <img src={M_trash} alt="" />
+                            <img src={trashIcon} alt="" />
                         </button>
                     )}
                 </div>
@@ -44,10 +44,10 @@ const QuestionBox = ({
                         <span className="text-[20px] font-[GmarketSansBold] text-[#58534E]">A</span>
                         <div className="flex gap-[4px]">
                             {canEdit && (
-                                <button onClick={onEditAnswer}><img src={M_write} alt="" /></button>
+                                <button onClick={onEditAnswer}><img src={penIcon} alt="" /></button>
                             )}
                             {canDelete && (
-                                <button onClick={onDeleteAnswer}><img src={M_trash} alt="" /></button>
+                                <button onClick={onDeleteAnswer}><img src={trashIcon} alt="" /></button>
                             )}
                         </div>
                     </div>

@@ -1,6 +1,6 @@
 import Divider from "../components/Divider";
 import MenuBarItems from "../components/MenuBarItems";
-import MyPageTopBar from "../components/MyPageTopBar";
+import Header from "../components/Header";
 import ReadingGraph from "../components/ReadingGraph";
 import ReadingInformList from "../components/ReadingInformList";
 import ReadingSpeedList from "../components/ReadingSpeedList";
@@ -19,7 +19,7 @@ const ReadingRecordPage = () => {
     return (
         <div
             className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-            <MyPageTopBar />
+            <Header />
 
             {/* MyPageLabel */}
             <div
@@ -44,7 +44,7 @@ const ReadingRecordPage = () => {
             </div>
 
 
-            <div className="w-full flex flex-col items-start justify-center py-[10px] px-[16px] gap-[10px]">
+            <div className="w-full flex flex-col items-center justify-center py-[10px] px-[16px] gap-[10px]">
                 <Divider />
                 <ReadingGraph ReadingTotalTime={100} weeklyData={weeklyData} />
             </div>
@@ -53,7 +53,7 @@ const ReadingRecordPage = () => {
                 <p> 도서별 독서 시간/독서율</p>
             </div>
 
-            <div className="w-full flex flex-col items-start justify-center pt-[10px] px-[16px] gap-[15px]">
+            <div className="w-full flex flex-col items-center justify-center pt-[10px] px-[16px] gap-[15px]">
                 <Divider />
                 <ReadingInformList />
             </div>
@@ -66,7 +66,7 @@ const ReadingRecordPage = () => {
                 <Divider />
                 <ReadingSpeedList />
             </div>
-
+            <div className="h-[20px]" />
         </div>
     );
 };

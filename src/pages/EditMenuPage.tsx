@@ -1,12 +1,12 @@
+import Header from "../components/Header"
 import MyPageLabel from "../components/MyPageLabel"
-import MyPageTopBar from "../components/MyPageTopBar"
 
-const MyPageEditMenuPage = () => {
+const EditMenuPage = () => {
 
     return (
         <div
             className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1]">
-            <MyPageTopBar />
+            <Header />
             <MyPageLabel label="프로필 수정" />
 
             <div className="w-full flex flex-col justify-center items-start px-[14px] py-[2px] text-[16px] font-weight-[500] self-start text-[#58534E] font-[Freesentation]">
@@ -18,4 +18,4 @@ const MyPageEditMenuPage = () => {
     )
 }
 
-export default MyPageEditMenuPage
+export default EditMenuPage
