@@ -1,5 +1,5 @@
-import rabbitIcon from "../../assets/icons/rabbitIcon.svg"
-import turtleIcon from "../../assets/icons/turtleIcon.svg"
+import turtleIcon from "../assets/icons/turtleIcon.svg"
+import rabbitIcon from "../assets/icons/rabbitIcon.svg"
 
 interface ReadingInformProps {
     bookCover: string;
@@ -27,27 +27,27 @@ const ReadingInform = ({ bookCover, bookName, bookAuthor, readingTime, readingPe
             </div>
             {/* 읽은 시간 비율 */}
 
-            {readingTime && readingPercent && (
-                <div
-                    className="w-full flex flex-row justify-end gap-[5px] font-[Freesentation] text-[16px] text-[#58534E]  whitespace-nowrap ml-5">
+            {readingTime !== null && readingPercent !== null && (
+                <div className="w-full flex flex-row justify-end gap-[5px] text-[16px] text-[#58534E] whitespace-nowrap ml-5">
                     <span>{readingTime}h</span>
                     <span>{readingPercent}%</span>
                 </div>
             )}
 
-            {leftDays && leftDays < 7 && (
-                <div className="w-full flex flex-col justify-center items-end gap-[2px] font-[Freesentation] text-[14px] text-[#58534E] whitespace-nowrap ml-5">
-                    <img src={rabbitIcon} alt="" className="w-6 h-6" />
+            {leftDays !== null && leftDays < 7 && (
+                <div className="w-full flex flex-col justify-center items-end gap-[2px] text-[14px] text-[#58534E] whitespace-nowrap ml-5">
+                    <img src={rabbitIcon} alt="" className="mr-5" />
                     <span>{leftDays}일 후 완독 가능</span>
                 </div>
             )}
 
-            {leftDays && leftDays >= 7 && (
-                <div className="w-full flex flex-col justify-center items-end gap-[2px] font-[Freesentation] text-[14px] text-[#58534E] whitespace-nowrap ml-5">
-                    <img src={turtleIcon} alt="" className="w-6 h-6" />
+            {leftDays !== null && leftDays >= 7 && (
+                <div className="w-full flex flex-col justify-center items-end gap-[2px] text-[14px] text-[#58534E] whitespace-nowrap ml-5">
+                    <img src={turtleIcon} alt="" className="mr-5" />
                     <span>{leftDays}일 후 완독 가능</span>
                 </div>
             )}
+
 
 
         </div>

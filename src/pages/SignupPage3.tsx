@@ -1,7 +1,7 @@
 import TopLogo from "../components/TopLogo";
 import SignupLabel from "../components/SignupLabel";
 import FormLabel from "../components/FormLabel";
-import TextInput from "../components/TextInput";
+import LoginTextInput from "../components/LoginTextInput";
 import { useMemo, useRef, useState } from "react";
 import Divider from "../components/Divider";
 import LoginButton from "../components/LoginButton";
@@ -77,7 +77,7 @@ const SignupPage3 = () => {
             </div>
 
             <div className="w-full px-[16px] pt-[4px] pb-[6px]">
-                <TextInput placeholder="이름 입력" value={name} onChange={setName} />
+                <LoginTextInput placeholder="이름 입력" value={name} onChange={setName} />
             </div>
 
             <div className="w-full px-[16px] pt-[4px] pb-[6px]">
@@ -109,9 +109,9 @@ const SignupPage3 = () => {
                 <button
                     type="button"
                     onClick={openPicker}
-                    className="rounded-full border w-[45px] h-[45px] flex items-center justify-center"
+                    className="rounded-full border border-black/25 w-[45px] h-[45px] flex items-center justify-center bg-[#FFFFFF]"
                 >
-                    <img src={calendarIcon} alt="" />
+                    <img src={calendarIcon} alt="" className="p-[10px]" />
                 </button>
             </div>
 

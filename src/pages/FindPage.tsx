@@ -2,13 +2,18 @@ import EmailInput from "../components/EmailInput"
 import FormLabel from "../components/FormLabel"
 import LoginButton from "../components/LoginButton"
 import MyPageLabel from "../components/MyPageLabel"
-import MyPageTopBar from "../components/MyPageTopBar"
+import Header from "../components/Header"
+import { useState } from "react"
 
 const MyPageFindPage = () => {
+
+    const [localValue, setLocalValue] = useState("");
+    const [domainValue, setDomainValue] = useState("");
+
     return (
         <div
             className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-            <MyPageTopBar />
+            <Header />
             <MyPageLabel label="아이디/비밀번호 찾기" />
             <div className="w-full flex flex-col justify-center whitespace-nowrap px-[20px] pt-[20px] pb-[10px] gap-[10px]">
                 <p className="text-[16px] text-[#58534E]">메일로 비밀번호를 보내드릴게요</p>
@@ -29,7 +34,13 @@ const MyPageFindPage = () => {
             </div>
 
             <div className="w-full flex flex-col items-center justify-center px-[16px] py-[4px]">
-                <EmailInput localValue="" domainValue="" onLocalChange={() => { }} onDomainChange={() => { }} />
+                <EmailInput
+                    localValue={localValue}
+                    domainValue={domainValue}
+                    onLocalChange={setLocalValue}
+                    onDomainChange={setDomainValue}
+                />
+
             </div>
 
             <div className="w-full flex flex-col items-center justify-center px-[16px] py-[10px]">
