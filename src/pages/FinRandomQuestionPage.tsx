@@ -12,6 +12,7 @@ const QUESTION =
 
 export default function RandomQuestionPage() {
   const navigate = useNavigate();
+  const [input, setInput] = useState('');
   const [answer, setAnswer] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
   const toastTimeoutRef = useRef<number | null>(null);
@@ -62,7 +63,14 @@ export default function RandomQuestionPage() {
 
       {/* 하단 입력창 영역 */}
       <div className="fixed right-0 bottom-0 left-0 z-10 bg-[#F7F5F1] px-[16px] pt-[10px] pb-[20px]">
-        <TextInput onSubmit={handleSubmit} />
+        <TextInput
+          value={input}
+          onChange={setInput}
+          onSubmit={(v) => {
+            handleSubmit(v);
+            setInput(''); // 제출 후 입력창 비우기
+          }}
+        />
       </div>
 
       {/* 토스트 알림 */}
