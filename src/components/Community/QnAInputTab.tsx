@@ -1,4 +1,4 @@
-//import React, { useState } from "react";
+import React, { useState } from "react";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
 import QnACard from "../QnAcard_community";
 import TextInput from "../TextInput"; // TextInput 컴포넌트 불러오기
@@ -11,12 +11,16 @@ interface QnAInputTabProps {
     onBack: () => void;
 }
 
+
 const QnAInputTab: React.FC<QnAInputTabProps> = ({
     showMyQuestions,
     onToggleQuestions,
     selectedQuestion,
     //onBack,
 }) => {
+
+    const [answer, setAnswer] = useState("");
+
     return (
         <div className="flex flex-col h-full relative">
             {/* 나의 질문 / 사람들의 질문 버튼 */}
@@ -50,7 +54,14 @@ const QnAInputTab: React.FC<QnAInputTabProps> = ({
 
             {/* TextInput 컴포넌트 (답변 작성 영역) */}
             <div className="px-[20px] py-[12px] bg-[#F7F5F1] fixed bottom-0 left-0 w-full">
-                <TextInput />
+                <TextInput
+                    value={answer}
+                    onChange={setAnswer}
+                    onSubmit={() => {
+                        console.log("작성한 답변:", answer);
+                        setAnswer("");
+                    }}
+                />
             </div>
 
 
