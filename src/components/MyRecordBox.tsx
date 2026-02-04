@@ -1,5 +1,5 @@
-import M_trash from "../../assets/icons/M_trash.svg"
-import M_write from "../../assets/icons/M_write.svg"
+import penIcon from "../assets/icons/penIcon.svg";
+import trashIcon from "../assets/icons/trashIcon.svg";
 
 interface MyRecordBoxProps {
     bookName: string
@@ -28,10 +28,10 @@ const MyRecordBox = ({
                 {(canEdit || canDelete) && (
                     <div className="flex gap-[4px]">
                         {canDelete && (
-                            <button onClick={onDelete}><img src={M_trash} alt="" /></button>
+                            <button onClick={onDelete}><img src={penIcon} alt="휴지통 이미지" /></button>
                         )}
                         {canEdit && (
-                            <button onClick={onEdit}><img src={M_write} alt="" /></button>
+                            <button onClick={onEdit}><img src={trashIcon} alt="펜 이미지" /></button>
                         )}
                     </div>
                 )}
