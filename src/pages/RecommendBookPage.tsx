@@ -1,7 +1,7 @@
 import BookTitleLabel from "../components/BookTitleLabel"
 import Divider from "../components/Divider"
 import MenuBarItems from "../components/MenuBarItems"
-import MyPageTopBar from "../components/MyPageTopBar"
+import Header from "../components/Header"
 import MyRecordBox from "../components/MyRecordBox"
 
 const RecommendBookPage = () => {
@@ -26,7 +26,7 @@ const RecommendBookPage = () => {
 
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
-            <MyPageTopBar />
+            <Header />
 
             {/* MY PAGE */}
             <div className="w-full flex items-center px-[14px] pt-[30px]">
