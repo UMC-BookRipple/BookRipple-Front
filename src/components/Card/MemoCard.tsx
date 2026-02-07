@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import WriteIcon from '../assets/icons/M-write.svg';
-import TrashIcon from '../assets/icons/M-trash.svg';
+import WriteIcon from '../../assets/icons/M-write.svg';
+import TrashIcon from '../../assets/icons/M-trash.svg';
 
 interface MemoCardProps {
-  id: string;
+  id: number;
   title: string;
   content: string;
   isSelected: boolean;
   isSelectionMode: boolean;
-  onToggleSelect: (id: string) => void;
-  onDelete: (id: string) => void;
-  onUpdate: (id: string, content: string) => void;
+  onToggleSelect: (id: number) => void;
+  onDelete: (id: number) => void | Promise<void>;
+  onUpdate: (id: number, content: string) => void | Promise<void>;
 }
 
 export default function MemoCard({
@@ -26,14 +26,14 @@ export default function MemoCard({
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(content);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const trimmed = draft.trim();
     if (!trimmed) {
       setDraft(content);
       setIsEditing(false);
       return;
     }
-    onUpdate(id, trimmed);
+    await onUpdate(id, trimmed);
     setIsEditing(false);
   };
 
@@ -54,11 +54,15 @@ export default function MemoCard({
         <p className="font-sans text-[16px] leading-normal font-[500] whitespace-pre-wrap text-[#58534E] not-italic">
           {title}
         </p>
+
         <div className="flex items-center gap-[4px]">
           {isEditing ? (
             <button
               type="button"
-              onClick={handleSave}
+              onClick={(e) => {
+                e.stopPropagation();
+                void handleSave();
+              }}
               className="text-[14px] font-medium text-[#58534E]"
             >
               저장
@@ -66,7 +70,10 @@ export default function MemoCard({
           ) : (
             <button
               type="button"
-              onClick={() => setIsEditing(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+              }}
               className="text-[#58534E]"
             >
               <img src={WriteIcon} alt="수정" className="h-[28px] w-[28px]" />
@@ -74,7 +81,10 @@ export default function MemoCard({
           )}
           <button
             type="button"
-            onClick={() => onDelete(id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              void onDelete(id);
+            }}
             className="text-[#58534E]"
           >
             <img src={TrashIcon} alt="삭제" className="h-[28px] w-[28px]" />
@@ -87,6 +97,7 @@ export default function MemoCard({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             className="min-h-[120px] w-full resize-none rounded-[12px] border border-[#E3DED8] bg-[#FFFDF9] p-3 whitespace-pre-wrap"
+            onClick={(e) => e.stopPropagation()}
           />
         ) : (
           <p className="whitespace-pre-wrap">{content}</p>
