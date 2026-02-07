@@ -37,6 +37,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <button
             className="text-[#58534E] text-[16px] font-medium whitespace-nowrap"
             style={{ fontFamily: "Freesentation" }}
+            onClick={() => onChange('')}
           >
             취소
           </button>
