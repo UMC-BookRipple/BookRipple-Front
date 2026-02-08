@@ -2,9 +2,14 @@ interface LoginButtonProps {
     label: string;
     onClick: () => void;
     variant?: "brown" | "lightBrown" | "white";
+    disabled?: boolean;
 }
 
-const LoginButton = ({ label, onClick, variant = "brown" }: LoginButtonProps) => {
+const LoginButton = ({ label, onClick, variant = "brown", disabled = false }: LoginButtonProps) => {
+
+    const disabledStyle = disabled
+  ? "cursor-not-allowed pointer-events-none "
+  : "";
 
     const baseClass = "w-full h-[49px] rounded-[100px] py-[14px] px-[10px] font-medium text-[18px] flex flex-col justify-center items-center gap-[10px]";
 
@@ -17,10 +22,10 @@ const LoginButton = ({ label, onClick, variant = "brown" }: LoginButtonProps) =>
     return (
         <div className="w-full">
             <button
-                className={baseClass + " " + variantClass[variant]}
-                onClick={onClick}>
-                {label}
-            </button>
+            className={`${baseClass} ${variantClass[variant]} ${disabledStyle}`}
+            onClick={onClick}
+            disabled={disabled}
+            >{label}</button>
         </div>
     )
 }
