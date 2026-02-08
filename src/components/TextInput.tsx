@@ -1,37 +1,33 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
 interface TextInputProps {
-  placeholder: string;
   value: string;
   onChange: (value: string) => void;
   type?: React.HTMLInputTypeAttribute;
   className?: string;
+  onSubmit?: (value: string) => void;
 }
 
 export default function TextInput({
+  value,
+  onChange,
   onSubmit,
   className = '',
 }: TextInputProps) {
-  const [value, setValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useLayoutEffect(() => {
-    if (!textareaRef.current) {
-      return;
-    }
+    if (!textareaRef.current) return;
     textareaRef.current.style.height = 'auto';
     textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
   }, [value]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmed = value.trim();
+    if (!trimmed) return;
 
-    if (value.trim().length === 0) return;
-
-    if (onSubmit) {
-      onSubmit(value);
-      setValue('');
-    }
+    onSubmit?.(trimmed);
   };
 
   return (
@@ -42,7 +38,7 @@ export default function TextInput({
       <textarea
         ref={textareaRef}
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         rows={1}
         className="max-h-[140px] flex-1 resize-none bg-transparent text-[16px] font-normal text-[#58534E] outline-none"
       />
@@ -68,6 +64,4 @@ export default function TextInput({
       </button>
     </form>
   );
-};
-
-export default TextInput;
+}

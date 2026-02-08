@@ -9,17 +9,24 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
   progress,
   className = '',
 }) => {
-  // 0~100 사이의 값으로 제한
   const validProgress = Math.min(100, Math.max(0, progress));
 
   return (
-    <div className={`flex w-[155px] flex-col gap-1 ${className}`}>
+<<<<<<< feat/#22-bookshelf-select-ui
+    <div className={`overflow-hidden rounded-full bg-[#D2D2D2] ${className}`}>
+      <div
+        className="h-full bg-[#BDB7B2] transition-all duration-300 ease-out"
+        style={{ width: `${validProgress}%` }}
+      />
+=======
+    <div className={`flex w-full flex-col gap-1 ${className}`}>
       <div className="h-[20px] w-full overflow-hidden rounded-full bg-[#D2D2D2]">
         <div
           className="h-full bg-[#827A74] transition-all duration-300 ease-out"
           style={{ width: `${validProgress}%` }}
         />
       </div>
+>>>>>>> develop
     </div>
   );
 };
