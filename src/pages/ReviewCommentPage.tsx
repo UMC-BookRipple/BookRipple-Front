@@ -1,86 +1,208 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import BookTitleLabel from "../components/BookTitleLabel";
 import Divider from "../components/Divider";
 import EditUnderBar from "../components/EditUnderBar";
 import MenuBarItems from "../components/MenuBarItems";
 import Header from "../components/Header";
 import ReviewCommentBox from "../components/ReviewCommentBox";
-import TextInput from "../components/TextInput";
+import axios from "axios";
 
-const MyReadingMemoPage = () => {
-  // 👉 추후 API로 교체될 mock 데이터
-  const reviewComments = [
-    {
-      id: 1,
-      content: "설렘보다는 망설임에 가깝고,",
-    },
-    {
-      id: 2,
-      content: "문장이 잔잔해서 오래 남는다.",
-    },
-    {
-      id: 3,
-      content: "다시 읽고 싶은 책이다.",
-    },
-  ];
+interface MyReviewList {
+  id: number;
+  bookTitle: string;
+  content: string;
+  updatedAt: string;
+  createdAt?: string;
+}
 
-  const [isDelete, setIsDelete] = useState(false);
+interface MyReviewsApiResponse {
+  isSuccess: boolean;
+  code: string;
+  message: string;
+  result?: {
+    myReviewList?: MyReviewList[] | null;
+    hasNext: boolean;
+    lastBookTitle: string;
+    lastId: number;
+  };
+}
+
+const ReviewCommentPage = () => {
   const [input, setInput] = useState("");
+  const [comments, setComments] = useState<MyReviewList[]>([]);
 
-  const onDelete = () => {
-    setIsDelete((prev) => !prev);
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+
+  const idList: number[] = selectedIds;
+
+  const fetchComments = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const response = await axios.get<MyReviewsApiResponse>(
+        `${import.meta.env.VITE_API_BASE_URL}/reviews/me`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        }
+      );
+
+      const { isSuccess, message, result } = response.data;
+
+      if (!isSuccess) {
+        if (message) alert(message);
+        return;
+      }
+
+      // 서버 응답 리스트 세팅
+      setComments(result?.myReviewList ?? []);
+      // 데이터 새로 불러오면 선택 초기화(혼동 방지)
+      setSelectedIds([]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, []);
+
+  const groupedByBook = useMemo(() => {
+    return comments.reduce<Record<string, MyReviewList[]>>((acc, cur) => {
+      if (!acc[cur.bookTitle]) acc[cur.bookTitle] = [];
+      acc[cur.bookTitle].push(cur);
+      return acc;
+    }, {});
+  }, [comments]);
+
+
+  const toggleSelect = (id: number) => {
+    if (!isSelectMode) return;
+
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const isUnderBarOpen = selectedIds.length > 0;
+
+
+  const handleDelete = async () => {
+    const id = selectedIds[0];
+    if (!id) return;
+
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/reviews/${selectedIds}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          }
+        }
+      );
+
+      const { isSuccess, message, result, code } = response.data;
+
+      if (!isSuccess) {
+        if (message) alert(message);
+        return;
+      }
+
+      setComments((prev) => prev.filter((c) => !selectedIds.includes(c.id)));
+      setSelectedIds([]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  const handleDeleteAll = async () => {
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/reviews/me/batch-delete`,
+        {
+          idList,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+
+      const { isSuccess, message, result, code } = response.data;
+
+      if (!isSuccess) {
+        if (message) alert(message);
+        return;
+      }
+
+      setComments((prev) => prev.filter((c) => !selectedIds.includes(c.id)));
+      setSelectedIds([]);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
       <Header />
 
-      {/* MY PAGE */}
       <div className="w-full flex items-center px-[14px] pt-[30px]">
         <span className="h-[50px] flex items-center font-[GmarketSansBold] text-[20px]">
           MY PAGE
         </span>
       </div>
 
-      {/* 메뉴 */}
       <div className="w-full flex flex-col py-[6px] px-[14px]">
         <Divider />
         <MenuBarItems
           mainLabel="내 기록 확인"
           MenuBarLabel="독서 메모"
           plusMenuLabel="선택"
+          onClick={() => {
+            setIsSelectMode((prev) => !prev);
+            setSelectedIds([]); // 모드 바뀔 때 선택 초기화(헷갈림 방지)
+          }}
+          isSelectMode={isSelectMode}
         />
+
         <Divider />
       </div>
 
-      <BookTitleLabel BookTitle="브람스를 좋아하세요..." />
+      <div className="w-full px-[16px] flex flex-col gap-[20px]">
+        {Object.entries(groupedByBook).map(([bookTitle, items]) => (
+          <div key={bookTitle}>
+            <BookTitleLabel BookTitle={bookTitle} />
 
-      {/* 리뷰 댓글 리스트 */}
-      <div className="w-full px-[16px] flex flex-col gap-[20px]" onClick={onDelete}>
-        {reviewComments.map((reviewComment) => (
-          <ReviewCommentBox
-            key={reviewComment.id}
-            content={reviewComment.content}
-          />
+            <div className="mt-[20px] flex flex-col gap-[20px]">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => toggleSelect(item.id)}
+                  className={`rounded-[12px] transition ${selectedIds.includes(item.id)
+                    ? "border border-[#C9C4BF] bg-[#F3F1ED]"
+                    : "border border-transparent"
+                    }`}
+                >
+                  <ReviewCommentBox content={item.content} />
+                </div>
+
+              ))}
+            </div>
+          </div>
         ))}
       </div>
-      {!isDelete && (
-        <div className="fixed right-0 bottom-0 left-0 z-10 bg-[#F7F5F1] px-[16px] pt-[10px] pb-[20px]">
-          <TextInput
-            placeholder="답변을 입력해주세요."
-            value={input}
-            onChange={setInput}
-            onSubmit={(v) => {
-              handleSubmit(v);
-              setInput("");
-            }}
-          />
-        </div>
-      )}
 
-      {isDelete && <EditUnderBar />}
+      {isUnderBarOpen && (
+        <EditUnderBar
+          onSelectAll={() => {
+            setSelectedIds(comments.map((item) => item.id));
+          }}
+          onDelete={selectedIds.length > 1 ? handleDeleteAll : handleDelete}
+        />
+      )}
     </div>
   );
 };
 
-export default MyReadingMemoPage;
+export default ReviewCommentPage;

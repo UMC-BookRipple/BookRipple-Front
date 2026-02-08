@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import socialLoginIcon from "../assets/icons/socialLoginIcon.svg"
 import kakaoLoginIcon from "../assets/icons/kakaoLoginIcon.svg";
 import logo from "../assets/icons/logo.svg";
+import axios from "axios";
 
 const StartPage = () => {
   const navigate = useNavigate();
+
   const fontBase = "font-[Freesentation] font-medium text-[18px]";
 
   // 버튼: 폭은 반응형(w-full) + 최대폭(273px)
@@ -15,6 +17,39 @@ const StartPage = () => {
   const kakaoBtn = `${buttonBase} ${fontBase} bg-[#FFF3D0] text-[#58534E]`;
   const guestBtn = `${buttonBase} ${fontBase} bg-white text-[#58534E]`;
   const signupText = `${fontBase} text-[#58534E] underline`;
+
+  // 카카오 로그인
+  const K_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY as string;
+  const K_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI as string;
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
+
+  const handleKakaoLogin = () => {
+    window.location.href = KAKAO_AUTH_URL;
+  };
+
+
+  const guestLogin = async () => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/login/guest`);
+      const { isSuccess, code, message, result } = res.data;
+
+      localStorage.setItem("accessToken", result.accessToken);
+      localStorage.setItem("userName", result.userName);
+      localStorage.setItem("memberId", result.memberId);
+
+      console.log("guest login success", message);
+      navigate("/home");
+
+      if (!isSuccess) {
+        console.log(`${result.memberId}, ${message}`);
+        return;
+      }
+
+    } catch (error) {
+      console.log("guest login error", error);
+    }
+  };
 
 
   return (
@@ -27,11 +62,11 @@ const StartPage = () => {
         />
       </div>
       <div className="w-full flex flex-col items-center gap-[12px] pb-[20px] px-[64.5px]">
-        <button className={socialBtn} onClick={() => navigate("/login")}><img src={socialLoginIcon} alt="" />소셜 로그인</button>
-        <button className={kakaoBtn} onClick={() => { }}><img src={kakaoLoginIcon} alt="" />카카오 로그인</button>
-        <button className={guestBtn} onClick={() => { }}>게스트 로그인</button>
+        <button className={socialBtn} onClick={() => navigate("/auth/login/local")}><img src={socialLoginIcon} alt="" />소셜 로그인</button>
+        <button className={kakaoBtn} onClick={handleKakaoLogin}><img src={kakaoLoginIcon} alt="" />카카오 로그인</button>
+        <button className={guestBtn} onClick={guestLogin}>게스트 로그인</button>
         <div className="w-full h-[45px] flex items-center justify-center">
-          <p className={signupText} onClick={() => navigate("/signup")}>회원가입</p>
+          <p className={signupText} onClick={() => navigate("/signup/step1")}>회원가입</p>
         </div>
       </div>
     </div>

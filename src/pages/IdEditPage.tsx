@@ -1,18 +1,101 @@
 import Divider from "../components/Divider"
-import EmailInput from "../components/EmailInput"
 import FormLabel from "../components/FormLabel"
 import InputWithButton from "../components/InputWithButton"
 import LoginButton from "../components/LoginButton"
 import EditLabel from "../components/EditLabel"
 import Header from "../components/Header";
-import LoginTextInput from "../components/LoginTextInput"
 import { useState } from "react"
+import { Navigate, useLocation, useNavigate } from "react-router-dom"
+import axios from "axios"
+import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
+import CheckIconRed from "../assets/icons/checkIconRed.svg";
+import CheckIcon from "../assets/icons/checkIcon.svg";
 
 const IdEditPage = () => {
+    const location = useLocation();
 
-      const [localValue, setLocalValue] = useState("");
-      const [domainValue, setDomainValue] = useState("");
-      const [authCode, setAuthCode] = useState("");
+    const from = location.state && (location.state as any).from;
+
+    if (from !== "ProfileEditIdPage") {
+        return <Navigate to="/profile/edit/id" replace />;
+    }
+    const navigate = useNavigate();
+
+    const [loginId, setLoginId] = useState("");
+
+
+    const [idCheckStatus, setIdCheckStatus] =
+        useState<"idle" | "success" | "error">("idle");
+
+    const verifyId = async () => {
+        if (loginId.trim() === "") {
+            console.log("아이디를 입력해주세요.");
+            return;
+        }
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_API_BASE_URL}/members/check-id`,
+                {
+                    params: { loginId },
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                }
+            );
+            const { isSuccess, code, message, result } = response.data;
+
+            if (isSuccess) {
+                setIdCheckStatus('success');
+            } else {
+                console.log(`코드:${code}, 메시지:${message}`);
+                setIdCheckStatus('error');
+            }
+        } catch (error) {
+            console.error('아이디 중복 확인 실패:', error);
+            setIdCheckStatus('error');
+        }
+    };
+
+
+    const changeLoginId = async () => {
+        if (!(idCheckStatus === 'success')) {
+            return;
+        }
+
+        try {
+            const response = await axios.patch(
+                `${import.meta.env.VITE_API_BASE_URL}/members/me/login-id`,
+                {
+                    content: loginId,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                    },
+                }
+            );
+
+            const { isSuccess, code, message, result } = response.data;
+
+            if (isSuccess) {
+                console.log("아이디 변경 성공", result.id);
+                navigate("/profile/edit/menu");
+            } else {
+                console.log(`코드:${code}, 메시지:${message}`);
+                setIdCheckStatus('error');
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response?.data) {
+                    console.error("아이디 변경 실패:", error.response.data);
+                } else {
+                    console.error("서버 연결 실패", error.message);
+                }
+            } else {
+                console.error("예상치 못한 오류:", error);
+            }
+        }
+    };
 
     return (
         <div
@@ -25,37 +108,39 @@ const IdEditPage = () => {
             </div>
 
             <div className="w-full flex flex-col items-center justify-center px-[16px] py-[4px]">
-                <InputWithButton value="" onChange={() => { }} buttonLabel="중복확인" onButtonClick={() => { }} />
+                <InputWithButton value={loginId} onChange={setLoginId} buttonLabel="중복확인" onButtonClick={verifyId} />
+                {idCheckStatus === 'idle' && (
+                    <p className="w-full text-[14px] text-[#BDB7B2] flex flex-row items-center justify-start mt-[4px] px-[4px]">
+                        <img src={CheckIcon} alt="" className="mb-[2px]" />
+                        사용할 수 있는 아이디입니다.
+                    </p>
+                )}
+                {idCheckStatus === 'success' && (
+                    <p className="w-full text-[14px] text-[#28A745] flex flex-row items-center justify-start mt-[4px] px-[4px]">
+                        <img src={CheckIconGreen} alt="" className="mb-[2px]" />
+                        사용할 수 있는 아이디입니다.
+                    </p>
+                )}
+                {idCheckStatus === 'error' && (
+                    <p className="w-full text-[14px] text-[#DC3545] flex flex-row items-center justify-start mt-[4px] px-[4px]">
+                        <img src={CheckIconRed} alt="" className="mb-[2px]" />
+                        사용할 수 없는 아이디입니다.
+                    </p>
+                )}
             </div>
-
-            <div className="w-full flex flex-col items-center justify-center pt-[20px] pb-[10px] px-[20px]">
-                <FormLabel label="이메일 인증" />
-            </div>
-
-            <div className="w-full px-[16px] py-[4px] gap-[10px] flex flex-col">
-            <EmailInput
-                localValue={localValue}
-                domainValue={domainValue}
-                onLocalChange={setLocalValue}
-                onDomainChange={setDomainValue}
-            />
-            <LoginTextInput 
-            placeholder="인증 코드 입력" 
-            value={authCode} 
-            onChange={setAuthCode} 
-            type="text" />
-            </div>
-
-            <div className="w-full flex flex-col items-center justify-center px-[16px] py-[10px] gap-[10px]">
-                <LoginButton label="이메일 인증하기" onClick={() => { }} variant="lightBrown" />
-                <div className="w-full flex flex-col items-center justify-center py-[10px]">
-                    <Divider />
-                </div>
+            <div className="w-full px-[20px]">
+                <div className="h-[10px]" />
+                <Divider />
             </div>
 
             <div
                 className="w-full flex flex-col items-center justify-center px-[16px] pt-[45px] pb-[20px]">
-                <LoginButton label="비밀번호 설정하기" onClick={() => { }} />
+                <LoginButton
+                    label="저장하기"
+                    disabled={!(idCheckStatus === 'success')}
+                    variant={(idCheckStatus === 'success') ? "brown" : "lightBrown"}
+                    onClick={changeLoginId}
+                />
             </div>
 
         </div>
