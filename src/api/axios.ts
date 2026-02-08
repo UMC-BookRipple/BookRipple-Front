@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxOCIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzcwNDY4OTM4LCJleHAiOjE3NzA0NzA3Mzh9.cQzVQLntS_U0CUUsUCUbd2Kzu_f7WpNM-hQ0E3vhVboPMx6qw8_JKlZRN1i0Z2uMRB_OfwqWU3a99LK3wMa0pw';
+    const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzNyIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzcwNTQ3NzA3LCJleHAiOjE3NzA1NDk1MDd9.0hWwHq9Nzp2kDjPbVgchce-TETqG70SjL4y-7ROMpdizrGzeFA2V855qbGagnN8rpoyqBCnP_hH8PZFI1f1hoQ';
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     } else {

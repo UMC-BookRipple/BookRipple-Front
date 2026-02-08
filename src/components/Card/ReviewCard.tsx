@@ -1,16 +1,11 @@
-import { useState } from "react";
+import { type Review } from "../../types/review";
 
-interface ReviewData {
-    nickname: string;
-    content: string;
+interface ReviewCardProps {
+    review: Review;
 }
 
-const ReviewCard = () => {
-    // 디자인 확인용 더미 데이터
-    const [reviewData] = useState<ReviewData>({
-        nickname: "익명의 사용자 0322",
-        content: "설렘보다는 망설임에 가깝고, 확신보다는 흔들림에 가깝다. 누군가를 좋아하지만 쉽게 다가가지 못하는 마음, 말로 꺼내기 전까지 계속 마음속에 머무는 감정들이 자연스럽게 떠오른다.읽는 동안 따뜻함과 쓸쓸함이 함께 느껴지고, 지나간 관계나 놓쳐버린 순간들을 조용히 떠올리게 된다. 감정이 크게 요동치기보다는 낮은 온도로 오래 유지되는 느낌이라, 책을 덮은 뒤에도 여운이 쉽게 사라지지 않는다",
-    });
+const ReviewCard = ({ review }: ReviewCardProps) => {
+
 
     return (
         <div
@@ -38,7 +33,7 @@ const ReviewCard = () => {
               font-[400] leading-normal
             "
                     >
-                        {reviewData.nickname}
+                        {review.nickname}
                     </span>
                 </div>
             </div>
@@ -56,7 +51,7 @@ const ReviewCard = () => {
                     lineHeight: "normal",
                 }}
             >
-                {reviewData.content}
+                {review.content}
             </p>
         </div>
     );

@@ -1,6 +1,6 @@
 // api/Community/recommend.ts
 import api from "../axios";
-import { type RecommendBook } from "../../types/RecommendBook";
+import { type RecommendBook } from "../../types/recommendbook";
 
 export interface RecommendResponse {
     recommendList: RecommendBook[];
