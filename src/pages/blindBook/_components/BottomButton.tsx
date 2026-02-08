@@ -31,7 +31,18 @@ const BottomButtonItem = ({
         disabled ? 'opacity-50' : ''
       }`}
     >
-      <span className="text-[18px] leading-[21px] font-medium">{label}</span>
+      <span
+        style={{
+          color: variant === 'primary' ? '#FFF' : '#58534E',
+          fontFamily: 'Freesentation',
+          fontSize: '18px',
+          fontStyle: 'normal',
+          fontWeight: 500,
+          lineHeight: 'normal',
+        }}
+      >
+        {label}
+      </span>
     </button>
   );
 };

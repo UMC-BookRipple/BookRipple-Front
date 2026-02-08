@@ -1,13 +1,5 @@
 @import 'tailwindcss';
-
-/* 박용준투사회보체 (Pak_Yong_jun) */
-@font-face {
-  font-family: 'Pak_Yong_jun';
-  src: url('https://cdn.jsdelivr.net/npm/@noonnu/park-yong-jun@0.1.0/fonts/parkyongjun-normal.woff2')
-    format('woff2');
-  font-weight: 400;
-  font-style: normal;
-}
+@config '../tailwind.config.js';
 
 /* 굵은 거 (Bold, 700) */
 @font-face {
@@ -44,10 +36,6 @@
   font-weight: 700;
   font-style: normal;
 }
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 body {
   font-family: 'Freesentation', sans-serif;

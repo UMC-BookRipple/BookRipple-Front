@@ -14,6 +14,7 @@ export default function BlindBookSellRouter() {
       <Route path="new" element={<SellRegisterPage />} />
 
       <Route path=":postId" element={<SellDetailPage />} />
+      <Route path=":postId/edit" element={<SellRegisterPage />} />
       <Route path=":postId/requests" element={<SellRequestsPage />} />
       <Route path=":postId/waiting" element={<SellWaitingPage />} />
       <Route path=":postId/shipping" element={<SellShippingPage />} />

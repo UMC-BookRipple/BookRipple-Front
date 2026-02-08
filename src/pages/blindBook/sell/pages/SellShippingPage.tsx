@@ -9,6 +9,8 @@ import Input from '../_components/Input';
 import { MOCK_SELL_ITEMS } from '../../_mocks/blindBook.mock';
 import { formatPrice } from '../../_utils/blindBook.util';
 
+import arrowIcon from '../../../../assets/icons/arrowIcon.svg';
+
 export default function SellShippingPage() {
   const nav = useNavigate();
   const { postId } = useParams();
@@ -29,64 +31,144 @@ export default function SellShippingPage() {
   }
 
   return (
-    <BlindBookShell activeMode="sell" showHero={false}>
-      <div className="pt-5 pb-24">
-        <div className="flex items-center gap-2 text-[16px]">
-          <button onClick={() => nav(-1)} className="text-[18px]">
-            〈
-          </button>
-          <span>판매중 도서</span>
-        </div>
+    <BlindBookShell
+      activeMode="sell"
+      showHero={true}
+      heroVariant="minimal"
+      noBottomPadding={true}
+    >
+      <div className="pt-[14px] pb-[140px]">
+        {/* Sub Header */}
+        <button
+          onClick={() => nav(-1)}
+          className="flex items-center gap-[10px] py-[6px]"
+        >
+          <img src={arrowIcon} alt="back" className="h-[14px] w-[8px]" />
+          <span
+            className="text-[18px] leading-normal font-medium text-[#58534E]"
+            style={{ fontFamily: 'Freesentation' }}
+          >
+            판매중 도서
+          </span>
+        </button>
 
-        <div className="mt-5 flex items-end justify-between">
-          <div>
-            <div className="text-[16px] font-semibold">
+        {/* Info Section */}
+        <div className="mt-[10px] flex items-center gap-[4px] self-stretch px-2 py-[8px]">
+          <div className="flex flex-1 flex-col items-start gap-[-2px] rounded-[10px]">
+            <div
+              className="text-[18px] leading-normal font-medium text-[#58534E]"
+              style={{ fontFamily: 'Freesentation' }}
+            >
               {item.titleHint.replace('...', '')}
             </div>
-            <div className="mt-1 text-[24px] font-bold">
+            <div
+              className="text-[22px] leading-normal font-semibold text-[#58534E]"
+              style={{ fontFamily: 'Freesentation' }}
+            >
               {formatPrice(item.price)}
             </div>
           </div>
 
-          <div className="text-right">
-            <div className="text-[18px] font-semibold">판매요청</div>
-            <div className="text-[18px] font-semibold">승인</div>
+          <div className="flex flex-col items-center gap-[-2px]">
+            <div
+              className="text-center text-[22px] leading-[1.3] font-semibold text-[#58534E]"
+              style={{ fontFamily: 'Freesentation' }}
+            >
+              판매요청
+            </div>
+            <div
+              className="text-center text-[22px] leading-[1.1] font-semibold text-[#58534E]"
+              style={{ fontFamily: 'Freesentation' }}
+            >
+              승인
+            </div>
           </div>
         </div>
 
-        <Divider />
+        <div>
+          <Divider />
+        </div>
 
-        <div className="mb-3 text-[14px] font-semibold">구매자 배송정보</div>
+        {/* Buyer Information Section */}
+        <div
+          className="mt-[8px] mb-[12px] pl-[10px] text-[16px] leading-normal font-medium text-[#58534E]"
+          style={{ fontFamily: 'Freesentation' }}
+        >
+          구매자 배송정보
+        </div>
 
-        <div className="overflow-hidden rounded-[16px] bg-white shadow-[0px_2px_6px_rgba(0,0,0,0.08)]">
-          <div className="flex items-center gap-3 border-b border-[#EFEAE5] px-4 py-4">
-            <div className="h-10 w-10 rounded-full bg-[#E8E4DE]" />
-            <div>
-              <div className="text-[14px] font-semibold">구매자</div>
-              <div className="text-[14px] text-[#58534E]/70">
-                익명의 사용자 1325
+        <div className="flex flex-col gap-[10px]">
+          {/* Buyer Card */}
+          <div className="flex items-center self-stretch rounded-[12px] bg-white p-[16px]">
+            <div className="flex flex-1 items-center gap-[14px]">
+              <div
+                className="h-[40px] w-[40px] flex-shrink-0 rounded-full bg-[#F7F5F1]"
+                style={{ aspectRatio: '1/1' }}
+              />
+              <div className="flex flex-col items-start self-stretch">
+                <div
+                  className="self-stretch text-[18px] leading-normal font-medium text-[#58534E]"
+                  style={{ fontFamily: 'Freesentation', fontWeight: 500 }}
+                >
+                  구매자
+                </div>
+                <div
+                  className="-mt-[4px] self-stretch text-[16px] leading-normal font-medium text-[#58534E]"
+                  style={{ fontFamily: 'Freesentation', fontWeight: 500 }}
+                >
+                  익명의 사용자 1325
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="px-4 py-4">
-            <div className="text-[14px] font-semibold">북리플 블라인드 북</div>
-            <div className="mt-1 text-[14px] text-[#58534E]/70">
-              서울특별시 중구 세종대로 110
+          {/* Shipping Address Card */}
+          <div className="flex items-center self-stretch rounded-[12px] bg-white p-[16px]">
+            <div className="flex flex-1 items-center gap-[14px]">
+              <div className="flex flex-col items-start self-stretch">
+                <div
+                  className="self-stretch text-[18px] leading-normal font-medium text-[#58534E]"
+                  style={{ fontFamily: 'Freesentation', fontWeight: 500 }}
+                >
+                  북리플 블라인드 북
+                </div>
+                <div
+                  className="self-stretch text-[16px] leading-normal font-medium text-[#58534E]"
+                  style={{ fontFamily: 'Freesentation', fontWeight: 500 }}
+                >
+                  서울특별시 중구 세종대로 110
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-6 text-[14px] font-semibold">배송정보 입력</div>
+        {/* Divider */}
+        <div className="flex flex-col items-center justify-center gap-[10px] self-stretch py-[15px]">
+          <div className="h-[3px] w-[402px] bg-[#E6E6E6] opacity-70" />
+        </div>
 
-        <div className="mt-3 space-y-3">
+        {/* Shipping Input Section */}
+        <div
+          className="mb-[12px] pl-[10px] text-[16px] leading-normal font-medium text-[#58534E]"
+          style={{ fontFamily: 'Freesentation' }}
+        >
+          배송정보 입력
+        </div>
+
+        <div className="space-y-[10px]">
           <Input
             placeholder="배송방법 (편의점 반택, 우체국)"
             value={method}
             onChange={(e) => setMethod(e.target.value)}
           />
-          <div className="text-[12px] text-[#58534E]/60">
-            구매자에게 보낼 송장번호를 입력해 주세요
+          <div className="flex flex-col items-start gap-[10px] self-stretch pt-[5px]">
+            <div
+              className="pl-[10px] text-[14px] leading-normal font-normal text-[#58534E]/60"
+              style={{ fontFamily: 'Freesentation' }}
+            >
+              구매자에게 보낼 송장번호를 입력해 주세요
+            </div>
           </div>
           <Input
             placeholder="송장번호 입력"

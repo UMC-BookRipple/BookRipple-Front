@@ -126,7 +126,7 @@ export default function SellDetailPage() {
           <BottomButtonItem
             label="글 수정하기"
             variant="secondary"
-            onClick={() => {}}
+            onClick={() => nav(`/blind-book/sell/${item.id}/edit`)}
           />
           <BottomButtonItem
             label="글 삭제하기"
