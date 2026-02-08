@@ -1,5 +1,5 @@
 import searchIcon from '/src/assets/icons/M-search.svg';
-import type { BookshelfTabKey } from '../_types/bookshelf.type';
+import type { BookshelfTabKey } from '../../types/bookshelf.type';
 
 type Props = {
   activeTab: BookshelfTabKey;

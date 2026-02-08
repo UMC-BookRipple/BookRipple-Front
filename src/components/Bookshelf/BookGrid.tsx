@@ -1,4 +1,4 @@
-import type { BookItem } from '../_types/bookshelf.type';
+import type { BookItem } from '../../types/bookshelf.type';
 import BookCard from './BookCard';
 
 type Props = {

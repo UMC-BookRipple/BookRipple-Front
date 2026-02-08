@@ -1,7 +1,7 @@
 import likeOn from '/src/assets/icons/M-like2.svg';
 import likeOff from '/src/assets/icons/M-like1.svg';
 import checkIcon from '/src/assets/icons/check.svg';
-import type { BookItem } from '../_types/bookshelf.type';
+import type { BookItem } from '../../types/bookshelf.type';
 
 type Props = {
   book: BookItem;

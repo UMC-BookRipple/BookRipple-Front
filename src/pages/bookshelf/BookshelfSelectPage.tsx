@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import logo from '/src/assets/icons/logo.svg';
 import likeIcon from '/src/assets/icons/M-like1.svg';
 import likedIcon from '/src/assets/icons/M-like2.svg';
 
 import Header from '../../components/Header';
+import SideBar from '../../components/SideBar';
 import ReadingProgress from '../../components/ReadingProgress';
 import Button from '../../components/Button';
-import BookshelfSection from './_components/BookshelfSection';
+import BookshelfSection from '../../components/Bookshelf/BookshelfSection';
 
-import type { BookshelfTabKey } from './_types/bookshelf.type';
-import { isBookshelfTabKey } from './_utils/bookshelf.utils';
-import { useBookshelfStore } from '../../stores/BookshelfStore';
+import type { BookshelfTabKey, BookItem } from '../../types/bookshelf.type';
+import { isBookshelfTabKey } from '../../utils/bookshelf.utils';
+import {
+  fetchBookDetail,
+  toggleBookLike,
+  fetchBooksByStatus,
+} from '../../api/bookshelf.api';
+import type { ApiBookItem } from '../../types/bookshelf.type';
+import { statusToTab } from '../../types/bookshelf.type';
+import { useSidebarStore } from '../../stores/SidebarStore';
 
 const TABS: Array<{ key: BookshelfTabKey; label: string }> = [
   { key: 'reading', label: '진행 중 도서' },
@@ -22,9 +30,12 @@ const TABS: Array<{ key: BookshelfTabKey; label: string }> = [
 export default function BookshelfSelectPage() {
   const navigate = useNavigate();
   const params = useParams();
-  const { getBookById, toggleLike } = useBookshelfStore();
 
   const [isMemoOpen, setIsMemoOpen] = useState(false);
+  const [book, setBook] = useState<BookItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { isOpen, close } = useSidebarStore();
 
   const tabParam = params.tab ?? 'reading';
   const tab: BookshelfTabKey = isBookshelfTabKey(tabParam)
@@ -32,31 +43,125 @@ export default function BookshelfSelectPage() {
     : 'reading';
   const bookId = params.bookId ?? '';
 
-  const book = getBookById(bookId);
+  // API에서 책 상세 정보 가져오기
+  useEffect(() => {
+    const loadBookDetail = async () => {
+      if (!bookId) {
+        setError('책 ID가 없습니다');
+        setIsLoading(false);
+        return;
+      }
 
-  if (!book)
-    return (
-      <div className="min-h-screen bg-[#F7F5F1] p-6">
-        도서를 찾을 수 없습니다.
-      </div>
-    );
+      console.log('🔄 Loading book detail for bookId:', bookId);
+      setIsLoading(true);
+      setError(null);
 
-  const isFinishedView = tab === 'finished' || book.status === 'finished';
-  const progress = book.progressPercent ?? 0;
-  const pages = book.pages ?? 0;
-  const current = book.currentPage ?? 0;
+      try {
+        const response = await fetchBookDetail(Number(bookId));
 
-  const handleLikeToggle = () => {
-    toggleLike(bookId);
+        // 좋아요한 책 목록 가져오기 (isLiked 확인용)
+        let isLiked = false;
+        try {
+          const likedResponse = await fetchBooksByStatus({
+            status: 'LIKED',
+            size: 100,
+          });
+          const likedBookIds = new Set(
+            likedResponse.result.items.map((item: ApiBookItem) => item.bookId),
+          );
+          isLiked = likedBookIds.has(response.result.bookId);
+        } catch (error) {
+          console.warn('⚠️ Failed to fetch liked books, isLiked will be false');
+        }
+
+        // API 응답을 BookItem 형식으로 변환
+        const bookData: BookItem = {
+          id: response.result.bookId.toString(),
+          title: response.result.title,
+          coverUrl: response.result.coverUrl,
+          authors: response.result.authors,
+          author: response.result.authors[0],
+          publisher: response.result.publisher,
+          pages: response.result.totalPages,
+          isLiked, // 좋아요한 책 목록에서 확인한 값 사용
+          status: statusToTab[response.result.status],
+          progressPercent: response.result.progressPercent ?? 0, // null/undefined일 경우 0으로 설정
+          currentPage: Math.round(
+            ((response.result.progressPercent ?? 0) / 100) *
+              response.result.totalPages,
+          ),
+          bookId: response.result.bookId,
+        };
+
+        setBook(bookData);
+      } catch (err) {
+        console.error('❌ Failed to load book detail:', err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : '책 정보를 불러오는데 실패했습니다',
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBookDetail();
+  }, [bookId]);
+
+  const handleLikeToggle = async () => {
+    if (!book || !book.bookId) return;
+
+    // Optimistic UI update
+    const previousLikedState = book.isLiked;
+    setBook({ ...book, isLiked: !book.isLiked });
+
+    try {
+      await toggleBookLike(book.bookId, previousLikedState);
+      console.log('✅ Like toggled successfully');
+    } catch (error) {
+      console.error('❌ Failed to toggle like:', error);
+      // Revert on error
+      setBook({ ...book, isLiked: previousLikedState });
+      alert('좋아요 처리에 실패했습니다.');
+    }
   };
 
   const handleTabChange = (newTab: BookshelfTabKey) => {
     navigate(`/bookshelf/${newTab}`);
   };
 
+  // 로딩 중
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F7F5F1]">
+        <div className="text-[#58534E]/70">로딩 중...</div>
+      </div>
+    );
+  }
+
+  // 에러 발생
+  if (error || !book) {
+    return (
+      <div className="min-h-screen bg-[#F7F5F1] p-6">
+        <div className="mb-2 font-semibold text-red-600">오류 발생</div>
+        <div className="text-[#58534E]/70">
+          {error || '도서를 찾을 수 없습니다'}
+        </div>
+      </div>
+    );
+  }
+
+  // 책 정보에서 필요한 값 추출
+  const isFinishedView = tab === 'finished' || book.status === 'finished';
+  const progress = book.progressPercent ?? 0;
+  const pages = book.pages ?? 0;
+  const current = book.currentPage ?? 0;
+
   return (
     <div className="min-h-screen bg-[#F7F5F1]">
       <Header />
+      <SideBar isOpen={isOpen} onClose={close} />
 
       <div className="mx-auto w-full max-w-[402px] bg-[#F7F5F1]">
         {/* Logo Section */}
@@ -116,14 +221,19 @@ export default function BookshelfSelectPage() {
             </div>
 
             {/* Book Info */}
-            <div className="flex flex-col items-start justify-between self-stretch pt-[2px] pb-[8px]">
+            <div
+              className="flex min-w-0 flex-col items-start justify-between self-stretch pt-[2px] pb-[8px]"
+              style={{ maxWidth: '149px' }}
+            >
               <div className="flex h-[21px] flex-1 items-center gap-[10px] self-stretch overflow-hidden border-t border-b border-[#58534E] px-0 py-[4px] font-[Freesentation] text-[18px] leading-normal font-medium text-[#58534E]">
-                <span className="truncate">{book.title}</span>
+                <span className="min-w-0 flex-1 truncate">{book.title}</span>
               </div>
 
-              <div className="mt-[12px] self-stretch font-[Freesentation] text-[16px] leading-normal font-normal text-[#58534E]">
-                {book.author && <div>{book.author}</div>}
-                {book.publisher && <div>{book.publisher}</div>}
+              <div className="mt-[12px] w-full overflow-hidden font-[Freesentation] text-[16px] leading-normal font-normal text-[#58534E]">
+                {book.author && <div className="truncate">{book.author}</div>}
+                {book.publisher && (
+                  <div className="truncate">{book.publisher}</div>
+                )}
                 {!!pages && <div>{pages}P</div>}
               </div>
 
