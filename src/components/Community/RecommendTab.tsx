@@ -62,8 +62,8 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
     return (
         <div className="flex flex-col gap-[10px] px-[10px] py-[24px] w-full">
             <div className="flex flex-col items-center gap-[10px] w-full">
-                {books.map((book) => (
-                    <div key={book.id} className="px-[24px] py-[10px] w-full">
+                {books.map((book, index) => (
+                    <div key={`${book.id}-${index}`} className="px-[24px] py-[10px] w-full">
                         <RecommendBookCard book={book} />
                     </div>
                 ))}

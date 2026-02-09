@@ -139,20 +139,12 @@ export const fetchCommunitySearchHistory = async (): Promise<SearchHistoryItem[]
     }
 };
 
-export const deleteAllSearchHistory = async (): Promise<number> => {
+export const deleteAllSearchHistory = async (type: "BOOK" | "COMMUNITY") => {
     const response = await api.delete<DeleteAllHistoryResponse>(
         "/v1/books/search/history",
-        {
-            params: {
-                type: "COMMUNITY",
-            },
-        }
+        { params: { type } }
     );
-
-    if (!response.data.isSuccess) {
-        throw new Error(response.data.message);
-    }
-
+    if (!response.data.isSuccess) throw new Error(response.data.message);
     return response.data.result.deletedCount;
 };
 
@@ -168,4 +160,28 @@ export const deleteSearchHistoryById = async (
     }
 
     return response.data.result.deleted;
+};
+
+// 🔍 BOOK 타입 검색 기록 조회
+export const fetchBookSearchHistory = async (): Promise<SearchHistoryItem[]> => {
+    try {
+        const response = await api.get<SearchHistoryResponse>(
+            "/v1/books/search/history",
+            {
+                params: {
+                    type: "BOOK",
+                },
+            }
+        );
+
+        if (!response.data.isSuccess) {
+            console.error("검색 기록 조회 실패:", response.data.message);
+            return [];
+        }
+
+        return response.data.result.items;
+    } catch (error) {
+        console.error("검색 기록 API 에러:", error);
+        return [];
+    }
 };
