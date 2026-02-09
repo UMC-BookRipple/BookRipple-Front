@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @config '../tailwind.config.js';
-
 /* 굵은 거 (Bold, 700) */
 @font-face {
   font-family: 'Freesentation';
@@ -37,6 +36,15 @@
   font-style: normal;
 }
 
+/* 박용준투사회보체 (Park Yong Jun Tusahoebo) - 손글씨 폰트 */
+@font-face {
+  font-family: 'Pak_Yong_jun';
+  src: url('/fonts/Pak_Yong_jun.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 body {
   font-family: 'Freesentation', sans-serif;
 }
@@ -44,5 +52,9 @@ body {
 @layer utilities {
   .rotate-y-180 {
     transform: rotateY(180deg);
+  }
+
+  .font-handwriting {
+    font-family: 'Pak_Yong_jun', cursive;
   }
 }
