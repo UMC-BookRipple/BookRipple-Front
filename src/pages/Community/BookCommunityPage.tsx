@@ -1,12 +1,13 @@
 import Header from "../../components/Header";
 import TopBar from "../../components/TopBar2";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReviewTab from "../../components/Community/ReviewTab";
 import QnATab from "../../components/Community/QnATab";
 import RecommendTab from "../../components/Community/RecommendTab";
-import { useNavigate, useLocation } from "react-router-dom";
-import { type Book, dummyBooks } from "../../data/dummyBooks";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { getBookDetailByAladinId, type BookDetail } from "../../api/books";
+
 
 
 
@@ -17,18 +18,36 @@ const TABS = [
 ];
 
 const BookCommunityPage = () => {
-    // 임시 선택된 책 제목 (나중에 API / state로 교체)
-    const { bookId } = useParams();
-    const location = useLocation();
-    const bookFromState = location.state?.book as Book | undefined;
+    const { bookId: aladinItemId } = useParams<{ bookId: string }>();
 
-    const book =
-        bookFromState ??
-        dummyBooks.find((b) => String(b.id) === bookId);
+    const [book, setBook] = useState<BookDetail | null>(null);
+    const [loading, setLoading] = useState(true);
+
+
+
+    useEffect(() => {
+        if (!aladinItemId) return;
+
+        const fetchBook = async () => {
+            try {
+                setLoading(true);
+                const data = await getBookDetailByAladinId(Number(aladinItemId));
+                setBook(data);
+            } catch (e) {
+                console.error("책 상세 조회 실패", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBook();
+    }, [aladinItemId]);
+
+
 
     const navigate = useNavigate();
 
-    const [activeIndex, setActiveIndex] = useState(1);
+    const [activeIndex, setActiveIndex] = useState(0);
 
 
     return (
@@ -94,6 +113,9 @@ const BookCommunityPage = () => {
                     </svg>
                 </button>
 
+
+
+
                 {/* 책 제목 텍스트 */}
                 <p
                     className="
@@ -106,6 +128,7 @@ const BookCommunityPage = () => {
           "
                     style={{ fontFamily: "Freesentation" }}
                 >
+                    {loading ? "불러오는 중..." : book?.title ?? "책 정보 없음"}
                     {book?.title}
                 </p>
             </div>
@@ -118,10 +141,18 @@ const BookCommunityPage = () => {
             </div>
             <div className="flex-1 overflow-y-auto">
 
-                {activeIndex === 0 && <QnATab
-                />}
-                {activeIndex === 1 && <ReviewTab />}
-                {activeIndex === 2 && <RecommendTab />}
+                {!loading && book && activeIndex === 0 && (
+                    <QnATab bookId={book.bookId} />
+                )}
+
+                {!loading && book && activeIndex === 1 && (
+                    <ReviewTab bookId={book.bookId} />
+                )}
+
+                {!loading && book && activeIndex === 2 && (
+                    <RecommendTab bookId={book.bookId} />
+                )}
+
 
             </div>
         </div>
