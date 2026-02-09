@@ -8,7 +8,6 @@ import ReadingMemoWritePage from './pages/Main/ReadingSwipe/ReadingMemoWritePage
 import ReadingQuestionListPage from './pages/Main/ReadingSwipe/ReadingQuestionListPage';
 import ReadingQuestionWritePage from './pages/Main/ReadingSwipe/ReadingQuestionWritePage';
 import ReadingQuestionOthersAnswer from './pages/Main/ReadingSwipe/ReadingQuestionOthersAnswer';
-import MyReadingMemoPage from './pages/MyReadingMemoPage';
 import ReadingPageRecordPage from './pages/Main/ReadingFlow/ReadingPageRecordPage';
 import CompletePage from './pages/Main/ReadingFlow/CompletePage';
 import FinRandomQuestionPage from './pages/Main/ReadingFlow/FinRandomQuestionPage';
@@ -59,8 +58,6 @@ export default function App() {
         path="/questions/:questionId/answers"
         element={<ReadingQuestionOthersAnswer />}
       />
-
-      <Route path="/mypage/memo" element={<MyReadingMemoPage />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
