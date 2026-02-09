@@ -3,24 +3,30 @@ import { useNavigate, useParams } from 'react-router-dom';
 import logo from '/src/assets/icons/logo.svg';
 
 import Header from '../../components/Header';
+import SideBar from '../../components/SideBar';
 import Modal from '../../components/Modal';
 import { useModalStore } from '../../stores/ModalStore';
 import { useBookshelfStore } from '../../stores/BookshelfStore';
+import { useSidebarStore } from '../../stores/SidebarStore';
 
-import type { BookshelfTabKey } from './_types/bookshelf.type';
-import { filterByTab, isBookshelfTabKey } from './_utils/bookshelf.utils';
+import type { BookshelfTabKey } from '../../types/bookshelf.type';
+import { tabToStatus } from '../../types/bookshelf.type';
+import { filterByTab, isBookshelfTabKey } from '../../utils/bookshelf.utils';
 
-import BookshelfTabs from './_components/BookshelfTabs';
-import BookshelfToolbar from './_components/BookshelfToolbar';
-import BookGrid from './_components/BookGrid';
-import EditBottomBar from './_components/EditBottomBar';
-import BookshelfFooter from './_components/BookshelfFooter';
+import BookshelfTabs from '../../components/Bookshelf/BookshelfTabs';
+import BookshelfToolbar from '../../components/Bookshelf/BookshelfToolbar';
+import BookGrid from '../../components/Bookshelf/BookGrid';
+import EditBottomBar from '../../components/Bookshelf/EditBottomBar';
+import BookshelfFooter from '../../components/Bookshelf/BookshelfFooter';
+import { toggleBookLike } from '../../api/bookshelf.api';
 
 export default function BookshelfPage() {
   const navigate = useNavigate();
   const params = useParams();
   const modalStore = useModalStore();
-  const { books, toggleLike, deleteBooks } = useBookshelfStore();
+  const { books, isLoading, error, fetchBooksByTab, deleteBooks } =
+    useBookshelfStore();
+  const { isOpen, close } = useSidebarStore();
 
   const tabParam = params.tab ?? 'reading';
   const initialTab: BookshelfTabKey = isBookshelfTabKey(tabParam)
@@ -33,12 +39,18 @@ export default function BookshelfPage() {
   // 편집 모드 선택 상태
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // URL 파라미터가 변경되면 activeTab 업데이트
+  // 컴포넌트 마운트 시 데이터 fetch
+  useEffect(() => {
+    fetchBooksByTab(activeTab);
+  }, []);
+
+  // URL 파라미터가 변경되면 activeTab 업데이트 및 데이터 fetch
   useEffect(() => {
     if (params.tab && isBookshelfTabKey(params.tab)) {
       setActiveTab(params.tab);
+      fetchBooksByTab(params.tab);
     }
-  }, [params.tab]);
+  }, [params.tab, fetchBooksByTab]);
 
   const visibleBooks = useMemo(
     () => filterByTab(books, activeTab),
@@ -71,20 +83,34 @@ export default function BookshelfPage() {
       return;
     }
 
-    // 도서 선택 상세로 이동
-    navigate(`/bookshelf/${activeTab}/select/${bookId}`);
+    const book = books.find((b) => b.id === bookId);
+    if (!book || !book.bookId) {
+      console.error('❌ Book not found or missing bookId:', bookId);
+      return;
+    }
+
+    // 도서 선택 상세로 이동 - API bookId 사용
+    console.log('📖 Navigating to book detail:', {
+      bookId: book.bookId,
+      tab: activeTab,
+    });
+    navigate(`/bookshelf/${activeTab}/select/${book.bookId}`);
   };
 
   const handleSelectAll = () => {
     setSelectedIds(new Set(visibleBooks.map((b) => b.id)));
   };
 
-  const handleConfirmDelete = () => {
-    // delete API 붙일 자리
-    deleteBooks(Array.from(selectedIds));
-
-    setSelectedIds(new Set());
-    setIsEditMode(false);
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteBooks(Array.from(selectedIds), tabToStatus[activeTab]);
+      setSelectedIds(new Set());
+      setIsEditMode(false);
+      modalStore.close();
+    } catch (error) {
+      console.error('❌ Failed to delete books:', error);
+      alert('도서 삭제에 실패했습니다.');
+    }
   };
 
   const handleDeleteClick = () => {
@@ -94,10 +120,28 @@ export default function BookshelfPage() {
     modalStore.open('삭제하시겠습니까?', handleConfirmDelete);
   };
 
+  const handleToggleLike = async (bookId: string) => {
+    const book = books.find((b) => b.id === bookId);
+
+    if (!book || !book.bookId) {
+      console.error('❌ Book not found or missing bookId:', bookId);
+      return;
+    }
+
+    try {
+      await toggleBookLike(book.bookId, book.isLiked);
+      // Refresh data to get updated state
+      await fetchBooksByTab(activeTab);
+    } catch (error) {
+      console.error('❌ Failed to toggle like:', error);
+      alert('좋아요 처리에 실패했습니다.');
+    }
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-[#F7F5F1]">
-      {/* 공통 Header */}
       <Header />
+      <SideBar isOpen={isOpen} onClose={close} />
       <div className="mx-auto flex w-full max-w-[402px] flex-1 flex-col bg-[#F7F5F1]">
         {/* 로고 영역 */}
         <section className="flex flex-col items-center justify-center gap-[10px] self-stretch px-[10px] pt-[26px] pb-[28px]">
@@ -118,13 +162,29 @@ export default function BookshelfPage() {
         />
 
         <div className="w-full flex-1">
-          <BookGrid
-            books={visibleBooks}
-            isEditMode={isEditMode}
-            selectedIds={selectedIds}
-            onClickBook={handleClickBook}
-            onToggleLike={toggleLike}
-          />
+          {error ? (
+            <div className="flex flex-col items-center justify-center px-4 py-20">
+              <div className="mb-2 font-semibold text-red-600">오류 발생</div>
+              <div className="text-center text-sm text-[#58534E]/70">
+                {error}
+              </div>
+              <div className="mt-4 text-xs text-[#58534E]/50">
+                콘솔(F12)에서 자세한 로그를 확인하세요
+              </div>
+            </div>
+          ) : isLoading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="text-[#58534E]/70">로딩 중...</div>
+            </div>
+          ) : (
+            <BookGrid
+              books={visibleBooks}
+              isEditMode={isEditMode}
+              selectedIds={selectedIds}
+              onClickBook={handleClickBook}
+              onToggleLike={handleToggleLike}
+            />
+          )}
         </div>
 
         <BookshelfFooter />
