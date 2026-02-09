@@ -15,6 +15,7 @@ const formatTime = (totalSeconds: number) => {
   const seconds = totalSeconds % 60;
 
   const pad = (value: number) => String(value).padStart(2, '0');
+
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 };
 

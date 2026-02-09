@@ -18,7 +18,7 @@ const Header = () => {
       {/* 가로 전체 채우는 영역 */}
       <div className="w-full border-b border-[#58534E] bg-[#F7F5F1]">
         {/* 가운데 정렬 + 고정폭은 이 안에 */}
-        <header className="mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4">
+        <header className="flex w-full items-center justify-between px-[14px] pt-[14px] pb-[10px]">
           <button onClick={handleMenu} className="menu-button">
             <img src={menuIcon} alt="Menu" className="menu-icon h-6 w-6" />
           </button>

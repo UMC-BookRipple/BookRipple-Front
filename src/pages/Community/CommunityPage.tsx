@@ -1,15 +1,63 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import logoImg from "/src/assets/icons/logo.svg";
 import SearchBarSimple from "../../components/SearchBar_simple"; // SearchBarSimple 사용
 import BookCard from "../../components/Card/BookCard";
-import { dummyBooks } from "../../data/dummyBooks";
+
 import { Link } from "react-router-dom";
 import CommunitySearchTab from "../../components/Community/CommunitySearchTab"; // CommunitySearchTab import
+import { type LibraryBook } from "../../types/mybook";
+import { getMyLibraryBooks } from "../../api/Community/mybook";
+import { type TodayRecommendBook } from "../../types/todayrecommend";
+import { getTodayRecommendBooks } from "../../api/Community/todayRecommend";
+
 
 const CommunityPage = () => {
     const [view, setView] = useState<"list" | "search">("list"); // 뷰 상태 관리
     const [searchQuery, setSearchQuery] = useState<string>(""); // 검색어 상태
+    const [myBooks, setMyBooks] = useState<LibraryBook[]>([]);
+    const [loadingMyBooks, setLoadingMyBooks] = useState(false);
+    const [todayBooks, setTodayBooks] = useState<TodayRecommendBook[]>([]);
+    const [loadingToday, setLoadingToday] = useState(false);
+
+
+    useEffect(() => {
+        const fetchMyBooks = async () => {
+            try {
+                setLoadingMyBooks(true);
+
+                const data = await getMyLibraryBooks("COMPLETED");
+
+                setMyBooks(data.items);
+            } catch (error) {
+                console.error("나의 도서 불러오기 실패:", error);
+            } finally {
+                setLoadingMyBooks(false);
+            }
+        };
+
+        fetchMyBooks();
+    }, []);
+
+    useEffect(() => {
+        const fetchTodayBooks = async () => {
+            try {
+                setLoadingToday(true);
+                const data = await getTodayRecommendBooks();
+                setTodayBooks(data.items);
+            } catch (e) {
+                console.error("오늘의 추천도서 불러오기 실패:", e);
+            } finally {
+                setLoadingToday(false);
+            }
+        };
+
+        fetchTodayBooks();
+    }, []);
+
+
+
+
 
     // 검색창을 클릭하면 CommunitySearchTab으로 변경
     const handleSearchClick = () => {
@@ -78,19 +126,34 @@ const CommunityPage = () => {
                 {/* 카드 리스트 - 검은 선 안쪽 + 가운데 정렬 */}
                 <div className="w-full">
                     <div className="flex justify-between flex-wrap gap-2 sm:gap-4 md:gap-6 lg:gap-8 py-[10px]">
-                        {dummyBooks.map((book) => (
-                            <Link
-                                key={book.id}
-                                to={`/community/book/${book.id}`}
-                                state={{ book }}
-                                className="block"
-                            >
-                                <BookCard
-                                    title={book.title}
-                                    imgSrc={book.imageUrl}
-                                />
-                            </Link>
-                        ))}
+                        {loadingToday ? (
+                            <p className="text-sm text-[#999]">불러오는 중...</p>
+                        ) : todayBooks.length === 0 ? (
+                            <p className="text-sm text-[#999]">추천 도서가 없습니다.</p>
+                        ) : (
+                            todayBooks.map((book) => (
+                                <Link
+                                    key={book.aladinItemId}
+                                    to={`/community/book/${book.aladinItemId}`}
+                                    state={{
+                                        book: {
+                                            id: book.aladinItemId,
+                                            title: book.title,
+                                            author: book.author,
+                                            publisher: book.publisher,
+                                            imageUrl: book.coverUrl,
+                                        },
+                                    }}
+                                    className="block"
+                                >
+                                    <BookCard
+                                        title={book.title}
+                                        imgSrc={book.coverUrl}
+                                    />
+                                </Link>
+                            ))
+                        )}
+
                     </div>
                 </div>
             </div>
@@ -133,13 +196,20 @@ const CommunityPage = () => {
                 {/* 카드 리스트 - 검은 선 안쪽 + 최대 간격 */}
                 <div className="w-full">
                     <div className="flex justify-between flex-wrap gap-2 sm:gap-4 md:gap-6 lg:gap-8 py-[10px]">
-                        {dummyBooks.map((book) => (
-                            <BookCard
-                                key={book.id}
-                                title={book.title}
-                                imgSrc={book.imageUrl}
-                            />
-                        ))}
+                        {loadingMyBooks ? (
+                            <p className="text-sm text-[#999]">불러오는 중...</p>
+                        ) : myBooks.length === 0 ? (
+                            <p className="text-sm text-[#999]">완독한 도서가 없습니다.</p>
+                        ) : (
+                            myBooks.map((book) => (
+                                <BookCard
+                                    key={book.libraryItemId}
+                                    title={book.title}
+                                    imgSrc={book.coverUrl}
+                                />
+                            ))
+                        )}
+
                     </div>
                 </div>
             </div>

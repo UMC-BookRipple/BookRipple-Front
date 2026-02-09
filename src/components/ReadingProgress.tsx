@@ -14,7 +14,7 @@ const ReadingProgress: React.FC<ReadingProgressProps> = ({
   return (
     <div className={`overflow-hidden rounded-full bg-[#D2D2D2] ${className}`}>
       <div
-        className="h-full bg-[#BDB7B2] transition-all duration-300 ease-out"
+        className="h-full bg-[#827A74] transition-all duration-300 ease-out"
         style={{ width: `${validProgress}%` }}
       />
     </div>

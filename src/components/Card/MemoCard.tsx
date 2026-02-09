@@ -29,7 +29,6 @@ export default function MemoCard({
   onUpdate,
 }: MemoCardProps) {
   const [isEditing, setIsEditing] = useState(false);
-
   const [draftTitle, setDraftTitle] = useState(title);
   const [draftContent, setDraftContent] = useState(content);
   const [draftPage, setDraftPage] = useState(page);

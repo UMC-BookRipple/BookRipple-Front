@@ -3,19 +3,37 @@ import MyQuestionsHeader from "../Button/MyQuestionHeader";
 import QnACard from "../QnAcard_community";
 import QnASearchTab from "./QnASearchTab";
 import QnAInputTab from "./QnAInputTab"; // QnAInputTab 컴포넌트 추가
-import { dummyQnA } from "../../data/dummyQnA";
+//import { fetchQuestions } from "../../api/Community/qna"; // API 호출 함수 임포트
+import { type Question } from "../../api/Community/qna"; // 타입 임포트
+
 
 type QnAView = "list" | "search" | "input";
 
-const QnATab: React.FC = () => {
+interface QnATabProps {
+    bookId: number;
+}
+
+const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
     const [view, setView] = useState<QnAView>("list");
     const [showMyQuestions, setShowMyQuestions] = useState(true);
     const [searchQuery, setSearchQuery] = useState(""); // 검색어
-    const [selectedQuestion, setSelectedQuestion] = useState<typeof dummyQnA[0] | null>(null); // 선택된 질문
+    const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null); // 선택된 질문
+    const [questions] = useState<Question[]>([]); // 질문 목록
 
-    const myQuestions = dummyQnA.filter((q) => q.isMine);
-    const allQuestions = dummyQnA.filter((q) => !q.isMine);
-    const questions = showMyQuestions ? myQuestions : allQuestions;
+
+    // 책의 질문 목록을 API에서 불러옴
+    /*useEffect(() => {
+        const fetchData = async () => {
+            if (searchQuery && bookId) {
+                const data = await fetchQuestions(searchQuery, bookId); // 책 ID와 검색어로 질문 목록 가져오기
+                setQuestions(data); // 받아온 데이터를 상태에 저장
+            }
+        };
+
+        fetchData();
+    }, [searchQuery, bookId]); // 검색어와 책 ID가 변경될 때마다 호출*/
+
+
 
     // 🔍 검색 화면이면 QnASearchTab만 보여줌
     if (view === "search") {
@@ -26,10 +44,11 @@ const QnATab: React.FC = () => {
                 showMyQuestions={showMyQuestions}
                 onToggleQuestions={() => setShowMyQuestions((prev) => !prev)}
                 onBack={() => setView("list")}
-                onSelectQuestion={(question) => {
+                onSelectQuestion={(question: Question) => {
                     setSelectedQuestion(question);
                     setView("input");
                 }}
+                bookId={bookId}
             />
         );
     }
@@ -45,6 +64,13 @@ const QnATab: React.FC = () => {
             />
         );
     }
+
+
+
+    // 질문 목록 필터링
+    const myQuestions = questions.filter((q) => q.type === "USER");
+    const allQuestions = questions.filter((q) => q.type !== "USER");
+    const filteredQuestions = showMyQuestions ? myQuestions : allQuestions;
 
     return (
         <div className="relative flex flex-col h-full">
@@ -68,7 +94,7 @@ const QnATab: React.FC = () => {
 
             {/* 질문 & 답변 리스트 */}
             <div className="flex flex-col gap-[20px] px-[16px] py-[10px] pb-[120px]">
-                {questions.map((q) => (
+                {filteredQuestions.map((q) => (
                     <div key={q.id} className="flex flex-col gap-[12px]">
                         {/* 질문 카드 버튼 */}
                         <QnACard
@@ -81,9 +107,10 @@ const QnATab: React.FC = () => {
                         />
 
                         {/* 답변 카드들 */}
-                        {q.answers.map((a) => (
+                        {(q.answers ?? []).map((a) => (
                             <QnACard key={a.id} variant="answer" content={a.content} />
                         ))}
+
 
                         <div className="w-full h-[0.7px] bg-black opacity-30" />
                     </div>

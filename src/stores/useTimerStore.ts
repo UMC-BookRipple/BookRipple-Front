@@ -20,10 +20,8 @@ interface TimerState {
 const useTimerStore = create<TimerState>((set) => ({
   status: 'idle',
   elapsedSeconds: 0,
-
   startPage: null,
   endPage: null,
-
   start: () => set({ status: 'running' }),
   pause: () => set({ status: 'paused' }),
   resume: () => set({ status: 'running' }),

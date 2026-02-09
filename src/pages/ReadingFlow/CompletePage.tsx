@@ -12,7 +12,6 @@ import ForwardIcon from '../../assets/icons/Forward.svg';
 import { useModalStore } from '../../stores/ModalStore';
 import RefreshModal from '../../components/RefreshModal';
 import Toast from '../../components/Toast';
-
 import {
   batchDeleteMyQuestions,
   createAiAfterQuestions,
