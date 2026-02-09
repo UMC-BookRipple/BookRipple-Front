@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header.tsx';
-import PageHeader from '../../components/PageHeader.tsx';
-import { createQuestion } from '../../api/questionApi.ts';
+import Header from '../../../components/Header.tsx';
+import PageHeader from '../../../components/PageHeader.tsx';
+import { createQuestion } from '../../../api/questionApi.ts';
 
 export default function ReadingQuestionWritePage() {
   const navigate = useNavigate();

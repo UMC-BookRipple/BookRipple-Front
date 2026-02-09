@@ -1,20 +1,20 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Button from '../../components/Button';
-import Header from '../../components/Header';
-import PageHeader from '../../components/PageHeader';
-import QnACard from '../../components/QnAcard';
-import Toast from '../../components/Toast';
-import Modal from '../../components/Modal';
-import EditUnderBar from '../../components/EditUnderBar';
-import { useModalStore } from '../../stores/ModalStore';
-import { useSwipeNavigate } from '../../hooks/useSwipeNavigate';
-import { useBookTitle } from '../../hooks/useBookTitle';
-import { useReadingProgress } from '../../hooks/useReadingProgress';
-import { useCursorPagination } from '../../hooks/useCursorPagination';
-import { useSelection } from '../../hooks/useSelection';
-import { useQuestionDeleteActions } from '../../hooks/useQuestionDeleteActions';
-import type { ReadingAiQnAItem } from '../../api/questionApi';
+import Button from '../../../components/Button.tsx';
+import Header from '../../../components/Header.tsx';
+import PageHeader from '../../../components/PageHeader.tsx';
+import QnACard from '../../../components/QnAcard.tsx';
+import Toast from '../../../components/Toast.tsx';
+import Modal from '../../../components/Modal.tsx';
+import EditUnderBar from '../../../components/EditUnderBar.tsx';
+import { useModalStore } from '../../../stores/ModalStore.ts';
+import { useSwipeNavigate } from '../../../hooks/useSwipeNavigate.ts';
+import { useBookTitle } from '../../../hooks/useBookTitle.ts';
+import { useReadingProgress } from '../../../hooks/useReadingProgress.ts';
+import { useCursorPagination } from '../../../hooks/useCursorPagination.ts';
+import { useSelection } from '../../../hooks/useSelection.ts';
+import { useQuestionDeleteActions } from '../../../hooks/useQuestionDeleteActions.ts';
+import type { ReadingAiQnAItem } from '../../../api/questionApi.ts';
 
 import {
   batchDeleteMyQuestions,
@@ -24,7 +24,7 @@ import {
   getReadingQuestions,
   patchReadingAnswer,
   type BookQuestionItem,
-} from '../../api/questionApi.ts';
+} from '../../../api/questionApi.ts';
 
 type UiItem =
   | {

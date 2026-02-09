@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import Header from '../../components/Header';
-import PageHeader from '../../components/PageHeader';
-import TextInput from '../../components/TextInput';
-import Toast from '../../components/Toast';
-import QnACard from '../../components/QnAcard';
-import BackIcon from '../../assets/icons/M-Vector.svg';
+import Header from '../../../components/Header';
+import PageHeader from '../../../components/PageHeader';
+import TextInput from '../../../components/TextInput';
+import Toast from '../../../components/Toast';
+import QnACard from '../../../components/QnAcard';
+import BackIcon from '../../../assets/icons/M-Vector.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   createQuestionAnswer,
   patchReadingAnswer,
-} from '../../api/questionApi';
+} from '../../../api/questionApi';
 
 type RandomQuestionLocationState = {
   mode: 'during' | 'after';

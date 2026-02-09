@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header';
-import PageHeader from '../../components/PageHeader';
-import QnACard from '../../components/QnAcard';
-import Modal from '../../components/Modal';
-import { useModalStore } from '../../stores/ModalStore';
-import { useBookTitle } from '../../hooks/useBookTitle';
+import Header from '../../../components/Header.tsx';
+import PageHeader from '../../../components/PageHeader.tsx';
+import QnACard from '../../../components/QnAcard.tsx';
+import Modal from '../../../components/Modal.tsx';
+import { useModalStore } from '../../../stores/ModalStore.ts';
+import { useBookTitle } from '../../../hooks/useBookTitle.ts';
 
 import {
   deleteQuestion,
   getQuestionAnswers,
   type AnswerItem,
-} from '../../api/questionApi.ts';
+} from '../../../api/questionApi.ts';
 
 type AnswerUi = {
   id: number;

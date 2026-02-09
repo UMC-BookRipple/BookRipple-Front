@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header';
-import PageHeader from '../../components/PageHeader';
-import useMemoStore from '../../stores/useMemoStore';
-import { useBookTitle } from '../../hooks/useBookTitle';
+import Header from '../../../components/Header';
+import PageHeader from '../../../components/PageHeader';
+import useMemoStore from '../../../stores/useMemoStore';
+import { useBookTitle } from '../../../hooks/useBookTitle';
 
 export default function ReadingMemoWritePage() {
   const navigate = useNavigate();

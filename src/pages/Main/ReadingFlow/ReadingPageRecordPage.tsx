@@ -1,10 +1,10 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header';
-import ReadingMark from '../../components/ReadingMark';
-import useTimerStore from '../../stores/useTimerStore';
-import logo from '../../assets/icons/logo.svg';
-import { completeReading, endReading } from '../../api/timerApi';
+import Header from '../../../components/Header';
+import ReadingMark from '../../../components/ReadingMark';
+import useTimerStore from '../../../stores/useTimerStore';
+import logo from '../../../assets/icons/logo.svg';
+import { completeReading, endReading } from '../../../api/timerApi';
 
 type LocationState = {
   sessionId?: number | null;
