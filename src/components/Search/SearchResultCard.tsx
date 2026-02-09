@@ -4,6 +4,7 @@ interface SearchResultCardProps {
     author: string;
     publisher: string;
     pageCount: number;
+    onClick?: () => void;
 }
 
 const SearchResultCard = ({
@@ -12,6 +13,7 @@ const SearchResultCard = ({
     author,
     publisher,
     pageCount,
+    onClick,
 }: SearchResultCardProps) => {
     return (
         <div
@@ -21,6 +23,7 @@ const SearchResultCard = ({
               w-full
               
             "
+            onClick={onClick}
         >
             {/* 책 이미지 */}
             <div

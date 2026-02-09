@@ -1,24 +1,36 @@
-import { type Book } from "../../data/dummyBooks";
 import LikeIcon from "../../assets/icons/M-like1.svg";
 import LikeActiveIcon from "../../assets/icons/M-like2.svg";
 import { useState } from "react";
+import { type RecommendBook } from "../../types/recommendbook";
+import { toggleLikeBook } from "../../api/Community/bookLike";
+
+
 
 interface RecommendBookCardProps {
-    book: Book;
+    book: RecommendBook;
 }
 
 const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
     const [liked, setLiked] = useState(false);
     const [showToast, setShowToast] = useState(false);
 
-    const handleLikeClick = () => {
-        setLiked(true);
-        setShowToast(true);
+    const handleLikeClick = async () => {
+        try {
+            const result = await toggleLikeBook(book.id);
 
-        setTimeout(() => {
-            setShowToast(false);
-        }, 2000);
+
+            setLiked(result.liked);
+
+            setShowToast(true);
+            setTimeout(() => {
+                setShowToast(false);
+            }, 2000);
+        } catch (error) {
+            console.error("좋아요 토글 실패:", error);
+        }
     };
+
+
 
     return (
         <div className="flex flex-col justify-center items-center gap-[22px] flex-1 pb-[4px] rounded-[20px] bg-white shadow-[0_0_4px_rgba(0,0,0,0.15)]">
@@ -62,16 +74,16 @@ const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
                 shadow-[0_2px_4px_rgba(0,0,0,0.25)]
                 rounded-[6px]
               "
-                            style={{ backgroundImage: `url(${book.imageUrl})` }}
+                            style={{ backgroundImage: `url(${book.targetBookCover})` }}
                         />
 
                         {/* 제목 + 작가 */}
                         <div className="flex flex-col items-center">
                             <p className="text-[#58534E] text-[18px] font-[500] font-[Freesentation] text-center">
-                                {book.title}
+                                {book.targetBookTitle}
                             </p>
                             <p className="text-[#827A74] text-[16px] font-[400] font-[Freesentation]">
-                                {book.author}
+                                {book.targetBookAuthor}
                             </p>
                         </div>
 
@@ -127,7 +139,9 @@ const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
           whitespace-nowrap
         "
                         >
-                            좋아요한 도서를 관심도서에 추가하였습니다
+                            {liked
+                                ? "좋아요한 도서를 관심도서에 추가하였습니다"
+                                : "관심도서에서 제거하였습니다"}
                         </span>
                     </div>
                 </div>

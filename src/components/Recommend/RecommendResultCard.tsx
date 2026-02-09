@@ -6,6 +6,7 @@ interface SearchResultCardProps {
     author: string;
     publisher: string;
     pageCount: number;
+    onSelect?: () => void;
 }
 
 const SearchResultCard = ({
@@ -14,6 +15,7 @@ const SearchResultCard = ({
     author,
     publisher,
     pageCount,
+
 }: SearchResultCardProps) => {
     const navigate = useNavigate();
 
