@@ -1,23 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Button from '../../components/Button';
-import Header from '../../components/Header';
-import ReadCompleteMark from '../../components/ReadCompleteMark';
-import ReadingFlowProgress from '../../components/ReadingFlowProgress';
-import readCompleteIcon from '../../assets/icons/M-ReadComplete.svg';
-import refreshIcon from '../../assets/icons/M-refresh1.svg';
-import refreshPressedIcon from '../../assets/icons/M-refresh2.svg';
-import BackwardIcon from '../../assets/icons/Backward.svg';
-import ForwardIcon from '../../assets/icons/Forward.svg';
-import { useModalStore } from '../../stores/ModalStore';
-import RefreshModal from '../../components/RefreshModal';
-import Toast from '../../components/Toast';
+import Button from '../../../components/Button';
+import Header from '../../../components/Header';
+import ReadCompleteMark from '../../../components/ReadCompleteMark';
+import ReadingFlowProgress from '../../../components/ReadingFlowProgress';
+import readCompleteIcon from '../../../assets/icons/M-ReadComplete.svg';
+import refreshIcon from '../../../assets/icons/M-refresh1.svg';
+import refreshPressedIcon from '../../../assets/icons/M-refresh2.svg';
+import BackwardIcon from '../../../assets/icons/Backward.svg';
+import ForwardIcon from '../../../assets/icons/Forward.svg';
+import { useModalStore } from '../../../stores/ModalStore';
+import RefreshModal from '../../../components/RefreshModal';
+import Toast from '../../../components/Toast';
 import {
   batchDeleteMyQuestions,
   createAiAfterQuestions,
-} from '../../api/questionApi';
+} from '../../../api/questionApi';
 
-import { useBookTitle } from '../../hooks/useBookTitle';
+import { useBookTitle } from '../../../hooks/useBookTitle';
 
 type UiQuestion = { id: number; content: string };
 

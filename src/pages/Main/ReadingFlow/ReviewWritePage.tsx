@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Header from '../../components/Header';
-import PageHeader from '../../components/PageHeader';
-import UserNumber from '../../components/UserNumber';
-import { createReview } from '../../api/reviewApi';
+import Header from '../../../components/Header';
+import PageHeader from '../../../components/PageHeader';
+import UserNumber from '../../../components/UserNumber';
+import { createReview } from '../../../api/reviewApi';
 
 type LocationState = {
   bookTitle?: string;

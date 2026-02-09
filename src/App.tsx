@@ -1,19 +1,17 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import ReadingTimerPage from './pages/ReadingFlow/ReadingTimerPage';
-import NonCompletePage from './pages/ReadingFlow/NonCompletePage';
-import ReviewWritePage from './pages/ReadingFlow/ReviewWritePage';
-import ReadingMemoListPage from './pages/ReadingSwipe/ReadingMemoListPage';
-import ReadingMemoWritePage from './pages/ReadingSwipe/ReadingMemoWritePage';
-import ReadingQuestionListPage from './pages/ReadingSwipe/ReadingQuestionListPage';
-import ReadingQuestionWritePage from './pages/ReadingSwipe/ReadingQuestionWritePage';
-import ReadingQuestionOthersAnswer from './pages/ReadingSwipe/ReadingQuestionOthersAnswer';
-import BookshelfSelectPage from './pages/bookshelf/BookshelfSelectPage';
-import BookshelfPage from './pages/bookshelf/BookshelfPage';
+import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';
+import NonCompletePage from './pages/Main/ReadingFlow/NonCompletePage';
+import ReviewWritePage from './pages/Main/ReadingFlow/ReviewWritePage';
+import ReadingMemoListPage from './pages/Main/ReadingSwipe/ReadingMemoListPage';
+import ReadingMemoWritePage from './pages/Main/ReadingSwipe/ReadingMemoWritePage';
+import ReadingQuestionListPage from './pages/Main/ReadingSwipe/ReadingQuestionListPage';
+import ReadingQuestionWritePage from './pages/Main/ReadingSwipe/ReadingQuestionWritePage';
+import ReadingQuestionOthersAnswer from './pages/Main/ReadingSwipe/ReadingQuestionOthersAnswer';
 import MyReadingMemoPage from './pages/MyReadingMemoPage';
-import ReadingPageRecordPage from './pages/ReadingFlow/ReadingPageRecordPage';
-import CompletePage from './pages/ReadingFlow/CompletePage';
-import FinRandomQuestionPage from './pages/ReadingFlow/FinRandomQuestionPage';
+import ReadingPageRecordPage from './pages/Main/ReadingFlow/ReadingPageRecordPage';
+import CompletePage from './pages/Main/ReadingFlow/CompletePage';
+import FinRandomQuestionPage from './pages/Main/ReadingFlow/FinRandomQuestionPage';
 
 export default function App() {
   return (

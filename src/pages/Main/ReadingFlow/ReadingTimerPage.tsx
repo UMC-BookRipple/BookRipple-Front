@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Button from '../../components/Button';
-import Header from '../../components/Header';
-import ReadingMark from '../../components/ReadingMark';
-import useTimerStore from '../../stores/useTimerStore';
-import logo from '../../assets/icons/logo.svg';
-import { pauseReading, startReading } from '../../api/timerApi';
-import { useSwipeNavigate } from '../../hooks/useSwipeNavigate';
-import { useBookTitle } from '../../hooks/useBookTitle';
+import Button from '../../../components/Button';
+import Header from '../../../components/Header';
+import ReadingMark from '../../../components/ReadingMark';
+import useTimerStore from '../../../stores/useTimerStore';
+import logo from '../../../assets/icons/logo.svg';
+import { pauseReading, startReading } from '../../../api/timerApi';
+import { useSwipeNavigate } from '../../../hooks/useSwipeNavigate';
+import { useBookTitle } from '../../../hooks/useBookTitle';
 
 const formatTime = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);

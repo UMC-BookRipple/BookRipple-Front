@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Button from '../../components/Button';
-import Header from '../../components/Header';
-import ReadingMark from '../../components/ReadingMark';
-import logo from '../../assets/icons/logo.svg';
-import ReadingFlowProgress from '../../components/ReadingFlowProgress';
-import { createAiDuringQuestion } from '../../api/questionApi';
+import Button from '../../../components/Button';
+import Header from '../../../components/Header';
+import ReadingMark from '../../../components/ReadingMark';
+import logo from '../../../assets/icons/logo.svg';
+import ReadingFlowProgress from '../../../components/ReadingFlowProgress';
+import { createAiDuringQuestion } from '../../../api/questionApi';
 
 type LocationState = {
   bookTitle?: string;
