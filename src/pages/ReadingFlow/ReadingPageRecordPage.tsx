@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import ReadingMark from '../../components/ReadingMark';
@@ -11,7 +11,7 @@ type LocationState = {
   bookTitle?: string;
 };
 
-export default function ReadingPagesRecordPage() {
+export default function ReadingPageRecordPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { bookId } = useParams();
@@ -52,7 +52,7 @@ export default function ReadingPagesRecordPage() {
     endPage >= 1 &&
     endPage >= startPage;
 
-  const handleSubmit = async (e?: React.FormEvent) => {
+  const handleSubmit = async (e?: FormEvent) => {
     if (e) e.preventDefault();
     if (!canSubmit || isLoading) return;
 
@@ -155,7 +155,6 @@ export default function ReadingPagesRecordPage() {
             </div>
           </section>
 
-          {/* submit 트리거(Enter 시 submit) */}
           <button
             type="submit"
             disabled={!canSubmit || isLoading}

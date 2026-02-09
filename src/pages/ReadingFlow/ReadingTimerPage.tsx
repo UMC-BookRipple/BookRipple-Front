@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../../components/Button';
 import Header from '../../components/Header';
 import ReadingMark from '../../components/ReadingMark';
 import useTimerStore from '../../stores/useTimerStore';
 import logo from '../../assets/icons/logo.svg';
 import { pauseReading, startReading } from '../../api/timerApi';
+import { useSwipeNavigate } from '../../hooks/useSwipeNavigate';
+import { useBookTitle } from '../../hooks/useBookTitle';
 
 const formatTime = (totalSeconds: number) => {
   const hours = Math.floor(totalSeconds / 3600);
@@ -19,47 +21,49 @@ const formatTime = (totalSeconds: number) => {
 
 export default function ReadingTimerPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-
   const { bookId } = useParams();
   const numericBookId = Number(bookId);
 
-  const bookTitle =
-    (location.state as { bookTitle?: string } | null)?.bookTitle ?? '책 제목';
+  // book title
+  const bookTitle = useBookTitle(numericBookId) || '책 제목';
 
+  // session id
   const [sessionId, setSessionId] = useState<number | null>(() => {
     const saved = sessionStorage.getItem(`reading_session_${bookId ?? ''}`);
     return saved ? Number(saved) : null;
   });
+
+  // loading
   const [isLoading, setIsLoading] = useState(false);
 
+  // in-flight guard
   const startInFlightRef = useRef(false);
   const pauseInFlightRef = useRef(false);
 
-  // Swipe
-  const startPointRef = useRef<{ x: number; y: number } | null>(null);
-  const SWIPE_THRESHOLD_PX = 80;
-  const SWIPE_MAX_VERTICAL_PX = 60;
-
-  const isInteractiveTarget = (target: EventTarget | null) => {
-    const el = target as HTMLElement | null;
-    if (!el) return false;
-    return Boolean(
-      el.closest('button, a, input, textarea, select, [role="button"]'),
-    );
-  };
-
+  // navigate: memo
   const goToMemoList = () => {
-    if (bookId) navigate(`/books/${bookId}/memos`);
+    if (!bookId) return;
+    navigate(`/books/${bookId}/memos`);
   };
 
+  // navigate: question
   const goToQuestionList = () => {
-    if (bookId) navigate(`/books/${bookId}/questions`);
+    if (!bookId) return;
+    navigate(`/books/${bookId}/questions`);
   };
+
+  // swipe
+  const { onPointerDown, onPointerUp } = useSwipeNavigate({
+    onSwipeLeft: goToQuestionList, // 질문 리스트
+    onSwipeRight: goToMemoList, // 메모 리스트
+    thresholdPx: 80,
+    maxVerticalPx: 60,
+  });
 
   const { status, elapsedSeconds, start, pause, resume, end, tick } =
     useTimerStore();
 
+  // tick
   useEffect(() => {
     if (status !== 'running') return undefined;
 
@@ -75,7 +79,7 @@ export default function ReadingTimerPage() {
     [elapsedSeconds],
   );
 
-  /* 시작(초기) */
+  // 시작하기
   const handleStart = async () => {
     if (!Number.isFinite(numericBookId)) return;
     if (startInFlightRef.current) return;
@@ -99,7 +103,7 @@ export default function ReadingTimerPage() {
     }
   };
 
-  /* 재개(독서 계속하기) */
+  // 독서 계속하기
   const handleResume = async () => {
     if (!Number.isFinite(numericBookId)) return;
     if (startInFlightRef.current) return;
@@ -123,7 +127,7 @@ export default function ReadingTimerPage() {
     }
   };
 
-  /* 일시정지 */
+  // 일시정지
   const handlePause = async () => {
     if (!sessionId) return;
     if (pauseInFlightRef.current) return;
@@ -142,6 +146,7 @@ export default function ReadingTimerPage() {
     }
   };
 
+  // 끝내기
   const handleEnd = () => {
     end();
     navigate(`/books/${bookId}/reading/pages`, {
@@ -153,31 +158,8 @@ export default function ReadingTimerPage() {
     <div
       className="min-h-screen bg-[#F7F5F1] pb-30 text-[#4C4540]"
       style={{ touchAction: 'pan-y' }}
-      onPointerDown={(e) => {
-        if (isInteractiveTarget(e.target)) return;
-        startPointRef.current = { x: e.clientX, y: e.clientY };
-      }}
-      onPointerUp={(e) => {
-        const startPt = startPointRef.current;
-        startPointRef.current = null;
-        if (!startPt) return;
-
-        const diffX = e.clientX - startPt.x;
-        const diffY = Math.abs(e.clientY - startPt.y);
-
-        if (diffY > SWIPE_MAX_VERTICAL_PX) return;
-
-        // 왼쪽 스와이프 → 질문 리스트
-        if (diffX < -SWIPE_THRESHOLD_PX) {
-          goToQuestionList();
-          return;
-        }
-
-        // 오른쪽 스와이프 → 메모 리스트
-        if (diffX > SWIPE_THRESHOLD_PX) {
-          goToMemoList();
-        }
-      }}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerUp}
     >
       <Header />
 
@@ -191,7 +173,7 @@ export default function ReadingTimerPage() {
         </section>
 
         <section className="flex items-center justify-center gap-[10px] self-stretch px-[20px] py-[10px]">
-          <div className="flex flex-1 items-center justify-center gap-[10px] rounded-[20px] bg-white px-[10px] py-[180px]">
+          <div className="flex flex-1 items-center justify-center gap-[10px] rounded-[20px] bg-white px-[10px] py-[150px]">
             <p className="font-gmarket text-[36px] leading-normal font-bold text-[#58534E]">
               {formattedTime}
             </p>

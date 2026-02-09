@@ -14,6 +14,7 @@ interface TimerState {
   tick: () => void;
   setStartPage: (value: number | null) => void;
   setEndPage: (value: number | null) => void;
+  resetPages: () => void;
 }
 
 const useTimerStore = create<TimerState>((set) => ({
@@ -25,9 +26,13 @@ const useTimerStore = create<TimerState>((set) => ({
   pause: () => set({ status: 'paused' }),
   resume: () => set({ status: 'running' }),
   end: () => set({ status: 'ended' }),
+
   tick: () => set((state) => ({ elapsedSeconds: state.elapsedSeconds + 1 })),
+
   setStartPage: (value) => set({ startPage: value }),
   setEndPage: (value) => set({ endPage: value }),
+
+  resetPages: () => set({ startPage: null, endPage: null }),
 }));
 
 export default useTimerStore;

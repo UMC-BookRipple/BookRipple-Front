@@ -11,11 +11,13 @@ import BackwardIcon from '../../assets/icons/Backward.svg';
 import ForwardIcon from '../../assets/icons/Forward.svg';
 import { useModalStore } from '../../stores/ModalStore';
 import RefreshModal from '../../components/RefreshModal';
-
+import Toast from '../../components/Toast';
 import {
   batchDeleteMyQuestions,
   createAiAfterQuestions,
 } from '../../api/questionApi';
+
+import { useBookTitle } from '../../hooks/useBookTitle';
 
 type UiQuestion = { id: number; content: string };
 
@@ -25,6 +27,7 @@ type LocationState = {
   readingTime?: number; // 이번 세션 독서시간(초)
   totalReadingTime?: number; // 누적 독서시간(초)
   recordId?: number;
+  toastMessage?: string;
 };
 
 const formatHHMMSS = (totalSeconds: number) => {
@@ -48,11 +51,15 @@ const formatKoreanDuration = (totalSeconds: number) => {
 export default function CompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { bookId } = useParams<{ bookId: string }>();
+  const { bookId, tab } = useParams<{ bookId: string; tab: string }>();
+  const numericBookId = Number(bookId);
+
   const { open } = useModalStore();
 
   const state = (location.state as LocationState | null) ?? null;
-  const bookTitle = state?.bookTitle ?? '책 제목';
+
+  const titleFromStore = useBookTitle(numericBookId);
+  const bookTitle = state?.bookTitle?.trim() || titleFromStore || '책 제목';
 
   const [isFlipped, setIsFlipped] = useState(false);
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -63,6 +70,33 @@ export default function CompletePage() {
 
   const inFlightRef = useRef(false);
   const fetchedKeyRef = useRef<string | null>(null);
+
+  // 토스트
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const toastTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const msg = (location.state as LocationState | null)?.toastMessage;
+    if (!msg) return;
+
+    setToastMessage(msg);
+    setToastVisible(true);
+
+    if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = window.setTimeout(() => {
+      setToastVisible(false);
+      toastTimeoutRef.current = null;
+    }, 2000);
+
+    navigate(location.pathname, { replace: true });
+  }, [location.state, location.pathname, navigate]);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
+    };
+  }, []);
 
   const totalReadingTime = state?.totalReadingTime ?? 0;
 
@@ -136,7 +170,7 @@ export default function CompletePage() {
 
   // 최초 진입 시 완독 질문 3개 생성
   useEffect(() => {
-    fetchAfterQuestions();
+    void fetchAfterQuestions();
   }, [bookId]);
 
   const refreshQuestions = async () => {
@@ -350,16 +384,32 @@ export default function CompletePage() {
       <section className="flex flex-col items-center justify-center gap-[12px] self-stretch px-[20px] pt-[24px] pb-[4px]">
         <Button
           variant="secondary"
-          onClick={() => navigate(`/books/${bookId}/review/new`)}
+          onClick={() =>
+            navigate(`/books/${bookId}/review/new`, { state: { bookTitle } })
+          }
         >
           감상평 작성
         </Button>
         <Button variant="secondary" onClick={() => navigate('/recommend')}>
           추천 도서 보기
         </Button>
-        <Button onClick={() => navigate('/')}>나가기</Button>
+        <Button onClick={() => navigate(`/${tab}/select/${bookId}`)}>
+          나가기
+        </Button>
       </section>
+
       <RefreshModal />
+
+      {/* 토스트 */}
+      <div
+        className={`pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 transition-all duration-300 ease-in-out ${
+          toastVisible
+            ? 'bottom-[100px] translate-y-0 opacity-100'
+            : 'bottom-[80px] translate-y-[10px] opacity-0'
+        }`}
+      >
+        <Toast visible={toastVisible} message={toastMessage} />
+      </div>
     </div>
   );
 }

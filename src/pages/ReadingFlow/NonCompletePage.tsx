@@ -36,7 +36,7 @@ const formatKoreanDuration = (totalSeconds: number) => {
 export default function NonCompletePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { bookId } = useParams<{ bookId: string }>();
+  const { bookId, tab } = useParams<{ bookId: string; tab: string }>();
 
   const state = (location.state as LocationState | null) ?? null;
   const bookTitle = state?.bookTitle ?? '책 제목';
@@ -201,9 +201,11 @@ export default function NonCompletePage() {
         </section>
       </main>
 
-      {/* 하단: 라우트 수정하기 */}
+      {/* 하단 */}
       <section className="flex flex-col items-center justify-center gap-[12px] self-stretch px-[20px] pt-[14px] pb-[4px]">
-        <Button onClick={() => navigate('/')}>나가기</Button>
+        <Button onClick={() => navigate(`/${tab}/select/${bookId}`)}>
+          나가기
+        </Button>
       </section>
     </div>
   );
