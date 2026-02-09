@@ -6,6 +6,11 @@ interface PageHeaderProps {
   className?: string;
 }
 
+const clampText = (text: string, max: number) => {
+  if (text.length <= max) return text;
+  return `${text.slice(0, max)}…`;
+};
+
 export default function PageHeader({
   depth1,
   depth2,
@@ -13,15 +18,20 @@ export default function PageHeader({
   onAction,
   className = '',
 }: PageHeaderProps) {
+  const depth1Clamped = clampText(depth1, 15);
+
   return (
     <div
       className={`flex items-center gap-[10px] self-stretch border-y-[1.3px] border-[#58534E] p-[8px] ${className}`}
     >
-      <div className="w-full truncate font-sans text-[16px] leading-normal font-medium text-[#58534E]">
-        <span>{depth1}</span>
-        <span className="mx-[10px]">&gt;</span>
-        <span>{depth2}</span>
+      <div className="min-w-0 flex-1 font-sans text-[16px] leading-normal font-medium text-[#58534E]">
+        <div className="truncate">
+          <span>{depth1Clamped}</span>
+          <span className="mx-[10px]">&gt;</span>
+          <span>{depth2}</span>
+        </div>
       </div>
+
       {actionLabel && (
         <button
           type="button"
