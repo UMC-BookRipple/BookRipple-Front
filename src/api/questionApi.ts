@@ -1,4 +1,4 @@
-import api from "./axios";
+import { http } from './http';
 
 export type ApiResponse<T> = {
     isSuccess: boolean;
@@ -68,8 +68,8 @@ export async function createQuestion(params: {
     body: ContentReq;
 }) {
     const { bookId, body } = params;
-    const res = await api.post<ApiResponse<{ id: number }>>(
-        `/v1/books/${bookId}/questions`,
+    const res = await http.post<ApiResponse<{ id: number }>>(
+        `/api/v1/books/${bookId}/questions`,
         body,
     );
     return res.data;
@@ -84,8 +84,8 @@ export async function getBookQuestions(params: {
     size?: number;
 }) {
     const { bookId, ...query } = params;
-    const res = await api.get<ApiResponse<BookQuestionListResult>>(
-        `/v1/books/${bookId}/questions`,
+    const res = await http.get<ApiResponse<BookQuestionListResult>>(
+        `/api/v1/books/${bookId}/questions`,
         { params: query },
     );
     return res.data;
@@ -93,8 +93,8 @@ export async function getBookQuestions(params: {
 
 // DELETE 질문 삭제
 export async function deleteQuestion(questionId: number) {
-    const res = await api.delete<ApiResponse<{ id: number }>>(
-        `/v1/questions/${questionId}`,
+    const res = await http.delete<ApiResponse<{ id: number }>>(
+        `/api/v1/questions/${questionId}`,
     );
     return res.data;
 }
@@ -105,8 +105,8 @@ export async function createQuestionAnswer(params: {
     body: ContentReq;
 }) {
     const { questionId, body } = params;
-    const res = await api.post<ApiResponse<{ id: number }>>(
-        `/v1/questions/${questionId}/answers`,
+    const res = await http.post<ApiResponse<{ id: number }>>(
+        `/api/v1/questions/${questionId}/answers`,
         body,
     );
     return res.data;
@@ -114,24 +114,24 @@ export async function createQuestionAnswer(params: {
 
 // GET 질문 답변 목록 조회
 export async function getQuestionAnswers(questionId: number) {
-    const res = await api.get<ApiResponse<AnswerListResult>>(
-        `/v1/questions/${questionId}/answers`,
+    const res = await http.get<ApiResponse<AnswerListResult>>(
+        `/api/v1/questions/${questionId}/answers`,
     );
     return res.data;
 }
 
 // POST 완독 후 질문 생성
 export async function createAiAfterQuestions(bookId: number) {
-    const res = await api.post<ApiResponse<BookQuestionListResult>>(
-        `/v1/books/${bookId}/questions/ai/after`,
+    const res = await http.post<ApiResponse<BookQuestionListResult>>(
+        `/api/v1/books/${bookId}/questions/ai/after`,
     );
     return res.data;
 }
 
 // POST 방향성 질문 생성
 export async function createAiDuringQuestion(bookId: number) {
-    const res = await api.post<ApiResponse<AiDuringQuestionResult>>(
-        `/v1/books/${bookId}/questions/ai/during`,
+    const res = await http.post<ApiResponse<AiDuringQuestionResult>>(
+        `/api/v1/books/${bookId}/questions/ai/during`,
     );
     return res.data;
 }
@@ -142,8 +142,8 @@ export async function patchReadingAnswer(params: {
     body: ContentReq;
 }) {
     const { readingQuestionId, body } = params;
-    const res = await api.patch<ApiResponse<{ id: number }>>(
-        `/v1/reading-questions/${readingQuestionId}`,
+    const res = await http.patch<ApiResponse<{ id: number }>>(
+        `/api/v1/reading-questions/${readingQuestionId}`,
         body,
     );
     return res.data;
@@ -156,8 +156,8 @@ export async function getReadingQuestions(params: {
     size?: number;
 }) {
     const { bookId, ...query } = params;
-    const res = await api.get<ApiResponse<ReadingAiQnAListResult>>(
-        `/v1/books/${bookId}/reading-questions`,
+    const res = await http.get<ApiResponse<ReadingAiQnAListResult>>(
+        `/api/v1/books/${bookId}/reading-questions`,
         { params: query },
     );
     return res.data;
@@ -165,16 +165,16 @@ export async function getReadingQuestions(params: {
 
 // DELETE 방향성 질문&답변 삭제
 export async function deleteReadingQuestion(readingQuestionId: number) {
-    const res = await api.delete<ApiResponse<{ id: number }>>(
-        `/v1/reading-questions/${readingQuestionId}`,
+    const res = await http.delete<ApiResponse<{ id: number }>>(
+        `/api/v1/reading-questions/${readingQuestionId}`,
     );
     return res.data;
 }
 
 // POST 내가 쓴 질문 일괄 삭제
 export async function batchDeleteMyQuestions(body: IdListReq) {
-    const res = await api.post<ApiResponse<string>>(
-        `/v1/questions/me/batch-delete`,
+    const res = await http.post<ApiResponse<string>>(
+        `/api/v1/questions/me/batch-delete`,
         body,
     );
     return res.data;
@@ -186,8 +186,8 @@ export const searchQuestions = async (
 
 ): Promise<BookQuestionItem[]> => {
     try {
-        const response = await api.get<ApiResponse<BookQuestionListResult>>(
-            `/v1/books/${bookId}/search`,
+        const response = await http.get<ApiResponse<BookQuestionListResult>>(
+            `/api/v1/books/${bookId}/search`,
             {
                 params: { query: keyword },
             }
