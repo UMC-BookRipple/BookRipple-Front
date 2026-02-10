@@ -8,6 +8,7 @@ export interface RecommendBook {
     nickname: string;
     content: string;
     updatedAt: string;
+    isLiked: boolean;
 }
 
 export interface RecommendResult {

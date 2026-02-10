@@ -1,22 +1,9 @@
 import QnACard from "../QnAcard_community";
-
-interface Answer {
-    id: number;
-    content: string;
-}
-
-interface Question {
-    id: number;
-    type: string; // 'USER' 또는 'ADMIN'과 같은 값이 들어올 수 있음
-    content: string;
-    createdAt: string; // 질문 생성 날짜
-    isMine: boolean; // 내가 작성한 질문인지 여부
-    answers?: Answer[]; // 질문에 대한 답변 목록
-}
+import { type BookQuestionItem } from "../../api/questionApi"; // 타입 임포트
 
 interface QnAListProps {
-    questions: Question[];
-    onSelectQuestion: (question: Question) => void; // 카드 클릭 시 부모에게 알림
+    questions: BookQuestionItem[];
+    onSelectQuestion: (question: BookQuestionItem) => void; // 카드 클릭 시 부모에게 알림
 }
 
 const QnAList: React.FC<QnAListProps> = ({ questions, onSelectQuestion }) => {

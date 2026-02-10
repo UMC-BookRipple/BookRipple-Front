@@ -10,6 +10,8 @@ export interface RecommendResponse {
 
 export interface RecommendApiResponse {
     isSuccess: boolean;
+    code: string;
+    message: string;
     result: RecommendResponse | null;
 }
 

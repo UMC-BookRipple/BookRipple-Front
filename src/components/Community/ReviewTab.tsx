@@ -18,6 +18,8 @@ const ReviewTab = ({ bookId }: { bookId: number }) => {
         try {
             const data = await fetchReviews({ bookId, lastId });
 
+
+
             const { isSuccess, result } = data;
 
             if (!isSuccess || !result) {
@@ -58,6 +60,11 @@ const ReviewTab = ({ bookId }: { bookId: number }) => {
     return (
         <div className="flex flex-col gap-[10px] px-[10px] py-[16px] w-full">
             <div className="flex flex-col gap-[10px] w-full">
+                {reviews.length === 0 && !isLoading && (
+                    <div className="text-center text-gray-400 py-8">
+                        아직 등록된 리뷰가 없습니다.
+                    </div>
+                )}
                 {reviews.map((review, index) => (
                     <div key={`${review.id}-${index}`} className="w-full flex flex-col gap-[10px]">
                         <ReviewCard review={review} />

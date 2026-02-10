@@ -1,7 +1,7 @@
-import { type Book } from "../../data/dummyBooks";
+import { type RecommendBookCardData } from "../../types/recommend";
 
 interface RecommendBookCardNoLikeProps {
-    book: Book;
+    book: RecommendBookCardData;
 }
 
 const RecommendBookCardNoLike = ({ book }: RecommendBookCardNoLikeProps) => {
@@ -39,7 +39,7 @@ const RecommendBookCardNoLike = ({ book }: RecommendBookCardNoLikeProps) => {
                 <div className="flex flex-col justify-center items-center gap-[24px] w-full py-[10px]">
                     {/* 추천 도서 제목 */}
                     <p className="text-[#58534E] text-[18px] font-[500] font-[Freesentation] text-center">
-                        추천 도서 제목 (추후 데이터)
+                        {`${book.baseBookTitle}을 완독한 독자의 추천도서`}
                     </p>
 
                     {/* 이미지 + 텍스트 */}
@@ -72,7 +72,7 @@ const RecommendBookCardNoLike = ({ book }: RecommendBookCardNoLikeProps) => {
 
                         {/* 추천 텍스트 */}
                         <p className="text-[#827A74] text-[16px] font-[400] font-[Freesentation] text-center">
-                            추천 내용 (추후 데이터 연결)
+                            {book.recommendationContent}
                         </p>
                     </div>
                 </div>

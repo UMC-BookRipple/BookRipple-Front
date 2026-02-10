@@ -1,10 +1,38 @@
 import Header from "../../components/Header";
 import RecommendBookCardNoLike from "../../components/Card/RecommendCardNoLike";
-import { dummyBooks } from "../../data/dummyBooks";
+import { useLocation, useNavigate } from "react-router-dom";
+
+export interface RecommendCompleteState {
+    book: {
+        id: number;
+        imageUrl: string;
+        title: string;
+        author: string;
+        publisher: string;
+    };
+    recommendationId?: number; // 나중에 API 성공 시
+}
 
 
 const RecommendCompletePage = () => {
-    const book = dummyBooks[0]; // 예시: 첫 번째 도서
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const { baseBook, recommendedBook, content } = location.state || {};
+
+    if (!baseBook || !recommendedBook) {
+        return <div>잘못된 접근입니다.</div>;
+    }
+
+    const cardData = {
+        id: recommendedBook.id,
+        imageUrl: recommendedBook.imageUrl,
+        title: recommendedBook.title,
+        author: recommendedBook.author,
+        recommendationContent: content,
+        recommenderName: "닉네임", // 추후 API
+        baseBookTitle: baseBook.title,
+    };
 
     return (
         <div className="flex flex-col h-screen w-full bg-[#F7F5F1]">
@@ -17,7 +45,7 @@ const RecommendCompletePage = () => {
                 <div className="h-[40px]" />
 
                 {/* 카드 */}
-                <RecommendBookCardNoLike book={book} />
+                <RecommendBookCardNoLike book={cardData} />
 
 
             </div>
@@ -31,7 +59,9 @@ const RecommendCompletePage = () => {
             </div>
 
             <div className="flex flex-col w-full mt-auto px-[16px]">
-                <button className="flex w-full px-[10px] py-[16px] justify-center items-center gap-[10px] rounded-[100px] bg-white shadow-[0_0_1px_0_rgba(0,0,0,0.25)] text-[#58534E] font-[Freesentation] text-[18px] font-[500] leading-normal">
+                <button
+                    onClick={() => navigate("/bookshelf")}
+                    className="flex w-full px-[10px] py-[16px] justify-center items-center gap-[10px] rounded-[100px] bg-white shadow-[0_0_1px_0_rgba(0,0,0,0.25)] text-[#58534E] font-[Freesentation] text-[18px] font-[500] leading-normal">
                     책장으로 가기
                 </button>
             </div>

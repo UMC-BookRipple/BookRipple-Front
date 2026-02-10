@@ -88,7 +88,7 @@ const CommunitySearchTab: React.FC<CommunitySearchTabProps> = ({
     // **전체 삭제 기능**
     const handleClearAll = async () => {
         try {
-            await deleteAllSearchHistory();
+            await deleteAllSearchHistory("COMMUNITY");
             setRecentSearches([]);
         } catch (e) {
             console.error("검색 기록 전체 삭제 실패", e);
