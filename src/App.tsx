@@ -19,6 +19,7 @@ import BookCommunityPage from "./pages/Community/BookCommunityPage";
 import RecommendWritePage from "./pages/Recommend/RecommendwritePage";
 import RecommendCompletePage from "./pages/Recommend/RecommendCompletePage";
 import RecommendBookSearchPage from "./pages/Recommend/RecommendBookSearchPage";
+import BookShelfSearchPage from "./pages/BookShelfSearchPage";
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -88,6 +89,9 @@ export default function App() {
           />
         }
       />
+      <Route path="/Bookshelf/search" element={<BookShelfSearchPage searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onBack={() => window.history.back()} />} />
 
     </Routes>
   );
