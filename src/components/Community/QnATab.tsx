@@ -1,3 +1,4 @@
+import axios, { AxiosError } from "axios";
 import React, { useState, useEffect } from "react";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
 import QnACard from "../QnAcard_community";
@@ -24,6 +25,8 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
     const [selectedQuestion, setSelectedQuestion] = useState<BookQuestionItem | null>(null); // 선택된 질문
     const [questions, setQuestions] = useState<BookQuestionItem[]>([]); // 질문 목록
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
     const handleUpdateQuestionAnswers = (questionId: number, answers: AnswerItem[]) => {
         setQuestions(prev =>
@@ -69,8 +72,26 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                 // 4️⃣ 상태 업데이트
                 setQuestions(questionsWithAnswers);
 
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error("질문 목록 조회 실패:", error);
+
+                // 🔹 독서 세션 없을 때 처
+                if (axios.isAxiosError(error)) {
+                    const axiosError = error as AxiosError<{ code?: string; message?: string }>;
+
+                    if (axiosError.response?.data?.code === "READING_404") {
+                        setErrorMessage("이 책에 대한 독서 세션이 없습니다.");
+                    } else if (axiosError.response?.status === 403) {
+                        setErrorMessage("권한이 없어 질문을 불러올 수 없습니다.");
+                    } else {
+                        setErrorMessage("질문 목록을 불러오는 중 오류가 발생했습니다.");
+                    }
+                } else if (error instanceof Error) {
+                    // 일반 JS 오류
+                    setErrorMessage(error.message);
+                } else {
+                    setErrorMessage("알 수 없는 오류가 발생했습니다.");
+                }
             } finally {
                 setLoading(false);
             }
@@ -149,6 +170,14 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                         질문 불러오는 중...
                     </div>
                 )}
+
+                {errorMessage && (
+                    <div className="text-center text-red-500 py-8">
+                        {errorMessage}
+                    </div>
+                )}
+
+
                 {!loading && filteredQuestions.map((q) => (
                     <div key={q.id} className="flex flex-col gap-[12px]">
                         {/* 질문 카드 버튼 */}

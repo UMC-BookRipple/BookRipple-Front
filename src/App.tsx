@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from "react";
 
 import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';
 import NonCompletePage from './pages/Main/ReadingFlow/NonCompletePage';
@@ -13,7 +14,15 @@ import ReadingPageRecordPage from './pages/Main/ReadingFlow/ReadingPageRecordPag
 import CompletePage from './pages/Main/ReadingFlow/CompletePage';
 import FinRandomQuestionPage from './pages/Main/ReadingFlow/FinRandomQuestionPage';
 
+import CommunityPage from "./pages/Community/CommunityPage";
+import BookCommunityPage from "./pages/Community/BookCommunityPage";
+import RecommendWritePage from "./pages/Recommend/RecommendwritePage";
+import RecommendCompletePage from "./pages/Recommend/RecommendCompletePage";
+import RecommendBookSearchPage from "./pages/Recommend/RecommendBookSearchPage";
+
 export default function App() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
     <Routes>
       <Route
@@ -63,6 +72,23 @@ export default function App() {
       <Route path="/mypage/memo" element={<MyReadingMemoPage />} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
+
+      {/* Community / Recommend */}
+      <Route path="/community" element={<CommunityPage />} />
+      <Route path="/community/book/:bookId" element={<BookCommunityPage />} />
+      <Route path="/recommend/write" element={<RecommendWritePage />} />
+      <Route path="/recommend/complete" element={<RecommendCompletePage />} />
+      <Route
+        path="/recommend/search"
+        element={
+          <RecommendBookSearchPage
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onBack={() => window.history.back()}
+          />
+        }
+      />
+
     </Routes>
   );
 }

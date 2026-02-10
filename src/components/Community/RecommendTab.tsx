@@ -59,12 +59,21 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
         return () => observer.disconnect();
     }, [hasNext, lastId]);
 
+    const handleLikeUpdate = (bookId: number, liked: boolean) => {
+        setBooks((prevBooks) =>
+            prevBooks.map((book) =>
+                book.id === bookId ? { ...book, isLiked: liked } : book
+            )
+        );
+    };
+
     return (
         <div className="flex flex-col gap-[10px] px-[10px] py-[24px] w-full">
             <div className="flex flex-col items-center gap-[10px] w-full">
                 {books.map((book, index) => (
                     <div key={`${book.id}-${index}`} className="px-[24px] py-[10px] w-full">
-                        <RecommendBookCard book={book} />
+                        <RecommendBookCard book={book}
+                            onLikeUpdate={handleLikeUpdate} />
                     </div>
                 ))}
             </div>

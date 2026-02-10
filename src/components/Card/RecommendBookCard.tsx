@@ -2,24 +2,33 @@ import LikeIcon from "../../assets/icons/M-like1.svg";
 import LikeActiveIcon from "../../assets/icons/M-like2.svg";
 import { useState } from "react";
 import { type RecommendBook } from "../../types/recommendbook";
-import { toggleLikeBook } from "../../api/Community/bookLike";
+import { toggleLikeBook, cancelLikeBook } from "../../api/Community/bookLike";
 
 
 
 interface RecommendBookCardProps {
     book: RecommendBook;
+    onLikeUpdate: (bookId: number, liked: boolean) => void;
 }
 
-const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
-    const [liked, setLiked] = useState(false);
+const RecommendBookCard = ({ book, onLikeUpdate }: RecommendBookCardProps) => {
+    const [liked, setLiked] = useState(book.isLiked || false);
     const [showToast, setShowToast] = useState(false);
 
     const handleLikeClick = async () => {
         try {
-            const result = await toggleLikeBook(book.id);
+            let result;
+            if (liked) {
+                // 좋아요 상태가 true라면, 취소
+                result = await cancelLikeBook(book.id); // 좋아요 취소 API 호출
+            } else {
+                // 좋아요 상태가 false라면, 추가
+                result = await toggleLikeBook(book.id); // 좋아요 추가 API 호출
+            }
 
 
             setLiked(result.liked);
+            onLikeUpdate(book.id, result.liked);
 
             setShowToast(true);
             setTimeout(() => {

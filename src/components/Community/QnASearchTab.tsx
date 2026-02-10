@@ -4,12 +4,13 @@ import QnAList from "./QnAList";
 import SearchEmpty from "../Search/SearchEmpty";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
 import RecentSearchItem from "../RecentSearchItem";
-import { type BookQuestionItem, searchQuestions, getQuestionAnswers } from "../../api/questionApi";
 import {
+    type BookQuestionItem, searchQuestions, getQuestionAnswers,
     fetchCommunitySearchHistory,
-    type SearchHistoryItem, deleteSearchHistoryById,
-    deleteAllSearchHistory,
-
+    deleteSearchHistoryById, deleteAllSearchHistory
+} from "../../api/questionApi";
+import {
+    type SearchHistoryItem,
 } from "../../api/books";
 
 
@@ -46,7 +47,7 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
 
         try {
             // 1️⃣ 질문 검색
-            const questions = await searchQuestions(bookId, keyword);
+            const questions = await searchQuestions(bookId, keyword,);
 
             // 2️⃣ 각 질문별 답변 가져오기
             const questionsWithAnswers = await Promise.all(
@@ -70,10 +71,6 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
             setResults([]);
         }
     };
-
-
-
-
 
 
     useEffect(() => {
@@ -126,10 +123,14 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
 
     /** 전체 삭제 */
     const handleClearAll = async () => {
-        await deleteAllSearchHistory("COMMUNITY");
+        await deleteAllSearchHistory();
         setRecentSearches([]);
     };
 
+    /** showMyQuestions 적용한 필터링 */
+    const filteredResults = showMyQuestions
+        ? results.filter((q) => q.isMine)
+        : results;
 
 
 
@@ -187,15 +188,15 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
 
                         </div>
                     </>
-                ) : results.length === 0 ? (
+                ) : filteredResults.length === 0 ? (
                     <SearchEmpty />
                 ) : (
                     <>
                         <div className="mb-[10px] text-[#827A74]">
-                            총 {results.length}건의 검색 결과가 있습니다.
+                            총 {filteredResults.length}건의 검색 결과가 있습니다.
                         </div>
                         <QnAList
-                            questions={results}
+                            questions={filteredResults}
                             onSelectQuestion={onSelectQuestion} // 클릭 시 부모에 전달
                         />
                     </>

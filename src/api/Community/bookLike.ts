@@ -14,3 +14,19 @@ export const toggleLikeBook = async (bookId: number): Promise<LikeBookResult> =>
 
   return res.data.result;
 };
+
+// 좋아요 취소 API 함수
+export const cancelLikeBook = async (bookId: number): Promise<LikeBookResult> => {
+  try {
+    const res = await api.delete(`/v1/books/likes/${bookId}`); // DELETE 요청으로 취소 처리
+
+    if (res.data.isSuccess) {
+      return res.data.result; // liked: false로 변경
+    } else {
+      throw new Error(res.data.message || '좋아요 취소 실패');
+    }
+  } catch (error) {
+    console.error("좋아요 취소 실패:", error);
+    throw error;
+  }
+};
