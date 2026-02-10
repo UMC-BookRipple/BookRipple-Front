@@ -44,7 +44,7 @@ export default function NonCompletePage() {
   const [isFlipped, setIsFlipped] = useState(false);
 
   // end API 응답 기반 값
-  const totalReadingTime = state?.totalReadingTime ?? 0;
+  const readingTime = state?.readingTime ?? 0;
   const progressValue = useMemo(() => {
     const p = Number(state?.progress ?? 0);
     if (!Number.isFinite(p)) return 0;
@@ -52,13 +52,13 @@ export default function NonCompletePage() {
   }, [state?.progress]);
 
   const readingTimeLabel = useMemo(
-    () => formatHHMMSS(totalReadingTime),
-    [totalReadingTime],
+    () => formatHHMMSS(readingTime),
+    [readingTime],
   );
 
   const readingTimeSummary = useMemo(
-    () => formatKoreanDuration(totalReadingTime),
-    [totalReadingTime],
+    () => formatKoreanDuration(readingTime),
+    [readingTime],
   );
 
   // 미완독 방향성 질문(1개)
@@ -67,8 +67,6 @@ export default function NonCompletePage() {
   const [errorText, setErrorText] = useState<string | null>(null);
 
   const inFlightRef = useRef(false);
-  const fetchedKeyRef = useRef<string | null>(null);
-
   const handleFlip = () => setIsFlipped((prev) => !prev);
 
   const stop = (e: React.MouseEvent) => {
@@ -76,36 +74,58 @@ export default function NonCompletePage() {
     e.stopPropagation();
   };
 
+  const duringCacheKey = (recordId: number) => `during-ai:record:${recordId}`;
+
   useEffect(() => {
+    const recordId = state?.recordId;
+
+    if (!recordId) return;
     if (!bookId) return;
-    if (ai) return;
 
-    const key = `during:${bookId}`;
+    const key = duringCacheKey(recordId);
+
+    const cached = sessionStorage.getItem(key);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached) as { id: number; content: string };
+        if (parsed?.id && parsed?.content) {
+          setAi(parsed);
+          return;
+        }
+      } catch {
+        sessionStorage.removeItem(key);
+      }
+    }
+
     if (inFlightRef.current) return;
-    if (fetchedKeyRef.current === key) return;
-
     inFlightRef.current = true;
+
     setLoading(true);
     setErrorText(null);
 
     (async () => {
       try {
         const res = await createAiDuringQuestion(Number(bookId));
-        setAi({ id: res.result.id, content: res.result.content });
-        fetchedKeyRef.current = key;
+        if (!res?.isSuccess)
+          throw new Error(res?.message || 'AI 질문 생성 실패');
+
+        const next = { id: res.result.id, content: res.result.content };
+        setAi(next);
+
+        sessionStorage.setItem(key, JSON.stringify(next));
       } catch (err: any) {
         const status = err?.response?.status;
-        if (status === 429) {
-          setErrorText('요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.');
-        } else {
-          setErrorText('질문을 불러오지 못했습니다.');
-        }
+        setErrorText(
+          status === 429
+            ? '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.'
+            : '질문을 불러오지 못했습니다.',
+        );
       } finally {
         setLoading(false);
         inFlightRef.current = false;
       }
     })();
-  }, [bookId, ai]);
+  }, [bookId, state?.recordId]);
 
   return (
     <div className="min-h-screen bg-[#F7F5F1] pb-[30px]">
@@ -185,6 +205,7 @@ export default function NonCompletePage() {
                     navigate(`/books/${bookId}/random-question`, {
                       state: {
                         mode: 'during',
+                        bookId: Number(bookId),
                         readingQuestionId: ai.id,
                         question: ai.content,
                         bookTitle,
