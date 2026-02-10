@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,16 +13,16 @@ interface MenuSection {
   items: { label: string; path: string }[];
 }
 
-// 페이지 라우트 테스트를 위한 임의의 주소 설정 (추후 수정 예정)
+// 페이지 라우트 설정
 const menuSections: MenuSection[] = [
   {
     title: 'MY BOOK SHELF',
     koreanLabel: '독서기록',
-    path: '/library',
+    path: '/bookshelf/reading',
     items: [
-      { label: '진행중 도서', path: '/library/reading' },
-      { label: '완독 도서', path: '/library/completed' },
-      { label: '좋아요 한 도서', path: '/library/liked' },
+      { label: '진행중 도서', path: '/bookshelf/reading' },
+      { label: '완독 도서', path: '/bookshelf/finished' },
+      { label: '좋아요 한 도서', path: '/bookshelf/liked' },
     ],
   },
   {
@@ -48,7 +49,7 @@ const menuSections: MenuSection[] = [
     koreanLabel: '마이페이지',
     path: '/mypage',
     items: [
-      { label: '내 정보 수정', path: '/mypage/profile' },
+      { label: '내 정보 수정', path: '/mypage' },
       { label: '기록 관리', path: '/mypage/records' },
     ],
   },
@@ -56,6 +57,20 @@ const menuSections: MenuSection[] = [
 
 const SideBar = ({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate();
+
+  // 사이드바가 열릴 때 body 스크롤 방지
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // cleanup
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -66,13 +81,13 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
     <>
       {/* background overlay */}
       <div
-        className={`fixed inset-0 top-[49px] z-40 duration-300 ${
+        className={`fixed inset-0 top-0 z-40 duration-300 ${
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={onClose}
       />
 
-      {/* Sidebar Container */}
+      {/* Sidebar Container - 헤더 바로 아래에 위치 */}
       <aside
         className={`fixed top-[49px] left-0 z-40 flex h-[calc(100vh-49px)] w-[360px] max-w-[85vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'

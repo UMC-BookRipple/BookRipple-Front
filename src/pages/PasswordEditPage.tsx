@@ -1,3 +1,22 @@
+// TODO: 페이지 수정 중
+// 기존 코드는 아래 주석 처리됨
+
+export default function PasswordEditPage() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#F7F5F1]">
+      <div className="text-center">
+        <p className="font-[Freesentation] text-[24px] font-medium text-[#58534E]">
+          페이지 수정 중입니다
+        </p>
+        <p className="mt-4 font-[Freesentation] text-[16px] text-[#827A74]">
+          곧 다시 찾아뵙겠습니다
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/*
 import Divider from '../components/Divider';
 import EditLabel from '../components/EditLabel';
 import LoginButton from '../components/LoginButton';
@@ -43,11 +62,9 @@ const PasswordEditPage = () => {
       return;
     }
 
-    /**
-     * ✅ 여기서 API 연결하면 됨
-     * 성공이면 oldPasswordError false
-     * 실패(이전 비번 틀림 등)이면 oldPasswordError true
-     */
+    // ✅ 여기서 API 연결하면 됨
+    // 성공이면 oldPasswordError false
+    // 실패(이전 비번 틀림 등)이면 oldPasswordError true
 
     // 일단 예시로: 이전 비번이 틀렸다고 가정하고 에러 띄우기
     setOldPasswordError(true);
@@ -58,7 +75,7 @@ const PasswordEditPage = () => {
       <Header />
       <EditLabel mainLabel="프로필 수정" subLabel="비밀번호 수정" />
 
-      {/* 이전 비밀번호 */}
+      {/* 이전 비밀번호 *\/}
       <div className="flex w-full flex-col items-center px-[16px] py-[4px]">
         <PassWordForm
           label="비밀번호 수정"
@@ -81,7 +98,7 @@ const PasswordEditPage = () => {
 
       <div className="h-[20px]" />
 
-      {/* 새 비밀번호 */}
+      {/* 새 비밀번호 *\/}
       <div className="flex w-full flex-col items-center px-[16px] py-[4px]">
         <PassWordForm
           label=""
@@ -92,7 +109,7 @@ const PasswordEditPage = () => {
         />
       </div>
 
-      {/* 규칙 */}
+      {/* 규칙 *\/}
       <div className="flex w-full flex-col items-center justify-center px-[20px] pt-[10px] text-[14px]">
         <div className="flex w-full items-center gap-[10px]">
           <span
@@ -136,7 +153,7 @@ const PasswordEditPage = () => {
         </div>
       </div>
 
-      {/* 비밀번호 확인 */}
+      {/* 비밀번호 확인 *\/}
       <div className="flex w-full flex-col items-center px-[16px] pt-[6px] pb-[4px]">
         <PassWordForm
           label=""
@@ -146,7 +163,7 @@ const PasswordEditPage = () => {
           onChange={setNewPasswordConfirm}
         />
 
-        {/* 불일치 문구 바로 출력 */}
+        {/* 불일치 문구 바로 출력 *\/}
         {isConfirmStarted && !passwordsMatch && (
           <div className="mt-[6px] flex w-full items-center gap-[6px] px-[6px] text-[14px] text-[#D75D59]">
             <img src={CheckIcon} alt="" />
@@ -159,7 +176,7 @@ const PasswordEditPage = () => {
         </div>
       </div>
 
-      {/* 버튼 */}
+      {/* 버튼 *\/}
       <div className="flex w-full flex-col items-center justify-center px-[16px] pt-[20px] pb-[20px]">
         <LoginButton
           label="비밀번호 수정하기"
@@ -183,3 +200,4 @@ const PasswordEditPage = () => {
 };
 
 export default PasswordEditPage;
+*/

@@ -2,23 +2,21 @@ import { useMemo, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import logo from '/src/assets/icons/logo.svg';
 
-import Header from '../../components/Header';
-import SideBar from '../../components/SideBar';
-import Modal from '../../components/Modal';
-import { useModalStore } from '../../stores/ModalStore';
-import { useBookshelfStore } from '../../stores/BookshelfStore';
-import { useSidebarStore } from '../../stores/SidebarStore';
+import Header from '../../../components/Header';
+import Modal from '../../../components/Modal';
+import { useModalStore } from '../../../stores/ModalStore';
+import { useBookshelfStore } from '../../../stores/BookshelfStore';
 
-import type { BookshelfTabKey } from '../../types/bookshelf.type';
-import { tabToStatus } from '../../types/bookshelf.type';
-import { filterByTab, isBookshelfTabKey } from '../../utils/bookshelf.utils';
+import type { BookshelfTabKey } from '../../../types/bookshelf.type';
+import { tabToStatus } from '../../../types/bookshelf.type';
+import { filterByTab, isBookshelfTabKey } from '../../../utils/bookshelf.utils';
 
-import BookshelfTabs from '../../components/Bookshelf/BookshelfTabs';
-import BookshelfToolbar from '../../components/Bookshelf/BookshelfToolbar';
-import BookGrid from '../../components/Bookshelf/BookGrid';
-import EditBottomBar from '../../components/Bookshelf/EditBottomBar';
-import BookshelfFooter from '../../components/Bookshelf/BookshelfFooter';
-import { toggleBookLike } from '../../api/bookshelf.api';
+import BookshelfTabs from '../../../components/Bookshelf/BookshelfTabs';
+import BookshelfToolbar from '../../../components/Bookshelf/BookshelfToolbar';
+import BookGrid from '../../../components/Bookshelf/BookGrid';
+import EditBottomBar from '../../../components/Bookshelf/EditBottomBar';
+import BookshelfFooter from '../../../components/Bookshelf/BookshelfFooter';
+import { toggleBookLike } from '../../../api/bookshelf.api';
 
 export default function BookshelfPage() {
   const navigate = useNavigate();
@@ -26,7 +24,6 @@ export default function BookshelfPage() {
   const modalStore = useModalStore();
   const { books, isLoading, error, fetchBooksByTab, deleteBooks } =
     useBookshelfStore();
-  const { isOpen, close } = useSidebarStore();
 
   const tabParam = params.tab ?? 'reading';
   const initialTab: BookshelfTabKey = isBookshelfTabKey(tabParam)
@@ -141,7 +138,6 @@ export default function BookshelfPage() {
   return (
     <div className="flex min-h-screen flex-col bg-[#F7F5F1]">
       <Header />
-      <SideBar isOpen={isOpen} onClose={close} />
       <div className="mx-auto flex w-full max-w-[402px] flex-1 flex-col bg-[#F7F5F1]">
         {/* 로고 영역 */}
         <section className="flex flex-col items-center justify-center gap-[10px] self-stretch px-[10px] pt-[26px] pb-[28px]">
@@ -152,7 +148,7 @@ export default function BookshelfPage() {
           activeTab={activeTab}
           onChangeTab={handleChangeTab}
           onSearchClick={() => {
-            // 검색으로 연결 필요
+            navigate('/bookshelf/search');
           }}
         />
 

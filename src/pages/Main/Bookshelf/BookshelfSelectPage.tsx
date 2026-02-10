@@ -4,22 +4,20 @@ import logo from '/src/assets/icons/logo.svg';
 import likeIcon from '/src/assets/icons/M-like1.svg';
 import likedIcon from '/src/assets/icons/M-like2.svg';
 
-import Header from '../../components/Header';
-import SideBar from '../../components/SideBar';
-import ReadingProgress from '../../components/ReadingProgress';
-import Button from '../../components/Button';
-import BookshelfSection from '../../components/Bookshelf/BookshelfSection';
+import Header from '../../../components/Header';
+import ReadingProgress from '../../../components/ReadingProgress';
+import Button from '../../../components/Button';
+import BookshelfSection from '../../../components/Bookshelf/BookshelfSection';
 
-import type { BookshelfTabKey, BookItem } from '../../types/bookshelf.type';
-import { isBookshelfTabKey } from '../../utils/bookshelf.utils';
+import type { BookshelfTabKey, BookItem } from '../../../types/bookshelf.type';
+import { isBookshelfTabKey } from '../../../utils/bookshelf.utils';
 import {
   fetchBookDetail,
   toggleBookLike,
   fetchBooksByStatus,
-} from '../../api/bookshelf.api';
-import type { ApiBookItem } from '../../types/bookshelf.type';
-import { statusToTab } from '../../types/bookshelf.type';
-import { useSidebarStore } from '../../stores/SidebarStore';
+} from '../../../api/bookshelf.api';
+import type { ApiBookItem } from '../../../types/bookshelf.type';
+import { statusToTab } from '../../../types/bookshelf.type';
 
 const TABS: Array<{ key: BookshelfTabKey; label: string }> = [
   { key: 'reading', label: '진행 중 도서' },
@@ -35,7 +33,6 @@ export default function BookshelfSelectPage() {
   const [book, setBook] = useState<BookItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isOpen, close } = useSidebarStore();
 
   const tabParam = params.tab ?? 'reading';
   const tab: BookshelfTabKey = isBookshelfTabKey(tabParam)
@@ -159,11 +156,9 @@ export default function BookshelfSelectPage() {
   const current = book.currentPage ?? 0;
 
   return (
-    <div className="min-h-screen bg-[#F7F5F1]">
+    <div className="flex min-h-screen flex-col bg-[#F7F5F1]">
       <Header />
-      <SideBar isOpen={isOpen} onClose={close} />
-
-      <div className="mx-auto w-full max-w-[402px] bg-[#F7F5F1]">
+      <div className="mx-auto flex w-full max-w-[402px] flex-1 flex-col bg-[#F7F5F1]">
         {/* Logo Section */}
         <section className="flex flex-col items-center justify-center gap-[10px] self-stretch px-[10px] pt-[26px] pb-[28px]">
           <img src={logo} alt="BookRipple" className="h-[95.6px] w-[382px]" />
@@ -264,11 +259,26 @@ export default function BookshelfSelectPage() {
         <div className="mt-[15px] flex flex-col items-center justify-center gap-[10px] self-stretch px-[16px] py-0">
           {isFinishedView ? (
             <>
-              <Button variant="secondary">감상평 작성</Button>
-              <Button variant="secondary">추천 도서 보기</Button>
+              <Button
+                variant="secondary"
+                onClick={() => navigate(`/books/${bookId}/review/new`)}
+              >
+                감상평 작성
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => navigate('/recommend')}
+              >
+                추천 도서 보기
+              </Button>
             </>
           ) : (
-            <Button variant="primary">독서하기</Button>
+            <Button
+              variant="primary"
+              onClick={() => navigate(`/books/${bookId}/reading/timer`)}
+            >
+              독서하기
+            </Button>
           )}
         </div>
 
@@ -293,10 +303,7 @@ export default function BookshelfSelectPage() {
               <button
                 key={memo.id}
                 type="button"
-                onClick={() => {
-                  // 메모 페이지 라우팅 필요
-                  console.log('Navigate to memo:', memo.id);
-                }}
+                onClick={() => navigate(`/books/${bookId}/memos`)}
                 className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[16px] py-[10px]"
               >
                 <div className="flex-1 text-left font-[Freesentation] text-[16px] leading-snug font-[500] text-[#58534E]">
@@ -311,10 +318,7 @@ export default function BookshelfSelectPage() {
             {/* Write button */}
             <button
               type="button"
-              onClick={() => {
-                // 메모 작성 페이지 라우팅
-                console.log('Navigate to write memo');
-              }}
+              onClick={() => navigate(`/books/${bookId}/memos/new`)}
               className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[12px] py-[14px]"
             >
               <span className="flex-1 text-center font-[Freesentation] text-[16px] leading-normal font-[500] text-[#58534E]">
@@ -327,9 +331,7 @@ export default function BookshelfSelectPage() {
           <BookshelfSection
             title="질문답변"
             type="navigation"
-            onClick={() => {
-              console.log('Navigate to Q&A');
-            }}
+            onClick={() => navigate(`/books/${bookId}/questions`)}
           />
 
           {/* 사람들의 질문 답변 - Navigation */}
@@ -337,7 +339,8 @@ export default function BookshelfSelectPage() {
             title="사람들의 질문 답변"
             type="navigation"
             onClick={() => {
-              console.log('Navigate to community Q&A');
+              // TODO: 커뮤니티 페이지 구현 후 연결
+              alert('커뮤니티 페이지는 준비 중입니다.');
             }}
           />
         </div>

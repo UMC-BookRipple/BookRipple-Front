@@ -1,10 +1,10 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import BookshelfPage from './BookshelfPage';
 import BookshelfSelectPage from './BookshelfSelectPage';
 
 export default function BookshelfRouter() {
   return (
-    <Routes>
+    <>
       {/* 기본 책장 페이지 */}
       <Route path="/" element={<BookshelfPage />} />
 
@@ -16,6 +16,6 @@ export default function BookshelfRouter() {
 
       {/* 404 처리 */}
       <Route path="*" element={<Navigate to="/bookshelf" replace />} />
-    </Routes>
+    </>
   );
 }

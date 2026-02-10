@@ -1,3 +1,22 @@
+// TODO: 페이지 수정 중
+// 기존 코드는 아래 주석 처리됨
+
+export default function SignupPage2() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#F7F5F1]">
+      <div className="text-center">
+        <p className="font-[Freesentation] text-[24px] font-medium text-[#58534E]">
+          페이지 수정 중입니다
+        </p>
+        <p className="mt-4 font-[Freesentation] text-[16px] text-[#827A74]">
+          곧 다시 찾아뵙겠습니다
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/*
 import LoginButton from "../components/LoginButton";
 import { useState } from "react";
 import SignupLabel from "../components/SignupLabel";
@@ -89,7 +108,7 @@ const SignupPage2 = () => {
 
       <div className="w-full px-[20px] pb-[10px] flex items-center gap-[14px]">
 
-        {/* 영문 포함 */}
+        {/* 영문 포함 *\/}
         <span className={`flex flex-row items-center text-[14px] ${ruleColor(hasLetter)}`}>
           <div className="w-[16px] h-[16px] mb-[2px]">
             <img src={CheckIcon} alt="" />
@@ -97,7 +116,7 @@ const SignupPage2 = () => {
           영문 포함
         </span>
 
-        {/* 숫자 포함 */}
+        {/* 숫자 포함 *\/}
         <span className={`flex flex-row items-center text-[14px] ${ruleColor(hasNumber)}`}>
           <div className="w-[16px] h-[16px] mb-[2px]">
             <img src={CheckIcon} alt="" />
@@ -105,7 +124,7 @@ const SignupPage2 = () => {
           숫자 포함
         </span>
 
-        {/* 8~12자 */}
+        {/* 8~12자 *\/}
         <span className={`flex flex-row items-center text-[14px] ${ruleColor(hasLength)}`}>
           <div className="w-[16px] h-[16px] mb-[2px]">
             <img src={CheckIcon} alt="" />
@@ -163,3 +182,4 @@ const SignupPage2 = () => {
 };
 
 export default SignupPage2;
+*/
