@@ -12,7 +12,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const baseStyle =
-    'w-full h-[53px] rounded-[100px] text-[18px] flex items-center justify-center';
+    'w-full h-[53px] rounded-[100px] font-[Freesentation] text-[18px] font-[500] leading-normal flex items-center justify-center';
 
   const colorStyles = {
     primary: 'bg-[#827A74] text-white active:bg-[#58534E]',
