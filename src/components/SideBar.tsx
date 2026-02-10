@@ -66,7 +66,7 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
     <>
       {/* background overlay */}
       <div
-        className={`fixed inset-0 top-[54px] z-40 duration-300 ${
+        className={`fixed inset-0 top-[49px] z-40 duration-300 ${
           isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={onClose}
@@ -74,11 +74,12 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-[54px] left-0 z-50 flex h-[calc(100vh-54px)] w-[360px] max-w-[85vw] flex-col bg-white p-[14px] shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`fixed top-[49px] left-0 z-40 flex h-[calc(100vh-49px)] w-[360px] max-w-[85vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <nav className="flex h-full w-full flex-col">
+        {/* Scrollable content */}
+        <nav className="flex flex-1 flex-col overflow-y-auto p-[14px]">
           {menuSections.map((section, sectionIndex) => (
             <div key={sectionIndex} className={sectionIndex > 0 ? 'mt-4' : ''}>
               {/* Section Header */}

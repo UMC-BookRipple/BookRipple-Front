@@ -1,57 +1,77 @@
 import ReviewCard from "../Card/ReviewCard";
 import { useEffect, useRef, useState } from "react";
+import { type Review } from "../../types/review";
+import { fetchReviews } from "../../api/Community/review";
 
-const ReviewTab = () => {
-    const [page, setPage] = useState(1);
+const ReviewTab = ({ bookId }: { bookId: number }) => {
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [lastId, setLastId] = useState<number | null>(null);
+    const [hasNext, setHasNext] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const loaderRef = useRef<HTMLDivElement | null>(null);
 
-    // 임시 더미 데이터 개수
-    const reviews = Array.from({ length: page * 5 });
 
-    // 무한 스크롤 감지
+    const loadReviews = async () => {
+        if (!hasNext || isLoading) return;
+
+        setIsLoading(true);
+        try {
+            const data = await fetchReviews({ bookId, lastId });
+
+            const { isSuccess, result } = data;
+
+            if (!isSuccess || !result) {
+                setHasNext(false);
+                return;
+            }
+
+            setReviews((prev) => [...prev, ...result.reviewList]);
+            setLastId(result.lastId);
+            setHasNext(result.hasNext);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // 최초 로딩
+    useEffect(() => {
+        loadReviews();
+    }, [bookId]);
+
+    // 무한 스크롤
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    setPage((prev) => prev + 1);
+                    loadReviews();
                 }
             },
             { threshold: 1 }
         );
 
-        if (loaderRef.current) {
-            observer.observe(loaderRef.current);
-        }
-
+        if (loaderRef.current) observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, []);
+    }, [lastId, hasNext]);
 
     return (
         <div className="flex flex-col gap-[10px] px-[10px] py-[16px] w-full">
-
-            {/* 리뷰 리스트 */}
-            <div className="flex flex-col justify-center items-center gap-[10px] w-full">
-                {reviews.map((_, index) => (
-                    <div key={index} className="w-full flex flex-col gap-[10px]">
-
-                        {/* 리뷰 카드 */}
-                        <ReviewCard />
-                        {/* 구분선 영역 */}
+            <div className="flex flex-col gap-[10px] w-full">
+                {reviews.map((review, index) => (
+                    <div key={`${review.id}-${index}`} className="w-full flex flex-col gap-[10px]">
+                        <ReviewCard review={review} />
                         <div className="w-full py-[10px] flex justify-center">
-                            <div className="w-full h-[0.7px] bg-black" />
+                            <div className="w-full h-[0.7px] bg-black opacity-30" />
                         </div>
-
-
-
                     </div>
                 ))}
+
             </div>
 
-            {/* 무한 스크롤 트리거 */}
-            <div ref={loaderRef} className="h-[40px]" />
+            {hasNext && <div ref={loaderRef} className="h-[40px]" />}
         </div>
     );
 };
-
 
 export default ReviewTab;

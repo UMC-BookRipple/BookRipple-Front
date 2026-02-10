@@ -7,9 +7,11 @@ interface Answer {
 
 interface Question {
     id: number;
+    type: string; // 'USER' 또는 'ADMIN'과 같은 값이 들어올 수 있음
     content: string;
-    answers: Answer[];
-    isMine: boolean;
+    createdAt: string; // 질문 생성 날짜
+    isMine: boolean; // 내가 작성한 질문인지 여부
+    answers?: Answer[]; // 질문에 대한 답변 목록
 }
 
 interface QnAListProps {
@@ -33,9 +35,10 @@ const QnAList: React.FC<QnAListProps> = ({ questions, onSelectQuestion }) => {
                     />
 
                     {/* 답변 카드들 */}
-                    {q.answers.map((a) => (
+                    {(q.answers ?? []).map((a) => (
                         <QnACard key={a.id} variant="answer" content={a.content} />
                     ))}
+
 
                     {/* 질문 묶음 구분선 */}
                     <div className="w-full h-[0.7px] bg-black opacity-30" />
