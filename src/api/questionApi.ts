@@ -33,9 +33,9 @@ export type ReadingAiQnAItem = {
 };
 
 export type ReadingAiQnAListResult = {
-    readingAiQnAs: ReadingAiQnAItem[];
+    readingAiQnAS: ReadingAiQnAItem[];
     hasNext: boolean;
-    lastId: number;
+    lastId: number | null;
 };
 
 export type ContentReq = { content: string };
