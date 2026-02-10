@@ -141,8 +141,9 @@ export default function ReviewDetailPage() {
                     setReviewMemoId(found.reviewMemoId);
                     setMemoDraft(found.memoContent ?? "");
                 } else {
-                    setReviewMemoId(null);
+                    setReviewMemoId((prev) => prev ?? null);
                 }
+
             } catch (e) {
                 console.error(e);
             }
@@ -177,54 +178,41 @@ export default function ReviewDetailPage() {
         setIsReviewEdit(false);
     };
 
-    // 메모 생성 (POST /reviews/{review-id}/review-memos)
-    const handleCreateMemo = async () => {
-        if (!review) return;
-        if (!memoDraft.trim()) return alert("메모 내용을 입력해주세요.");
 
-        const body: ContentIdBody = { id: review.id, content: memoDraft };
+    const handleCreateMemo = async (content: string) => {
+        if (!review) return;
+        if (!content.trim()) return alert("메모 내용을 입력해주세요.");
 
         const res = await http.post(
             `${import.meta.env.VITE_API_BASE_URL}/api/v1/reviews/${review.id}/review-memos`,
-            body,
+            { id: review.id, content },
             { headers: authHeader() }
         );
 
-        const { isSuccess, message, result, code } = res.data;
-
+        const { isSuccess, message, result } = res.data;
         if (!isSuccess) return alert(message);
 
-        // 응답이 { id, content }라고 했으니 result로 받는다고 가정
-        const created = result as { id: number; content: string } | undefined;
-        if (created?.id != null) {
-            setReviewMemoId(created.id);
-            setMemoDraft(created.content);
-        }
+        const createdId = result?.id ?? result?.reviewMemoId ?? null;
+        const createdContent = result?.content ?? result?.memoContent ?? content;
+
+        if (createdId) setReviewMemoId(createdId);
+        setMemoDraft(createdContent);
+        setIsReviewMemoEdit(false);
     };
 
-    // 메모 수정 (PATCH /review-memos/{review-memo-id})
-    const handleUpdateMemo = async () => {
+    const handleUpdateMemo = async (content: string) => {
         if (!reviewMemoId) return;
-        if (!memoDraft.trim()) return alert("메모 내용을 입력해주세요.");
-
-        const body: ContentIdBody = { id: reviewMemoId, content: memoDraft };
+        if (!content.trim()) return alert("메모 내용을 입력해주세요.");
 
         const res = await http.patch(
             `${import.meta.env.VITE_API_BASE_URL}/api/v1/review-memos/${reviewMemoId}`,
-            body,
+            { id: reviewMemoId, content },
             { headers: authHeader() }
         );
 
-        const { isSuccess, message, code, result } = res.data;
-
-        if (isSuccess) {
-            setIsReviewMemoEdit(false);
-        }
-
-        if (!isSuccess) {
-            if (message) alert(message);
-            return;
-        }
+        if (!res.data.isSuccess) return alert(res.data.message);
+        setMemoDraft(content);
+        setIsReviewMemoEdit(false);
     };
 
 
@@ -283,7 +271,7 @@ export default function ReviewDetailPage() {
                 {/* 감상평 수정 */}
                 <div className="flex flex-col">
                     {!isReviewEdit ? (
-                        <div onClick={() => setIsReviewEdit(true)}>
+                        <div onClick={!isSelectMode ? () => setIsReviewEdit(true) : () => { }}>
                             <ReviewCommentBox content={review.content} />
                         </div>
                     ) : (
@@ -337,11 +325,15 @@ export default function ReviewDetailPage() {
             <div className="fixed bottom-0 left-0 right-0 bg-[#F7F5F1]">
                 <div className="w-full max-w-[520px] mx-auto px-[16px] py-[10px]">
                     <TextInput
-                        type="text"
                         value={isReviewMemoEdit || !reviewMemoId ? memoDraft : ""}
                         onChange={(val) => setMemoDraft(val)}
-                        onSubmit={reviewMemoId ? handleUpdateMemo : handleCreateMemo}
+                        onSubmit={(val) => {
+                            setMemoDraft(val); // 최신값 확정
+                            if (reviewMemoId) handleUpdateMemo(val);
+                            else handleCreateMemo(val);
+                        }}
                     />
+
                 </div>
             </div>
             {isUnderBarOpen && (

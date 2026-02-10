@@ -93,14 +93,10 @@ export default function App() {
         <Route path="/start" element={<StartPage />} />
         <Route path="/oauth/kakao" element={<KakaoRedirect />} />
         <Route path="/auth/login/local" element={<LoginPage />} />
-      // 체크 완료
-
         <Route path="/signup/step1" element={<SignupPage />} />
         <Route path="/signup/step2" element={<SignupPage2 />} />
         <Route path="/signup/step3" element={<SignupPage3 />} />
         <Route path="/signup/complete" element={<SignupCompletePage />} />
-      // 체크 완료
-
         <Route path="/find/menu" element={<FindPage />} />
         <Route path="/find-id/email/send" element={<FindIdPage />} />
         <Route path="/find-password/email/send" element={<FindPasswordPage />} />
@@ -108,6 +104,7 @@ export default function App() {
         <Route path="/policy" element={<PolicyPage />} />
 
         {/* protected (로그인 필요) */}
+
         <Route element={<ProtectedRoute />}>
           <Route path="/profile/edit/menu" element={<EditMenuPage />} />
           <Route path="/profile/edit/id" element={<ProfileEditIdPage />} />
@@ -115,7 +112,6 @@ export default function App() {
 
           <Route path="/members/me/login-id" element={<IdEditPage />} />
           <Route path="/members/me/password" element={<PasswordEditPage />} />
-        // 체크 완료
 
           <Route path="/my-page/menu" element={<MyPageMenuPage />} />
           <Route path="/questions/me" element={<ReadingQuestionPage />} />

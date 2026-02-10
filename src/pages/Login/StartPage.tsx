@@ -35,6 +35,7 @@ const StartPage = () => {
       const { isSuccess, code, message, result } = res.data;
 
       localStorage.setItem("accessToken", result.accessToken);
+      localStorage.setItem("refreshToken", result.refreshToken);
       localStorage.setItem("userName", result.userName);
       localStorage.setItem("memberId", result.memberId);
 

@@ -31,6 +31,7 @@ const LoginPage = () => {
 
             if (isSuccess) {
                 localStorage.setItem("accessToken", result.accessToken);
+                localStorage.setItem("refreshToken", result.refreshToken);
                 localStorage.setItem("userName", result.userName);
                 localStorage.setItem("memberId", result.memberId);
 
@@ -43,6 +44,7 @@ const LoginPage = () => {
         } catch (error) {
             console.error("로그인 통신 에러:", error);
             setWrongLogin(true);
+            alert("로그인에 실패했습니다.");
         }
     };
 

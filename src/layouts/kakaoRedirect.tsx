@@ -7,6 +7,7 @@ interface LoginResponse {
   message: string;
   result: {
     accessToken: string;
+    refreshToken: string;
     memberId: string;
     userName: string;
     isNewMember: boolean;
@@ -43,6 +44,7 @@ const KakaoRedirect: React.FC = () => {
 
       if (isSuccess) {
         localStorage.setItem("accessToken", result.accessToken);
+        localStorage.setItem("refreshToken", result.refreshToken);
         localStorage.setItem("memberId", result.memberId);
         localStorage.setItem("userName", result.userName);
 

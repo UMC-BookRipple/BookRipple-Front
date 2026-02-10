@@ -20,12 +20,11 @@ const MyPageMenuPage = () => {
     };
 
     const handleLogout = async () => {
-        console.log("token:", localStorage.getItem("accessToken"));
 
         try {
             const response = await http.post(
                 `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
-                null,
+                { refreshToken: localStorage.getItem("refreshToken") },
                 {
                     headers: {
                         Authorization:
@@ -37,8 +36,9 @@ const MyPageMenuPage = () => {
 
             if (isSuccess) {
                 console.log("로그아웃 성공", result);
-                navigate("/auth/login/local");
                 localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                navigate("/auth/login/local");
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
             }
@@ -60,7 +60,7 @@ const MyPageMenuPage = () => {
                 `${import.meta.env.VITE_API_BASE_URL}/api/v1/members/me`,
                 {
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                        Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
                     },
                 }
             );
@@ -70,6 +70,9 @@ const MyPageMenuPage = () => {
             if (isSuccess) {
                 console.log("회원탈퇴 성공", result);
                 localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("userName");
+                localStorage.removeItem("memberId");
                 navigate("/auth/login/local");
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
