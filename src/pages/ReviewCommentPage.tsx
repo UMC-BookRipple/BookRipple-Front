@@ -5,7 +5,8 @@ import EditUnderBar from "../components/EditUnderBar";
 import MenuBarItems from "../components/MenuBarItems";
 import Header from "../components/Header";
 import ReviewCommentBox from "../components/ReviewCommentBox";
-import axios from "axios";
+import { http } from "../types/http";
+import { useNavigate } from "react-router-dom";
 
 interface MyReviewList {
   id: number;
@@ -28,9 +29,9 @@ interface MyReviewsApiResponse {
 }
 
 const ReviewCommentPage = () => {
-  const [input, setInput] = useState("");
-  const [comments, setComments] = useState<MyReviewList[]>([]);
+  const navigate = useNavigate();
 
+  const [comments, setComments] = useState<MyReviewList[]>([]);
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
@@ -40,7 +41,7 @@ const ReviewCommentPage = () => {
     try {
       const token = localStorage.getItem("accessToken");
 
-      const response = await axios.get<MyReviewsApiResponse>(
+      const response = await http.get<MyReviewsApiResponse>(
         `${import.meta.env.VITE_API_BASE_URL}/reviews/me`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
@@ -54,9 +55,7 @@ const ReviewCommentPage = () => {
         return;
       }
 
-      // 서버 응답 리스트 세팅
       setComments(result?.myReviewList ?? []);
-      // 데이터 새로 불러오면 선택 초기화(혼동 방지)
       setSelectedIds([]);
     } catch (error) {
       console.error(error);
@@ -75,7 +74,7 @@ const ReviewCommentPage = () => {
     }, {});
   }, [comments]);
 
-
+  // 감상평 선택
   const toggleSelect = (id: number) => {
     if (!isSelectMode) return;
 
@@ -86,42 +85,13 @@ const ReviewCommentPage = () => {
 
   const isUnderBarOpen = selectedIds.length > 0;
 
-
   const handleDelete = async () => {
     const id = selectedIds[0];
     if (!id) return;
 
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/reviews/${selectedIds}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          }
-        }
-      );
-
-      const { isSuccess, message, result, code } = response.data;
-
-      if (!isSuccess) {
-        if (message) alert(message);
-        return;
-      }
-
-      setComments((prev) => prev.filter((c) => !selectedIds.includes(c.id)));
-      setSelectedIds([]);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  const handleDeleteAll = async () => {
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/reviews/me/batch-delete`,
-        {
-          idList,
-        },
+      const response = await http.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/reviews/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -129,7 +99,33 @@ const ReviewCommentPage = () => {
         }
       );
 
-      const { isSuccess, message, result, code } = response.data;
+      const { isSuccess, message, code, result } = response.data;
+
+      if (!isSuccess) {
+        if (message) alert(message);
+        return;
+      }
+
+      setComments((prev) => prev.filter((c) => c.id !== id));
+      setSelectedIds([]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      const response = await http.post(
+        `${import.meta.env.VITE_API_BASE_URL}/reviews/me/batch-delete`,
+        { idList },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+
+      const { isSuccess, message } = response.data;
 
       if (!isSuccess) {
         if (message) alert(message);
@@ -142,6 +138,15 @@ const ReviewCommentPage = () => {
       console.error(error);
     }
   };
+
+  const handleClickReview = (item: MyReviewList) => {
+    if (isSelectMode) {
+      toggleSelect(item.id);
+      return;
+    }
+    navigate(`/reviews/me/${item.id}`);
+  };
+
 
   return (
     <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
@@ -159,13 +164,13 @@ const ReviewCommentPage = () => {
           mainLabel="내 기록 확인"
           MenuBarLabel="독서 메모"
           plusMenuLabel="선택"
-          onClick={() => {
+          onClickMain={() => navigate("/my-page/menu")}
+          onClickPlus={() => {
             setIsSelectMode((prev) => !prev);
-            setSelectedIds([]); // 모드 바뀔 때 선택 초기화(헷갈림 방지)
+            setSelectedIds([]);
           }}
           isSelectMode={isSelectMode}
         />
-
         <Divider />
       </div>
 
@@ -178,7 +183,7 @@ const ReviewCommentPage = () => {
               {items.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => toggleSelect(item.id)}
+                  onClick={() => { isSelectMode ? toggleSelect(item.id) : handleClickReview(item) }}
                   className={`rounded-[12px] transition ${selectedIds.includes(item.id)
                     ? "border border-[#C9C4BF] bg-[#F3F1ED]"
                     : "border border-transparent"
@@ -186,7 +191,6 @@ const ReviewCommentPage = () => {
                 >
                   <ReviewCommentBox content={item.content} />
                 </div>
-
               ))}
             </div>
           </div>
@@ -195,9 +199,7 @@ const ReviewCommentPage = () => {
 
       {isUnderBarOpen && (
         <EditUnderBar
-          onSelectAll={() => {
-            setSelectedIds(comments.map((item) => item.id));
-          }}
+          onSelectAll={() => setSelectedIds(comments.map((item) => item.id))}
           onDelete={selectedIds.length > 1 ? handleDeleteAll : handleDelete}
         />
       )}

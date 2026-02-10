@@ -4,21 +4,21 @@ import LoginButton from "../components/LoginButton";
 import Header from "../components/Header";
 import PassWordForm from "../components/PassWordForm";
 import CheckIcon from "../assets/icons/checkIcon.svg";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
 import CheckIconRed from "../assets/icons/checkIconRed.svg";
 import InputWithButton from "../components/InputWithButton";
-import axios from "axios";
 import FormLabel from "../components/FormLabel";
 import EmailInput from "../components/EmailInput";
 import LoginTextInput from "../components/LoginTextInput";
 import { useEmailVerification } from "../hooks/useEmailVerification";
 import Toast from "../components/Toast";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { http } from "../types/http";
 
 const PasswordEditPage = () => {
     const location = useLocation();
-
+    const navigate = useNavigate();
     const from = location.state && (location.state as any).from;
 
     if (from !== "ProfileEditPwPage") {
@@ -66,9 +66,21 @@ const PasswordEditPage = () => {
         toastVisible,
         toastMessage,
     } = useEmailVerification({
-        sendUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/email/send`,
-        verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/email/verify`,
+        sendUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/find-pw/email/send`,
+        verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/find-pw/email/verify`,
     });
+
+    const [toastVisible2, setToastVisible2] = useState(false);
+    const [toastMessage2, setToastMessage2] = useState<string>("");
+
+    const showToast2 = useCallback((msg: string) => {
+        setToastMessage2(msg);
+        setToastVisible2(true);
+
+        // 2초 뒤 자동 숨김 (원하는 시간으로 변경 가능)
+        window.setTimeout(() => setToastVisible2(false), 2000);
+    }, []);
+
 
 
     const verifyPassword = async () => {
@@ -77,7 +89,7 @@ const PasswordEditPage = () => {
             return;
         }
         try {
-            const response = await axios.post(
+            const response = await http.post(
                 `${import.meta.env.VITE_API_BASE_URL}/members/me/password/check`,
                 {
                     content: oldPassword,
@@ -121,7 +133,7 @@ const PasswordEditPage = () => {
             return;
         }
         try {
-            const response = await axios.put(
+            const response = await http.put(
                 `${import.meta.env.VITE_API_BASE_URL}/members/me/password`,
                 {
                     currentPassword: oldPassword,
@@ -139,6 +151,8 @@ const PasswordEditPage = () => {
 
             if (isSuccess) {
                 console.log("비밀번호가 성공적으로 변경되었습니다.");
+                showToast2('변경이 완료되었습니다')
+                navigate('/profile/edit/menu');
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
             }
@@ -240,6 +254,8 @@ const PasswordEditPage = () => {
                     placeholder="비밀번호 입력"
                     value={newPassword}
                     onChange={setNewPassword}
+                    showPassword={showPassword}
+                    onToggle={() => setShowPassword((prev) => !prev)}
                 />
             </div>
 

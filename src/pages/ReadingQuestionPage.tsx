@@ -2,7 +2,7 @@ import BookTitleLabel from "../components/BookTitleLabel"
 import Divider from "../components/Divider"
 import MenuBarItems from "../components/MenuBarItems"
 import Header from "../components/Header"
-import QuestionBox from "../components/QuestionBox"
+import QnACard from "../components/QnAcard"
 
 const ReadingQuestionPage = () => {
     // 👉 나중에 API로 대체될 mock 데이터
@@ -28,14 +28,12 @@ const ReadingQuestionPage = () => {
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
             <Header />
 
-            {/* MY PAGE 라벨 */}
             <div className="w-full flex items-center px-[14px] pt-[30px]">
                 <span className="h-[50px] flex items-center font-[GmarketSansBold] text-[20px]">
                     MY PAGE
                 </span>
             </div>
 
-            {/* 메뉴 영역 */}
             <div className="w-full flex flex-col py-[6px] px-[14px]">
                 <Divider />
                 <MenuBarItems
@@ -46,28 +44,26 @@ const ReadingQuestionPage = () => {
                 <Divider />
             </div>
 
-            <BookTitleLabel BookTitle="브람스를 좋아하세요..." />
+            <div className="w-full px-[16px]">
+                <BookTitleLabel BookTitle="브람스를 좋아하세요..." />
+            </div>
 
-            {/* 질문 리스트 */}
             <div className="w-full px-[16px] flex flex-col gap-[20px]">
                 {questions.map((item) => (
-                    <QuestionBox
-                        key={item.id}
-                        question={item.question}
-                        answer={item.answer}
-                        canEdit
-                        canDelete
-                        onEditAnswer={() => {
-                            console.log("답변 수정:", item.id)
-                        }}
-                        onDeleteAnswer={() => {
-                            console.log("답변 삭제:", item.id)
-                        }}
-                        onDeleteQuestion={() => {
-                            console.log("질문 삭제:", item.id)
-                        }}
-                    />
+                    <div className="flex flex-col gap-[20px]">
+                        <QnACard
+                            key={item.id}
+                            variant="question"
+                            content={item.question}
+                        />
+                        <QnACard
+                            key={item.id}
+                            variant="answer"
+                            content={item.answer}
+                        />
+                    </div>
                 ))}
+
             </div>
         </div>
     )

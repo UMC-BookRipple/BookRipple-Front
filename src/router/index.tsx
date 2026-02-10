@@ -26,11 +26,13 @@ import ProfileEditPwPage from "../pages/ProfileEditPwPage";
 import MyPageMenuPage from "../pages/MyPageMenuPage";
 import ReviewCommentPage from "../pages/ReviewCommentPage";
 import ReadingRecordPage from "../pages/ReadingRecordPage";
+import ReviewDetailPage from "../pages/ReviewDetailPage";
+import GlobalSpinner from "../components/common/GlobalSpinner";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
         <>
-            {/* public */}
+            <GlobalSpinner />
             <Route path="/" element={<StartPage />} />
             <Route path="/oauth/kakao" element={<KakaoRedirect />} />
             <Route path="/auth/login/local" element={<LoginPage />} />
@@ -58,8 +60,10 @@ export const router = createBrowserRouter(
                 <Route path="/my-page/menu" element={<MyPageMenuPage />} />
                 <Route path="/questions/me" element={<ReadingQuestionPage />} />
                 <Route path="/reviews/me" element={<ReviewCommentPage />} />
+                <Route path="/reviews/me/detail" element={<ReviewDetailPage />} />
                 <Route path="/memos/me" element={<MyReadingMemoPage />} />
                 <Route path="/members/me/records" element={<ReadingRecordPage />} />
+
             </Route>
         </>
     )

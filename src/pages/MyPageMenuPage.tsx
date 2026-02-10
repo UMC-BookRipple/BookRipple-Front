@@ -2,7 +2,7 @@ import Divider from "../components/Divider";
 import MenuBarItems from "../components/MenuBarItems";
 import Header from "../components/Header";
 import arrowIcon from "../assets/icons/arrowIcon.svg";
-import axios from "axios";
+import { http } from "../types/http";
 import { useNavigate } from "react-router-dom";
 
 const MyPageMenuPage = () => {
@@ -21,7 +21,7 @@ const MyPageMenuPage = () => {
         console.log("token:", localStorage.getItem("accessToken"));
 
         try {
-            const response = await axios.post(
+            const response = await http.post(
                 `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
                 null,
                 {
@@ -36,25 +36,18 @@ const MyPageMenuPage = () => {
             if (isSuccess) {
                 console.log("로그아웃 성공", result);
                 navigate("/auth/login/local");
+                localStorage.removeItem("accessToken");
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response?.data) {
-                    console.error("로그아웃 실패:", error.response.data);
-                } else {
-                    console.error("서버 연결 실패", error.message);
-                }
-            } else {
-                console.error("예상치 못한 오류:", error);
-            }
+            console.error('로그아웃 실패:', error);
         }
     }
 
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(
+            const response = await http.delete(
                 `${import.meta.env.VITE_API_BASE_URL}/members/me`,
                 {
                     headers: {
@@ -67,20 +60,13 @@ const MyPageMenuPage = () => {
 
             if (isSuccess) {
                 console.log("회원탈퇴 성공", result);
+                localStorage.removeItem("accessToken");
                 navigate("/auth/login/local");
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response?.data) {
-                    console.error("회원탈퇴 실패:", error.response.data);
-                } else {
-                    console.error("서버 연결 실패", error.message);
-                }
-            } else {
-                console.error("예상치 못한 오류:", error);
-            }
+            console.error('회원탈퇴 실패:', error);
         }
     }
     return (
@@ -106,7 +92,7 @@ const MyPageMenuPage = () => {
 
                 <Divider />
                 <div className="w-full">
-                    <MenuBarItems mainLabel="프로필" MenuBarLabel="" plusMenuLabel="수정" />
+                    <MenuBarItems mainLabel="프로필" MenuBarLabel="" plusMenuLabel="수정" onClickPlus={() => navigate('/profile/edit/menu')} />
                 </div>
                 <Divider />
             </div>

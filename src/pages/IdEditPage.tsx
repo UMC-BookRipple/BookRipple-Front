@@ -4,12 +4,12 @@ import InputWithButton from "../components/InputWithButton"
 import LoginButton from "../components/LoginButton"
 import EditLabel from "../components/EditLabel"
 import Header from "../components/Header";
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Navigate, useLocation, useNavigate } from "react-router-dom"
-import axios from "axios"
 import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
 import CheckIconRed from "../assets/icons/checkIconRed.svg";
 import CheckIcon from "../assets/icons/checkIcon.svg";
+import { http } from "../types/http";
 
 const IdEditPage = () => {
     const location = useLocation();
@@ -27,13 +27,24 @@ const IdEditPage = () => {
     const [idCheckStatus, setIdCheckStatus] =
         useState<"idle" | "success" | "error">("idle");
 
+    const [toastVisible, setToastVisible] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string>("");
+
+    const showToast = useCallback((msg: string) => {
+        setToastMessage(msg);
+        setToastVisible(true);
+
+        // 2초 뒤 자동 숨김 (원하는 시간으로 변경 가능)
+        window.setTimeout(() => setToastVisible(false), 2000);
+    }, []);
+
     const verifyId = async () => {
         if (loginId.trim() === "") {
             console.log("아이디를 입력해주세요.");
             return;
         }
         try {
-            const response = await axios.get(
+            const response = await http.get(
                 `${import.meta.env.VITE_API_BASE_URL}/members/check-id`,
                 {
                     params: { loginId },
@@ -46,6 +57,7 @@ const IdEditPage = () => {
 
             if (isSuccess) {
                 setIdCheckStatus('success');
+                localStorage.setItem("loginId", loginId);
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
                 setIdCheckStatus('error');
@@ -63,7 +75,7 @@ const IdEditPage = () => {
         }
 
         try {
-            const response = await axios.patch(
+            const response = await http.patch(
                 `${import.meta.env.VITE_API_BASE_URL}/members/me/login-id`,
                 {
                     content: loginId,
@@ -79,21 +91,15 @@ const IdEditPage = () => {
 
             if (isSuccess) {
                 console.log("아이디 변경 성공", result.id);
+                showToast("아이디 변경이 완료되었습니다.");
                 navigate("/profile/edit/menu");
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
                 setIdCheckStatus('error');
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response?.data) {
-                    console.error("아이디 변경 실패:", error.response.data);
-                } else {
-                    console.error("서버 연결 실패", error.message);
-                }
-            } else {
-                console.error("예상치 못한 오류:", error);
-            }
+            console.error('아이디 변경 실패:', error);
+            setIdCheckStatus('error');
         }
     };
 

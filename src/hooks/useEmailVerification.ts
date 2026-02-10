@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { http } from "../types/http";
 
 type Status = "idle" | "success" | "error";
 
@@ -26,17 +26,39 @@ export const useEmailVerification = ({
     const [toastVisible, setToastVisible] = useState(false);
     const [toastMessage, setToastMessage] = useState<string>("");
 
+    const toastTimerRef = useRef<number | null>(null);
+
     const showToast = useCallback((msg: string) => {
-        setToastMessage(msg);
+        const trimmed = msg?.trim();
+        if (!trimmed) return;
+
+        setToastMessage(trimmed);
         setToastVisible(true);
 
-        // 2초 뒤 자동 숨김 (원하는 시간으로 변경 가능)
-        window.setTimeout(() => setToastVisible(false), 2000);
+        if (toastTimerRef.current) {
+            clearTimeout(toastTimerRef.current);
+        }
+
+        toastTimerRef.current = window.setTimeout(() => {
+            setToastVisible(false);
+            setToastMessage(""); // <- 중요: 다음 페이지에서 공백 렌더 방지
+        }, 2000);
     }, []);
+
+    useEffect(() => {
+        return () => {
+            if (toastTimerRef.current) {
+                clearTimeout(toastTimerRef.current);
+                toastTimerRef.current = null;
+            }
+        };
+    }, []);
+
+
 
     const sendEmail = async () => {
         try {
-            const res = await axios.post(
+            const res = await http.post(
                 `${sendUrl}`,
                 {
                     content: `${localValue}${domainValue}`
@@ -66,7 +88,7 @@ export const useEmailVerification = ({
         }
 
         try {
-            const res = await axios.post(
+            const res = await http.post(
                 `${verifyUrl}`,
                 {
                     email: `${localValue}${domainValue}`,

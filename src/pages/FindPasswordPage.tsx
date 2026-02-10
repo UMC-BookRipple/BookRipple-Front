@@ -12,6 +12,7 @@ import { useChangeStore } from "../stores/changeStore";
 import { useNavigate } from "react-router-dom";
 import { useEmailVerification } from "../hooks/useEmailVerification";
 import Toast from "../components/Toast";
+import { useEffect } from "react";
 
 const FindPasswordPage = () => {
     const { setChangeData } = useChangeStore();
@@ -37,20 +38,21 @@ const FindPasswordPage = () => {
         verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/find-pw/email/verify`,
     });
 
+    useEffect(() => {
+        if (emailVerifyStatus === "success") {
+            setChangeData({
+                email: `${localValue}${domainValue}`,
+            });
+        }
+    }, [emailVerifyStatus, localValue, domainValue, setChangeData]);
 
-    const handleVerifySuccess = () => {
-        setChangeData({
-            email: getFullEmail(),
-        })
-    };
 
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-            {toastVisible && (
-                <div className="fixed top-[100px] left-1/2 -translate-x-1/2 z-50">
-                    <Toast visible={toastVisible} message={toastMessage} />
-                </div>
+            {toastVisible && toastMessage.trim() && (
+                <Toast visible={toastVisible} message={toastMessage} />
             )}
+
             <Header />
             <div
                 className="w-full flex flex-row items-center px-[20px] pt-[20px] gap-[10px]">
@@ -98,12 +100,7 @@ const FindPasswordPage = () => {
 
                 <LoginButton
                     label="인증하기"
-                    onClick={async () => {
-                        await verifyEmailCode();
-                        if (emailVerifyStatus === "success") {
-                            handleVerifySuccess();
-                        }
-                    }}
+                    onClick={verifyEmailCode}
                     variant={emailSendStatus === "success" ? "brown" : "lightBrown"}
                 />
                 {authCode.length == 0 && emailVerifyStatus === 'idle' && (

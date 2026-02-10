@@ -161,3 +161,6 @@ const SignupPage2 = () => {
 };
 
 export default SignupPage2;
+
+
+// 최종 수정본

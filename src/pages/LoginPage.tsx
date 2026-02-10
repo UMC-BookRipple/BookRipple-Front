@@ -2,8 +2,8 @@ import LoginButton from "../components/LoginButton";
 import LoginFormBody from "../components/LoginForm";
 import { useState } from "react";
 import TopLogo from "../components/TopLogo";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { http } from "../types/http";
 
 const LoginPage = () => {
     const [loginId, setLoginId] = useState("");
@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post(
+            const response = await http.post(
                 `${import.meta.env.VITE_API_BASE_URL}/auth/login/local`,
                 {
                     loginId: loginId,
@@ -40,16 +40,9 @@ const LoginPage = () => {
                 console.log(`코드:${code}, 메시지:${message}`);
             }
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response?.data) {
-                    console.error("로그인 실패:", error.response.data);
-                    alert("로그인에 실패했습니다.");
-                } else {
-                    console.error("서버 연결 실패", error.message);
-                }
-            } else {
-                console.error("예상치 못한 오류:", error);
-            }
+            console.error("로그인 통신 에러:", error);
+            alert("로그인 정보를 확인해주세요");
+            navigate("/");
         }
     };
 

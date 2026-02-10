@@ -1,14 +1,16 @@
-import { useState, useEffect, useMemo } from "react";
-import BookTitleLabel from "../components/BookTitleLabel";
-import Divider from "../components/Divider";
-import EditUnderBar from "../components/EditUnderBar";
-import MenuBarItems from "../components/MenuBarItems";
-import Header from "../components/Header";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import ReviewCommentBox from "../components/ReviewCommentBox";
+import BookTitleLabel from "../components/BookTitleLabel";
+import MenuBarItems from "../components/MenuBarItems";
+import Divider from "../components/Divider";
+import Header from "../components/Header";
 import TextInput from "../components/TextInput";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import EditUnderBar from "../components/EditUnderBar";
+import { http } from "../types/http";
 
-interface MyReviewList {
+interface MyReview {
     id: number;
     bookTitle: string;
     content: string;
@@ -18,130 +20,243 @@ interface MyReviewList {
 
 interface MyReviewsApiResponse {
     isSuccess: boolean;
-    code: string;
     message: string;
     result?: {
-        myReviewList?: MyReviewList[] | null;
+        myReviewList?: MyReview[] | null;
+    };
+}
+
+interface MyMemosApiResponse {
+    isSuccess: boolean;
+    message: string;
+    result?: {
+        memoList?: Array<{
+            bookTitle: string;
+            reviewWriter: string;
+            reviewContent: string;
+            reviewUpdatedAt: string;
+            reviewMemoId: number;
+            memoContent: string;
+            memoUpdatedAt: string;
+        }> | null;
         hasNext: boolean;
         lastBookTitle: string;
         lastId: number;
     };
 }
 
-const ReviewCommentPage = () => {
-    const [input, setInput] = useState("");
-    const [comments, setComments] = useState<MyReviewList[]>([]);
+type ContentIdBody = { id: number; content: string };
+
+export default function ReviewDetailPage() {
+    const { reviewId } = useParams();
+    const navigate = useNavigate();
+    const [review, setReview] = useState<MyReview | null>(null);
 
     const [isSelectMode, setIsSelectMode] = useState(false);
-    const [selectedIds, setSelectedIds] = useState<number[]>([]);
+    const [selectedReviews, setSelectedReviews] = useState<number[]>([]);
 
-    const fetchComments = async () => {
-        try {
-            const token = localStorage.getItem("accessToken");
+    // 감상평 수정
+    const [isReviewEdit, setIsReviewEdit] = useState(false);
+    const [isReviewMemoEdit, setIsReviewMemoEdit] = useState(false);
+    const [reviewDraft, setReviewDraft] = useState("");
 
-            const response = await axios.get<MyReviewsApiResponse>(
+    // 메모(1개)
+    const [reviewMemoId, setReviewMemoId] = useState<number | null>(null);
+    const [memoDraft, setMemoDraft] = useState("");
+
+
+    const authHeader = () => {
+        const token = localStorage.getItem("accessToken");
+        return token ? { Authorization: `Bearer ${token}` } : undefined;
+    };
+
+
+    // 감상평 메모 선택
+    const toggleSelect = (id: number) => {
+        if (!isSelectMode) return;
+
+        setSelectedReviews((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        );
+    };
+
+    const isUnderBarOpen = selectedReviews.length > 0 && isSelectMode;
+
+    // 1) 리뷰 찾기
+    useEffect(() => {
+        const fetchReview = async () => {
+            const res = await http.get<MyReviewsApiResponse>(
                 `${import.meta.env.VITE_API_BASE_URL}/reviews/me`,
-                {
-                    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-                }
+                { headers: authHeader() }
             );
 
-            const { isSuccess, message, result } = response.data;
+            const { isSuccess, message, result } = res.data;
 
             if (!isSuccess) {
-                if (message) alert(message);
+                console.log(message);
+                navigate(`/reviews/me/${reviewId}`);
                 return;
             }
 
-            // 서버 응답 리스트 세팅
-            setComments(result?.myReviewList ?? []);
-            // 데이터 새로 불러오면 선택 초기화(혼동 방지)
-            setSelectedIds([]);
-        } catch (error) {
-            console.error(error);
+            const list = result?.myReviewList ?? [];
+            const found = list.find((x) => x.id === Number(reviewId)) ?? null;
+
+            setReview(found);
+            if (found) setReviewDraft(found.content);
+        };
+
+        if (reviewId) fetchReview();
+    }, [reviewId]);
+
+    // 2) 메모 불러오기: /review-memos/me 에서 현재 리뷰와 매칭되는 memo 찾기
+    useEffect(() => {
+        const fetchMemoForThisReview = async () => {
+            if (!reviewId) return;
+
+            try {
+                const res = await http.get<MyMemosApiResponse>(
+                    `${import.meta.env.VITE_API_BASE_URL}/review-memos/me`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                        }
+                    }
+                );
+
+                const { isSuccess, message, result } = res.data;
+                if (!isSuccess) {
+                    console.log(message);
+                    return;
+                }
+
+                if (!review) return;
+                const memoList = res.data.result?.memoList ?? [];
+
+                // id가 없으니 bookTitle + reviewContent로 매칭
+                const found = memoList.find(
+                    (m) => m.bookTitle === review.bookTitle && m.reviewContent === review.content
+                );
+
+                if (found && found.reviewMemoId !== 0) {
+                    setReviewMemoId(found.reviewMemoId);
+                    setMemoDraft(found.memoContent ?? "");
+                } else {
+                    setReviewMemoId(null);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        fetchMemoForThisReview();
+    }, [reviewId, review]);
+
+    // 감상평 저장 (PATCH /reviews/{review-id})
+    const handleSaveReview = async () => {
+        if (!review) return;
+        if (!reviewDraft.trim()) return alert("감상평 내용을 입력해주세요.");
+
+        const body: ContentIdBody = { id: review.id, content: reviewDraft };
+
+        const res = await http.patch(
+            `${import.meta.env.VITE_API_BASE_URL}/reviews/${review.id}`,
+            body,
+            { headers: authHeader() }
+        );
+
+        if (!res.data.isSuccess) return alert(res.data.message);
+
+        setReview((prev) => (prev ? { ...prev, content: reviewDraft } : prev));
+        setIsReviewEdit(false);
+
+    };
+
+    const handleCancelReview = () => {
+        if (!review) return;
+        setReviewDraft(review.content);
+        setIsReviewEdit(false);
+    };
+
+    // 메모 생성 (POST /reviews/{review-id}/review-memos)
+    const handleCreateMemo = async () => {
+        if (!review) return;
+        if (!memoDraft.trim()) return alert("메모 내용을 입력해주세요.");
+
+        const body: ContentIdBody = { id: review.id, content: memoDraft };
+
+        const res = await http.post(
+            `${import.meta.env.VITE_API_BASE_URL}/reviews/${review.id}/review-memos`,
+            body,
+            { headers: authHeader() }
+        );
+
+        const { isSuccess, message, result, code } = res.data;
+
+        if (!isSuccess) return alert(message);
+
+        // 응답이 { id, content }라고 했으니 result로 받는다고 가정
+        const created = result as { id: number; content: string } | undefined;
+        if (created?.id != null) {
+            setReviewMemoId(created.id);
+            setMemoDraft(created.content);
         }
     };
 
-    useEffect(() => {
-        fetchComments();
-    }, []);
+    // 메모 수정 (PATCH /review-memos/{review-memo-id})
+    const handleUpdateMemo = async () => {
+        if (!reviewMemoId) return;
+        if (!memoDraft.trim()) return alert("메모 내용을 입력해주세요.");
 
-    /**
-     * ✅ 같은 bookTitle끼리 묶어서 렌더링 (제목은 1번만 보여주기)
-     */
-    const groupedByBook = useMemo(() => {
-        return comments.reduce<Record<string, MyReviewList[]>>((acc, cur) => {
-            if (!acc[cur.bookTitle]) acc[cur.bookTitle] = [];
-            acc[cur.bookTitle].push(cur);
-            return acc;
-        }, {});
-    }, [comments]);
+        const body: ContentIdBody = { id: reviewMemoId, content: memoDraft };
 
-    /**
-     * ✅ 감상평 클릭 시 선택/해제 토글
-     * - 같은 감상평 다시 클릭하면 선택 해제 -> 선택이 0개가 되면 UnderBar 내려감
-     * - 다른 감상평 여러 개 선택 가능 (다중 선택)
-     */
-    const toggleSelect = (id: number) => {
-        setSelectedIds((prev) => {
-            const exists = prev.includes(id);
-            if (exists) return prev.filter((x) => x !== id);
-            return [...prev, id];
-        });
+        const res = await http.patch(
+            `${import.meta.env.VITE_API_BASE_URL}/review-memos/${reviewMemoId}`,
+            body,
+            { headers: authHeader() }
+        );
+
+        const { isSuccess, message, code, result } = res.data;
+
+        if (isSuccess) {
+            setIsReviewMemoEdit(false);
+        }
+
+        if (!isSuccess) {
+            if (message) alert(message);
+            return;
+        }
     };
 
-    /**
-     * ✅ UnderBar 노출 여부
-     */
-    const isUnderBarOpen = selectedIds.length > 0;
 
-    /**
-     * ✅ 수정하기 가능 여부: 1개만 선택된 경우만 가능
-     * - 여러 개 선택된 경우 UnderBar는 내려가지 않지만 수정은 불가
-     */
-    const canEdit = selectedIds.length === 1;
+    // 메모 삭제
+    const handleMemoDelete = async () => {
+        const memoId = selectedReviews[0];
+        if (!memoId) return;
 
-    /**
-     * ✅ [토대] 수정하기 버튼 클릭 시
-     * - 실제 API 연결/페이지 이동은 TODO로 남겨둠
-     */
-    const handleEdit = async () => {
-        if (!canEdit) return; // 여러 개 선택이면 수정 불가
+        try {
+            const response = await http.delete(
+                `${import.meta.env.VITE_API_BASE_URL}/review-memos/${memoId}`,
+                { headers: authHeader() }
+            );
 
-        const targetId = selectedIds[0];
+            const { isSuccess, message } = response.data;
+            if (!isSuccess) return alert(message);
 
-        // TODO 1) 수정 페이지로 이동하거나(modal/open)
-        // 예) navigate(`/reviews/${targetId}/edit`)
-        // TODO 2) 또는 상세 조회 API로 내용 가져와서 입력창에 세팅 등
-
-        console.log("수정 대상 id:", targetId);
+            // ✅ 메모만 지운 거니까 review는 건들지 말고, 메모 상태만 초기화
+            setSelectedReviews([]);
+            setIsSelectMode(false);
+            setReviewMemoId(null);
+            setMemoDraft("");
+        } catch (e) {
+            console.error(e);
+        }
     };
 
-    /**
-     * ✅ [토대] 삭제하기 버튼 클릭 시
-     * - 여러 개 선택 가능
-     * - 실제 API 연결은 TODO로 남겨둠
-     */
-    const handleDelete = async () => {
-        if (selectedIds.length === 0) return;
 
-        const idsToDelete = [...selectedIds];
-
-        // ✅ UI 즉시 반영(optimistic) — 원하면 API 성공 후에 반영하도록 바꿔도 됨
-        setComments((prev) => prev.filter((item) => !idsToDelete.includes(item.id)));
-        setSelectedIds([]); // 삭제 후 UnderBar 내려감
-
-        // TODO: 삭제 API 연결 (예시)
-        // await axios.delete(`${BASE_URL}/reviews`, { data: { ids: idsToDelete }, headers: ... })
-        console.log("삭제 대상 ids:", idsToDelete);
-    };
-
-    const handleSubmit = (v: string) => {
-        console.log("제출된 내용:", v);
-    };
+    if (!review) return <div className="p-4">리뷰를 찾을 수 없어요.</div>;
 
     return (
-        <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
+        <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E] pb-[110px]">
             <Header />
 
             <div className="w-full flex items-center px-[14px] pt-[30px]">
@@ -152,68 +267,76 @@ const ReviewCommentPage = () => {
 
             <div className="w-full flex flex-col py-[6px] px-[14px]">
                 <Divider />
-                <MenuBarItems
-                    mainLabel="내 기록 확인"
-                    MenuBarLabel="독서 메모"
+                <MenuBarItems mainLabel="내 기록 확인"
+                    onClickMain={() => navigate("/my-page/menu")}
+                    MenuBarLabel="감상평"
                     plusMenuLabel="선택"
-                />
+                    onClick={() => navigate('/reviews/me')}
+                    onClickPlus={() => setIsSelectMode((prev) => !prev)}
+                    isSelectMode={isSelectMode} />
                 <Divider />
             </div>
 
-            {/* ✅ 그룹(책)끼리 간격 */}
             <div className="w-full px-[16px] flex flex-col gap-[20px]">
-                {Object.entries(groupedByBook).map(([bookTitle, items]) => (
-                    // ✅ key 경고 해결: 그룹 최상위 요소에 key
-                    <div key={bookTitle}>
-                        <BookTitleLabel BookTitle={bookTitle} />
+                <BookTitleLabel BookTitle={review.bookTitle} />
 
-                        {/* ✅ 같은 책 안의 리뷰 박스끼리도 gap 적용 */}
-                        <div className="mt-[20px] flex flex-col gap-[20px]">
-                            {items.map((item) => (
-                                // ✅ key 경고 해결: items.map 최상위 요소에도 key
-                                <div
-                                    key={item.id}
-                                    onClick={() => toggleSelect(item.id)}
-                                    className={`rounded-[12px] transition
-    ${selectedIds.includes(item.id)
-                                            ? "border border-[#C9C4BF] bg-[#F3F1ED]"
-                                            : "border border-transparent"
-                                        }
-  `}
-                                >
-                                    <ReviewCommentBox content={item.content} />
-                                </div>
-
-                            ))}
+                {/* 감상평 수정 */}
+                <div className="mt-[20px] flex flex-col gap-[12px]">
+                    {!isReviewEdit ? (
+                        <div onClick={() => setIsReviewEdit(true)}>
+                            <ReviewCommentBox content={review.content} />
                         </div>
+                    ) : (
+                        <div className="flex flex-col gap-3">
+                            <textarea
+                                className="w-full flex flex-col gap-[10px] p-[14px] bg-[#FFF] text-[#58534E] rounded-[10px]"
+                                value={reviewDraft}
+                                onChange={(e) => setReviewDraft(e.target.value)}
+                                rows={8}
+                            />
+                            <div className="flex gap-2 justify-end">
+                                <button
+                                    className="px-4 py-2 rounded-[10px] border border-[#C9C4BF]"
+                                    onClick={handleCancelReview}
+                                >
+                                    취소
+                                </button>
+                                <button
+                                    className="px-4 py-2 rounded-[10px] bg-[#58534E] text-white"
+                                    onClick={handleSaveReview}
+                                >
+                                    저장
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {reviewMemoId && (
+                    <div className="rounded-[12px] bg-white p-4">
+                        <div className="whitespace-pre-wrap"
+                            onClick={() => isSelectMode ?
+                                toggleSelect(reviewMemoId)
+                                : setIsReviewMemoEdit(prev => !prev)}>{memoDraft}</div>
                     </div>
-                ))}
+                )}
             </div>
 
-            {/* ✅ 입력창: UnderBar가 열려있을 때는 숨김(기존 로직 유지) */}
-            {!isUnderBarOpen && (
-                <div className="fixed right-0 bottom-0 left-0 z-10 bg-[#F7F5F1] px-[16px] pt-[10px] pb-[20px]">
+            <div className="fixed bottom-0 left-0 right-0 bg-[#F7F5F1]">
+                <div className="w-full max-w-[520px] mx-auto px-[16px] py-[10px]">
                     <TextInput
-                        value={input}
-                        onChange={setInput}
-                        onSubmit={(v) => {
-                            handleSubmit(v);
-                            setInput("");
-                        }}
+                        type="text"
+                        value={isReviewMemoEdit ? memoDraft : ""}
+                        onChange={(val) => setMemoDraft(val)}
+                        onSubmit={reviewMemoId ? handleUpdateMemo : handleCreateMemo}
                     />
                 </div>
-            )}
-
+            </div>
             {isUnderBarOpen && (
                 <EditUnderBar
-                    onSelectAll={() => {
-                        setSelectedIds(comments.map((item) => item.id));
-                    }}
-                    onDelete={handleDelete}
+                    onDelete={handleMemoDelete}
                 />
             )}
         </div>
     );
-};
-
-export default ReviewCommentPage;
+}

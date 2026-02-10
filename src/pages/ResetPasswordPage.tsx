@@ -1,4 +1,3 @@
-import axios from "axios";
 import Divider from "../components/Divider";
 import FormLabel from "../components/FormLabel";
 import Header from "../components/Header";
@@ -13,6 +12,7 @@ import PassWordForm from "../components/PassWordForm";
 import { useChangeStore } from "../stores/changeStore";
 import { useNavigate, useLocation } from "react-router-dom";
 import Toast from "../components/Toast";
+import { http } from "../types/http";
 
 const ResetPasswordPage = () => {
     const { changeData } = useChangeStore();
@@ -58,8 +58,9 @@ const ResetPasswordPage = () => {
     }
 
     const handleResetPassword = async () => {
+        console.log(changeData);
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/find-pw/password/reset`,
+            const response = await http.post(`${import.meta.env.VITE_API_BASE_URL}/auth/find-pw/password/reset`,
                 {
                     email: changeData.email,
                     newPassword: password,
@@ -69,7 +70,7 @@ const ResetPasswordPage = () => {
                 setVisible(true);
                 setMessage("변경이 완료되었습니다");
                 setTimeout(() => {
-                    navigate("/login");
+                    navigate("/find/menu");
                 }, 2000);
             } else {
                 alert(message);
@@ -83,7 +84,7 @@ const ResetPasswordPage = () => {
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
             <div className="fixed top-[100px] left-1/2 -translate-x-1/2 z-50">
-                <Toast visible={visible} message={message} />
+                {!!message.trim() && <Toast visible={visible} message={message} />}
             </div>
 
             <Header />

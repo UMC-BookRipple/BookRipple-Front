@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import socialLoginIcon from "../assets/icons/socialLoginIcon.svg"
 import kakaoLoginIcon from "../assets/icons/kakaoLoginIcon.svg";
 import logo from "../assets/icons/logo.svg";
-import axios from "axios";
+import { http } from "../types/http";
 
 const StartPage = () => {
   const navigate = useNavigate();
@@ -21,16 +21,16 @@ const StartPage = () => {
   // 카카오 로그인
   const K_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY as string;
   const K_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI as string;
+
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
 
   const handleKakaoLogin = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
 
-
   const guestLogin = async () => {
     try {
-      const res = await axios.post(
+      const res = await http.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/login/guest`);
       const { isSuccess, code, message, result } = res.data;
 
@@ -39,7 +39,7 @@ const StartPage = () => {
       localStorage.setItem("memberId", result.memberId);
 
       console.log("guest login success", message);
-      navigate("/home");
+      navigate("/");
 
       if (!isSuccess) {
         console.log(`${result.memberId}, ${message}`);

@@ -11,11 +11,11 @@ import { useSignupStore } from "../stores/signupStore";
 import EmailInput from "../components/EmailInput";
 import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
 import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import axios from "axios";
 import CheckIcon from "../assets/icons/checkIcon.svg";
 import { useEmailVerification } from "../hooks/useEmailVerification";
 import Toast from "../components/Toast";
 import { useLocation } from "react-router-dom";
+import { http } from "../types/http";
 
 const SignupPage3 = () => {
     const location = useLocation();
@@ -140,7 +140,7 @@ const SignupPage3 = () => {
 
 
         try {
-            const res = await axios.post(
+            const res = await http.post(
                 `${import.meta.env.VITE_API_BASE_URL}/auth/signup`,
                 finalData
             );

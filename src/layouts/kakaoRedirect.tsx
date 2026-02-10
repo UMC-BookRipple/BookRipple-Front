@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { http } from "../types/http";
 
 interface LoginResponse {
   isSuccess: boolean;
@@ -18,9 +18,7 @@ const KakaoRedirect: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("현재 URL:", window.location.href);
-
-    const kakaoCode = new URL(window.location.href).searchParams.get("code");
+    const kakaoCode = new URL(window.location.search).searchParams.get("code");
     console.log("추출한 code:", kakaoCode);
 
     if (kakaoCode) {
@@ -33,8 +31,10 @@ const KakaoRedirect: React.FC = () => {
 
 
   const handleLogin = async (kakaoCode: string) => {
+
+    console.log(kakaoCode)
     try {
-      const res = await axios.post<LoginResponse>(`${import.meta.env.VITE_API_BASE_URL}/auth/kakao`,
+      const res = await http.post<LoginResponse>(`${import.meta.env.VITE_API_BASE_URL}/auth/kakao`,
         {
           content: kakaoCode,
         });

@@ -6,7 +6,7 @@ import MyPageLabel from "../components/MyPageLabel";
 import Header from "../components/Header";
 import PassWordForm from "../components/PassWordForm";
 import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import axios from "axios";
+import { http } from "../types/http";
 import { useNavigate } from "react-router-dom";
 
 const ProfileEditIdPage = () => {
@@ -22,7 +22,7 @@ const ProfileEditIdPage = () => {
         }
 
         try {
-            const response = await axios.post(
+            const response = await http.post(
                 `${import.meta.env.VITE_API_BASE_URL}/members/me/password/check`, {
                 content: password,
             },
@@ -52,7 +52,8 @@ const ProfileEditIdPage = () => {
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
             <Header />
-            <MyPageLabel label="프로필 수정" />
+            <MyPageLabel label="프로필 수정"
+                onclick={() => navigate(-1)} />
 
             <div className="w-full flex flex-col items-start justify-center whitespace-nowrap px-[16px] pt-[20px] pb-[10px] gap-[10px]">
                 <p className="text-[16px] text-[#58534E]">
