@@ -1,21 +1,21 @@
-import TopLogo from "../components/TopLogo";
-import SignupLabel from "../components/SignupLabel";
-import FormLabel from "../components/FormLabel";
-import LoginTextInput from "../components/LoginTextInput";
+import TopLogo from "../../components/TopLogo";
+import SignupLabel from "../../components/SignupLabel";
+import FormLabel from "../../components/FormLabel";
+import LoginTextInput from "../../components/LoginTextInput";
 import { useMemo, useRef, useState } from "react";
-import Divider from "../components/Divider";
-import LoginButton from "../components/LoginButton";
-import calendarIcon from "../assets/icons/calendarIcon.svg";
+import Divider from "../../components/Divider";
+import LoginButton from "../../components/LoginButton";
+import calendarIcon from "../../assets/icons/calendarIcon.svg";
 import { Navigate, useNavigate } from "react-router-dom";
-import { useSignupStore } from "../stores/signupStore";
-import EmailInput from "../components/EmailInput";
-import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
-import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import CheckIcon from "../assets/icons/checkIcon.svg";
-import { useEmailVerification } from "../hooks/useEmailVerification";
-import Toast from "../components/Toast";
+import { useSignupStore } from "../../stores/signupStore";
+import EmailInput from "../../components/EmailInput";
+import CheckIconGreen from "../../assets/icons/checkIconGreen.svg";
+import CheckIconRed from "../../assets/icons/checkIconRed.svg";
+import CheckIcon from "../../assets/icons/checkIcon.svg";
+import { useEmailVerification } from "../../hooks/useEmailVerification";
+import Toast from "../../components/Toast";
 import { useLocation } from "react-router-dom";
-import { http } from "../types/http";
+import { http } from "../../types/http";
 
 const SignupPage3 = () => {
     const location = useLocation();
@@ -47,8 +47,8 @@ const SignupPage3 = () => {
         toastVisible,
         toastMessage,
     } = useEmailVerification({
-        sendUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/email/send`,
-        verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/email/verify`,
+        sendUrl: `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/email/send`,
+        verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/email/verify`,
     });
 
 
@@ -141,7 +141,7 @@ const SignupPage3 = () => {
 
         try {
             const res = await http.post(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/signup`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/signup`,
                 finalData
             );
 
@@ -251,14 +251,14 @@ const SignupPage3 = () => {
                     variant={emailSendStatus === "success" ? "brown" : "lightBrown"}
                 />
                 {authCode.length == 0 && emailVerifyStatus === 'idle' && (
-                    <p className="text-[16px] text-[#BDB7B2] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIcon} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
+                    <p className="text-[14px] text-[#BDB7B2] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIcon} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
                 )}
 
                 {emailVerifyStatus === 'success' && (
-                    <p className="text-[16px] text-[#28A745] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconGreen} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
+                    <p className="text-[14px] text-[#28A745] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconGreen} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
                 )}
                 {emailVerifyStatus === 'error' && (
-                    <p className="text-[16px] text-[#DC3545] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconRed} alt="" className="mb-[2px]" />인증에 실패했습니다.</p>
+                    <p className="text-[14px] text-[#DC3545] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconRed} alt="" className="mb-[2px]" />인증에 실패했습니다.</p>
                 )}
             </div>
             <div className="w-full px-[16px] py-[10px]">

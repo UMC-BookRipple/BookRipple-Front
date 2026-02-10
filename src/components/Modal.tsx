@@ -2,9 +2,10 @@ import { useModalStore } from '../stores/ModalStore';
 
 interface ModalProps {
   children?: React.ReactNode;
+  label?: string;
 }
 
-const Modal = ({}: ModalProps) => {
+const Modal = ({ label = "삭제하기" }: ModalProps) => {
   const { isOpen, close, title, confirmAction } = useModalStore();
 
   if (!isOpen) return null;
@@ -30,7 +31,7 @@ const Modal = ({}: ModalProps) => {
               close();
             }}
           >
-            삭제하기
+            {label}
           </button>
         </div>
       </div>

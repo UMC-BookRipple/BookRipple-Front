@@ -1,5 +1,5 @@
-import MyPageLabel from "../components/MyPageLabel";
-import Header from "../components/Header";
+import MyPageLabel from "../../components/MyPageLabel";
+import Header from "../../components/Header";
 import { useNavigate } from "react-router-dom";
 
 const FindPage = () => {
@@ -8,7 +8,8 @@ const FindPage = () => {
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
             <Header />
-            <MyPageLabel label="아이디/비밀번호 찾기" />
+            <MyPageLabel label="아이디/비밀번호 찾기"
+                onclick={() => navigate('/auth/login/local')} />
 
             <div className="w-full px-[20px] pt-[20px] pb-[10px]">
                 <p className="text-[16px] text-[#58534E]">

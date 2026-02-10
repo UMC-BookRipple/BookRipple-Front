@@ -1,32 +1,32 @@
 // router/index.tsx (예시)
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 
-import StartPage from "../pages/StartPage";
+import StartPage from "../pages/Login/StartPage";
 import ProtectedRoute from "../components/ProtectedRoute";
-import LoginPage from "../pages/LoginPage";
-import SignupPage from "../pages/SignupPage";
-import SignupPage2 from "../pages/SignupPage2";
-import SignupPage3 from "../pages/SignupPage3";
-import SignupCompletePage from "../pages/SignupCompletePage";
+import LoginPage from "../pages/Login/LoginPage";
+import SignupPage from "../pages/Login/SignupPage";
+import SignupPage2 from "../pages/Login/SignupPage2";
+import SignupPage3 from "../pages/Login/SignupPage3";
+import SignupCompletePage from "../pages/Login/SignupCompletePage";
 
-import IdEditPage from "../pages/IdEditPage";
-import PasswordEditPage from "../pages/PasswordEditPage";
-import ReadingQuestionPage from "../pages/ReadingQuestionPage";
-import MyReadingMemoPage from "../pages/MyReadingMemoPage";
-import EditMenuPage from "../pages/EditMenuPage";
-import MyPageFindPage from "../pages/FindPage";
+import IdEditPage from "../pages/MyPage/IdEditPage";
+import PasswordEditPage from "../pages/MyPage/PasswordEditPage";
+import ReadingQuestionPage from "../pages/MyPage/ReadingQuestionPage";
+import MyReadingMemoPage from "../pages/MyPage/MyReadingMemoPage";
+import EditMenuPage from "../pages/MyPage/EditMenuPage";
+import MyPageFindPage from "../pages/Login/FindPage";
 
 import KakaoRedirect from "../layouts/kakaoRedirect";
-import FindIdPage from "../pages/FIndIdPage";
-import FindPasswordPage from "../pages/FindPasswordPage";
-import ResetPasswordPage from "../pages/ResetPasswordPage";
-import PolicyPage from "../pages/PolicyPage";
-import ProfileEditIdPage from "../pages/ProfileEditIdPage";
-import ProfileEditPwPage from "../pages/ProfileEditPwPage";
-import MyPageMenuPage from "../pages/MyPageMenuPage";
-import ReviewCommentPage from "../pages/ReviewCommentPage";
-import ReadingRecordPage from "../pages/ReadingRecordPage";
-import ReviewDetailPage from "../pages/ReviewDetailPage";
+import FindIdPage from "../pages/Login/FIndIdPage";
+import FindPasswordPage from "../pages/Login/FindPasswordPage";
+import ResetPasswordPage from "../pages/MyPage/ResetPasswordPage";
+import PolicyPage from "../pages/Login/PolicyPage";
+import ProfileEditIdPage from "../pages/MyPage/ProfileEditIdPage";
+import ProfileEditPwPage from "../pages/MyPage/ProfileEditPwPage";
+import MyPageMenuPage from "../pages/MyPage/MyPageMenuPage";
+import ReviewCommentPage from "../pages/MyPage/ReviewCommentPage";
+import ReadingRecordPage from "../pages/MyPage/ReadingRecordPage";
+import ReviewDetailPage from "../pages/MyPage/ReviewDetailPage";
 import GlobalSpinner from "../components/common/GlobalSpinner";
 
 export const router = createBrowserRouter(

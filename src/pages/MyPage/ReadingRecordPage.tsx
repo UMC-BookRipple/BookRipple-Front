@@ -1,9 +1,9 @@
-import Divider from "../components/Divider";
-import MenuBarItems from "../components/MenuBarItems";
-import Header from "../components/Header";
-import ReadingGraph from "../components/ReadingGraph";
-import ReadingInformList from "../components/ReadingInformList";
-import ReadingSpeedList from "../components/ReadingSpeedList";
+import Divider from "../../components/Divider";
+import MenuBarItems from "../../components/MenuBarItems";
+import Header from "../../components/Header";
+import ReadingGraph from "../../components/ReadingGraph";
+import ReadingInformList from "../../components/ReadingInformList";
+import ReadingSpeedList from "../../components/ReadingSpeedList";
 
 const ReadingRecordPage = () => {
 

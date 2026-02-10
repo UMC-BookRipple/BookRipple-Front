@@ -1,18 +1,18 @@
-import Divider from "../components/Divider";
-import FormLabel from "../components/FormLabel";
-import Header from "../components/Header";
-import LoginButton from "../components/LoginButton";
-import LoginTextInput from "../components/LoginTextInput";
+import Divider from "../../components/Divider";
+import FormLabel from "../../components/FormLabel";
+import Header from "../../components/Header";
+import LoginButton from "../../components/LoginButton";
+import LoginTextInput from "../../components/LoginTextInput";
 import { useState } from "react";
-import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
-import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import CheckIcon from "../assets/icons/checkIcon.svg";
-import arrowIcon from "../assets/icons/arrowIcon.svg";
-import PassWordForm from "../components/PassWordForm";
-import { useChangeStore } from "../stores/changeStore";
+import CheckIconGreen from "../../assets/icons/checkIconGreen.svg";
+import CheckIconRed from "../../assets/icons/checkIconRed.svg";
+import CheckIcon from "../../assets/icons/checkIcon.svg";
+import arrowIcon from "../../assets/icons/arrowIcon.svg";
+import PassWordForm from "../../components/PassWordForm";
+import { useChangeStore } from "../../stores/changeStore";
 import { useNavigate, useLocation } from "react-router-dom";
-import Toast from "../components/Toast";
-import { http } from "../types/http";
+import Toast from "../../components/Toast";
+import { http } from "../../types/http";
 
 const ResetPasswordPage = () => {
     const { changeData } = useChangeStore();
@@ -60,7 +60,7 @@ const ResetPasswordPage = () => {
     const handleResetPassword = async () => {
         console.log(changeData);
         try {
-            const response = await http.post(`${import.meta.env.VITE_API_BASE_URL}/auth/find-pw/password/reset`,
+            const response = await http.post(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find-pw/password/reset`,
                 {
                     email: changeData.email,
                     newPassword: password,

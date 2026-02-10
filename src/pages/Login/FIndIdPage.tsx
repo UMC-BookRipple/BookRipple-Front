@@ -1,20 +1,19 @@
-import Divider from "../components/Divider";
-import EmailInput from "../components/EmailInput";
-import FormLabel from "../components/FormLabel";
-import Header from "../components/Header";
-import LoginButton from "../components/LoginButton";
-import LoginTextInput from "../components/LoginTextInput";
-import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
-import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import CheckIcon from "../assets/icons/checkIcon.svg";
-import arrowIcon from "../assets/icons/arrowIcon.svg";
-import { useChangeStore } from "../stores/changeStore";
+import Divider from "../../components/Divider";
+import EmailInput from "../../components/EmailInput";
+import FormLabel from "../../components/FormLabel";
+import Header from "../../components/Header";
+import LoginButton from "../../components/LoginButton";
+import LoginTextInput from "../../components/LoginTextInput";
+import CheckIconGreen from "../../assets/icons/checkIconGreen.svg";
+import CheckIconRed from "../../assets/icons/checkIconRed.svg";
+import CheckIcon from "../../assets/icons/checkIcon.svg";
+import arrowIcon from "../../assets/icons/arrowIcon.svg";
+import { useChangeStore } from "../../stores/changeStore";
 import { useNavigate } from "react-router-dom";
-import { useEmailVerification } from "../hooks/useEmailVerification";
-import Toast from "../components/Toast";
-import { useEffect } from "react";
+import { useEmailVerification } from "../../hooks/useEmailVerification";
+import Toast from "../../components/Toast";
 
-const FindPasswordPage = () => {
+const FindIdPage = () => {
     const { setChangeData } = useChangeStore();
     const navigate = useNavigate();
 
@@ -30,35 +29,27 @@ const FindPasswordPage = () => {
         setAuthCode,
         sendEmail,
         verifyEmailCode,
-        getFullEmail,
         toastVisible,
         toastMessage,
+        resultValue
     } = useEmailVerification({
-        sendUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/find-pw/email/send`,
-        verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/auth/find-pw/email/verify`,
+        sendUrl: `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find-id/email/send`,
+        verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find-id/email/verify`,
     });
-
-    useEffect(() => {
-        if (emailVerifyStatus === "success") {
-            setChangeData({
-                email: `${localValue}${domainValue}`,
-            });
-        }
-    }, [emailVerifyStatus, localValue, domainValue, setChangeData]);
-
 
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-            {toastVisible && toastMessage.trim() && (
-                <Toast visible={toastVisible} message={toastMessage} />
+            {toastVisible && (
+                <div className="fixed top-[100px] left-1/2 -translate-x-1/2 z-50">
+                    <Toast visible={toastVisible} message={toastMessage} />
+                </div>
             )}
-
             <Header />
             <div
                 className="w-full flex flex-row items-center px-[20px] pt-[20px] gap-[10px]">
                 <img src={arrowIcon} className="mb-[3px] cursor-pointer" onClick={() => navigate(-1)} />
                 <div
-                    className="text-[18px] font-weight-[500] text-[#58534E] whitespace-nowrap">비밀번호 찾기</div>
+                    className="text-[18px] font-weight-[500] text-[#58534E] whitespace-nowrap">아이디 찾기</div>
             </div>
             <div className="w-full px-[16px] py-[10px] flex items-center justify-center gap-[10px]">
                 <Divider />
@@ -104,33 +95,37 @@ const FindPasswordPage = () => {
                     variant={emailSendStatus === "success" ? "brown" : "lightBrown"}
                 />
                 {authCode.length == 0 && emailVerifyStatus === 'idle' && (
-                    <p className="text-[16px] text-[#BDB7B2] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIcon} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
+                    <p className="text-[14px] text-[#BDB7B2] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIcon} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
                 )}
 
                 {emailVerifyStatus === 'success' && (
-                    <p className="text-[16px] text-[#28A745] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconGreen} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
+                    <p className="text-[14px] text-[#28A745] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconGreen} alt="" className="mb-[2px]" />인증이 완료되었습니다.</p>
                 )}
                 {emailVerifyStatus === 'error' && (
-                    <p className="text-[16px] text-[#DC3545] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconRed} alt="" className="mb-[2px]" />인증에 실패했습니다.</p>
+                    <p className="text-[14px] text-[#DC3545] mt-[4px] px-[4px] flex flex-row items-center"><img src={CheckIconRed} alt="" className="mb-[2px]" />인증에 실패했습니다.</p>
                 )}
             </div>
             <div className="w-full px-[16px] py-[10px]">
                 <Divider />
             </div>
 
+            <div className="w-full px-[20px] pt-[20px] pb-[10px]">
+                <FormLabel label="아이디" />
+            </div>
+            <div className="w-full px-[16px] py-[4px] flex flex-col gap-[10px]">
+                <span
+                    className="w-full h-[45px] rounded-[100px] border border-black/25 bg-[#FFFFFF] flex items-center px-[10px] py-[12px] gap-[10px] font-regular text-[16px] text-[#58534E] text-[#BDB7B2] outline-none">{resultValue}</span>
+            </div>
+
             <div className="w-full px-[16px] pt-[45px] pb-[20px] flex flex-col gap-[10px]">
                 <LoginButton
-                    label="비밀번호 변경하기"
-                    onClick={() => navigate("/find-password/reset", {
-                        state: {
-                            from: "FindPasswordPage"
-                        }
-                    })}
-                    variant={emailVerifyStatus === "success" ? "brown" : "lightBrown"}
+                    label="뒤로가기"
+                    onClick={() => navigate("/find/menu")}
+                    variant={"brown"}
                 />
             </div>
         </div>
     );
 };
 
-export default FindPasswordPage;
+export default FindIdPage;

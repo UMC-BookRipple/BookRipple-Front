@@ -41,7 +41,6 @@ export const useEmailVerification = ({
 
         toastTimerRef.current = window.setTimeout(() => {
             setToastVisible(false);
-            setToastMessage(""); // <- 중요: 다음 페이지에서 공백 렌더 방지
         }, 2000);
     }, []);
 

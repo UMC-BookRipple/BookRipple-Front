@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import BigLogo from "../components/BigLogo";
+import BigLogo from "../../components/BigLogo";
 import { useEffect, useState } from "react";
 
 const SignupCompletePage = () => {
@@ -26,7 +26,7 @@ const SignupCompletePage = () => {
         ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
       `}
         >
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center pb-[20px]">
                 <BigLogo />
             </div>
 

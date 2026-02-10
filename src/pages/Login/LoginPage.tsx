@@ -1,9 +1,9 @@
-import LoginButton from "../components/LoginButton";
-import LoginFormBody from "../components/LoginForm";
+import LoginButton from "../../components/LoginButton";
+import LoginFormBody from "../../components/LoginForm";
 import { useState } from "react";
-import TopLogo from "../components/TopLogo";
+import TopLogo from "../../components/TopLogo";
 import { useNavigate } from "react-router-dom";
-import { http } from "../types/http";
+import { http } from "../../types/http";
 
 const LoginPage = () => {
     const [loginId, setLoginId] = useState("");
@@ -14,13 +14,13 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     // 에러 상태
-    const [wrongId, setWrongId] = useState(false);
-    const [wrongPassword, setWrongPassword] = useState(false);
+    const [wrongLogin, setWrongLogin] = useState(false);
 
     const handleLogin = async () => {
+        setWrongLogin(false);
         try {
             const response = await http.post(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/login/local`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login/local`,
                 {
                     loginId: loginId,
                     password: password,
@@ -35,14 +35,14 @@ const LoginPage = () => {
                 localStorage.setItem("memberId", result.memberId);
 
                 console.log("로그인 성공", result);
-                navigate("/profile/edit/menu");
+                navigate("/");
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
+                setWrongLogin(true);
             }
         } catch (error) {
             console.error("로그인 통신 에러:", error);
-            alert("로그인 정보를 확인해주세요");
-            navigate("/");
+            setWrongLogin(true);
         }
     };
 
@@ -55,14 +55,13 @@ const LoginPage = () => {
                 password={password}
                 onChangeUserId={(v) => {
                     setLoginId(v);
-                    if (wrongId) setWrongId(false);
+                    if (wrongLogin) setWrongLogin(false);
                 }}
                 onChangePassword={(v) => {
                     setPassword(v);
-                    if (wrongPassword) setWrongPassword(false);
+                    if (wrongLogin) setWrongLogin(false);
                 }}
-                wrongId={wrongId}
-                wrongPassword={wrongPassword}
+                wrongLogin={wrongLogin}
                 showPassword={showPassword}
                 onToggle={() => setShowPassword((prev) => !prev)}
             />

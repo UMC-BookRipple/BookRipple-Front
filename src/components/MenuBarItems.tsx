@@ -29,7 +29,8 @@ const MenuBarItems = ({
                 {mainLabel && MenuBarLabel && (
                     <span className="mx-[10px]">&gt;</span>
                 )}
-                <span>
+                <span
+                    onClick={onClick}>
                     {MenuBarLabel}
                 </span>
             </div>
@@ -37,7 +38,7 @@ const MenuBarItems = ({
                 <button
                     type="button"
                     onClick={onClickPlus}
-                    className={`ml-3 shrink-0 text-[14px] font-medium text-[#58534E] ${isSelectMode ? 'text-[#D75D59]' : 'text-[#58534E]'
+                    className={`flex items-center justify-center ml-3 shrink-0 text-[14px] font-medium text-[#58534E] h-[28px] px-[10px] py-[6px] ${isSelectMode ? 'bg-[#827A74] rounded-[50px] text-[#FFFFFF]' : 'text-[#58534E]'
                         }`}
                 >
                     {plusMenuLabel}

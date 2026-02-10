@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
-import BookTitleLabel from "../components/BookTitleLabel";
-import Divider from "../components/Divider";
-import EditUnderBar from "../components/EditUnderBar";
-import MenuBarItems from "../components/MenuBarItems";
-import Header from "../components/Header";
-import ReviewCommentBox from "../components/ReviewCommentBox";
-import { http } from "../types/http";
+import BookTitleLabel from "../../components/BookTitleLabel";
+import Divider from "../../components/Divider";
+import EditUnderBar from "../../components/EditUnderBar";
+import MenuBarItems from "../../components/MenuBarItems";
+import Header from "../../components/Header";
+import ReviewCommentBox from "../../components/ReviewCommentBox";
+import { http } from "../../types/http";
 import { useNavigate } from "react-router-dom";
 
 interface MyReviewList {
@@ -42,7 +42,7 @@ const ReviewCommentPage = () => {
       const token = localStorage.getItem("accessToken");
 
       const response = await http.get<MyReviewsApiResponse>(
-        `${import.meta.env.VITE_API_BASE_URL}/reviews/me`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/reviews/me`,
         {
           headers: token ? { Authorization: `Bearer ${token}` } : undefined,
         }
@@ -91,7 +91,7 @@ const ReviewCommentPage = () => {
 
     try {
       const response = await http.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/reviews/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/reviews/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -116,7 +116,7 @@ const ReviewCommentPage = () => {
   const handleDeleteAll = async () => {
     try {
       const response = await http.post(
-        `${import.meta.env.VITE_API_BASE_URL}/reviews/me/batch-delete`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/reviews/me/batch-delete`,
         { idList },
         {
           headers: {
@@ -162,7 +162,7 @@ const ReviewCommentPage = () => {
         <Divider />
         <MenuBarItems
           mainLabel="내 기록 확인"
-          MenuBarLabel="독서 메모"
+          MenuBarLabel="감상평"
           plusMenuLabel="선택"
           onClickMain={() => navigate("/my-page/menu")}
           onClickPlus={() => {
@@ -174,23 +174,27 @@ const ReviewCommentPage = () => {
         <Divider />
       </div>
 
-      <div className="w-full px-[16px] flex flex-col gap-[20px]">
+      <div className="w-full flex flex-col gap-[10px]">
         {Object.entries(groupedByBook).map(([bookTitle, items]) => (
           <div key={bookTitle}>
             <BookTitleLabel BookTitle={bookTitle} />
 
-            <div className="mt-[20px] flex flex-col gap-[20px]">
+            <div className="w-full flex flex-col">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => { isSelectMode ? toggleSelect(item.id) : handleClickReview(item) }}
-                  className={`rounded-[12px] transition ${selectedIds.includes(item.id)
-                    ? "border border-[#C9C4BF] bg-[#F3F1ED]"
-                    : "border border-transparent"
+                  onClick={() => {
+                    isSelectMode ? toggleSelect(item.id) : handleClickReview(item)
+                  }}
+                  className={`relative transition
+    ${selectedIds.includes(item.id)
+                      ? "after:content-[''] after:absolute after:pointer-events-none after:inset-x-[16px] after:inset-y-[10px] after:rounded-[10px] after:border after:border-[1px] after:border-[#827A74]"
+                      : "after:content-[''] after:absolute after:pointer-events-none after:inset-x-[16px] after:inset-y-[10px] after:rounded-[10px] after:border after:border-transparent"
                     }`}
                 >
                   <ReviewCommentBox content={item.content} />
                 </div>
+
               ))}
             </div>
           </div>

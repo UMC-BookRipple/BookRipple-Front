@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import socialLoginIcon from "../assets/icons/socialLoginIcon.svg"
-import kakaoLoginIcon from "../assets/icons/kakaoLoginIcon.svg";
-import logo from "../assets/icons/logo.svg";
-import { http } from "../types/http";
+import socialLoginIcon from "../../assets/icons/socialLoginIcon.svg"
+import kakaoLoginIcon from "../../assets/icons/kakaoLoginIcon.svg";
+import logo from "../../assets/icons/logo.svg";
+import { http } from "../../types/http";
 
 const StartPage = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const StartPage = () => {
   const guestLogin = async () => {
     try {
       const res = await http.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/login/guest`);
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login/guest`);
       const { isSuccess, code, message, result } = res.data;
 
       localStorage.setItem("accessToken", result.accessToken);

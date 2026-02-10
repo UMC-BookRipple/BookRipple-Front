@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Divider from "../components/Divider";
-import FormLabel from "../components/FormLabel";
-import LoginButton from "../components/LoginButton";
-import MyPageLabel from "../components/MyPageLabel";
-import Header from "../components/Header";
-import PassWordForm from "../components/PassWordForm";
-import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import { http } from "../types/http";
+import Divider from "../../components/Divider";
+import FormLabel from "../../components/FormLabel";
+import LoginButton from "../../components/LoginButton";
+import MyPageLabel from "../../components/MyPageLabel";
+import Header from "../../components/Header";
+import PassWordForm from "../../components/PassWordForm";
+import CheckIconRed from "../../assets/icons/checkIconRed.svg";
+import { http } from "../../types/http";
 import { useNavigate } from "react-router-dom";
 
 const ProfileEditPwPage = () => {
@@ -23,7 +23,7 @@ const ProfileEditPwPage = () => {
 
         try {
             const response = await http.post(
-                `${import.meta.env.VITE_API_BASE_URL}/members/me/password/check`, {
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/members/me/password/check`, {
                 content: password,
             },
                 {

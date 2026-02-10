@@ -8,8 +8,7 @@ type LoginFormBodyProps = {
   password: string;
   onChangeUserId: (value: string) => void;
   onChangePassword: (value: string) => void;
-  wrongId?: boolean;
-  wrongPassword?: boolean;
+  wrongLogin?: boolean;
   onToggle?: () => void;
   showPassword: boolean;
 };
@@ -19,8 +18,7 @@ const LoginFormBody = ({
   password,
   onChangeUserId,
   onChangePassword,
-  wrongId = false,
-  wrongPassword = false,
+  wrongLogin = false,
   onToggle,
   showPassword,
 }: LoginFormBodyProps) => {
@@ -48,12 +46,6 @@ const LoginFormBody = ({
           value={userId}
           onChange={onChangeUserId}
         />
-        {wrongId && (
-          <p className="flex flex-row itmes-start mt-[6px] text-[#DC3545] text-[16px]">
-            <img src={CheckIconRed} alt="" />
-            입력된 아이디가 올바르지 않습니다.
-          </p>
-        )}
       </div>
 
       {/* 비밀번호 */}
@@ -69,10 +61,10 @@ const LoginFormBody = ({
           onToggle={onToggle}
         />
 
-        {wrongPassword && (
+        {wrongLogin && (
           <p className="flex flex-row itmes-start mt-[6px] text-[#DC3545] text-[16px]">
             <img src={CheckIconRed} alt="" />
-            입력된 비밀번호가 올바르지 않습니다.
+            입력된 정보가 올바르지 않습니다
           </p>
         )}
       </div>

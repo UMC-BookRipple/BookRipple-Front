@@ -1,6 +1,6 @@
-import TopLogo from "../components/TopLogo";
-import Policy from "../components/Policy";
-import LoginButton from "../components/LoginButton";
+import TopLogo from "../../components/TopLogo";
+import Policy from "../../components/Policy";
+import LoginButton from "../../components/LoginButton";
 import { useNavigate } from "react-router-dom";
 
 const PolicyPage = () => {

@@ -1,9 +1,11 @@
-import Divider from "../components/Divider";
-import MenuBarItems from "../components/MenuBarItems";
-import Header from "../components/Header";
-import arrowIcon from "../assets/icons/arrowIcon.svg";
-import { http } from "../types/http";
+import Divider from "../../components/Divider";
+import MenuBarItems from "../../components/MenuBarItems";
+import Header from "../../components/Header";
+import { http } from "../../types/http";
 import { useNavigate } from "react-router-dom";
+import arrowIcon from "../../assets/icons/arrowIcon.svg";
+import { useModalStore } from "../../stores/ModalStore";
+import Modal from "../../components/Modal";
 
 const MyPageMenuPage = () => {
 
@@ -22,7 +24,7 @@ const MyPageMenuPage = () => {
 
         try {
             const response = await http.post(
-                `${import.meta.env.VITE_API_BASE_URL}/auth/logout`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
                 null,
                 {
                     headers: {
@@ -43,12 +45,19 @@ const MyPageMenuPage = () => {
         } catch (error) {
             console.error('로그아웃 실패:', error);
         }
+    };
+
+    const { open: openModal } = useModalStore()
+
+    const confirmAction = () => {
+        console.log("confirmAction")
+        openModal("회원 탈퇴를 진행하시겠습니까?", handleDelete)
     }
 
     const handleDelete = async () => {
         try {
             const response = await http.delete(
-                `${import.meta.env.VITE_API_BASE_URL}/members/me`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/members/me`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -105,7 +114,7 @@ const MyPageMenuPage = () => {
                     onClick={handleKakaoLogin}
                 >카카오로 로그인</span>
             </div>
-
+            <Modal label="진행하기" />
             <div className="w-full flex flex-col py-[6px] px-[14px]">
                 <Divider />
                 <MenuBarItems mainLabel="내 도서 기록" MenuBarLabel="" />
@@ -136,7 +145,7 @@ const MyPageMenuPage = () => {
                 <div className="h-[189px]" />
                 <div className="w-full flex flex-col items-center gap-[8px]">
                     <span onClick={() => navigate('/policy')}>약관 및 정보</span>
-                    <span onClick={handleDelete}>회원 탈퇴</span>
+                    <span onClick={confirmAction}>회원 탈퇴</span>
                 </div>
             </div>
 

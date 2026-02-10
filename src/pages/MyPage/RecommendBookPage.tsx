@@ -1,8 +1,8 @@
-import BookTitleLabel from "../components/BookTitleLabel"
-import Divider from "../components/Divider"
-import MenuBarItems from "../components/MenuBarItems"
-import Header from "../components/Header"
-import MyRecordBox from "../components/MyRecordBox"
+import BookTitleLabel from "../../components/BookTitleLabel"
+import Divider from "../../components/Divider"
+import MenuBarItems from "../../components/MenuBarItems"
+import Header from "../../components/Header"
+import MyRecordBox from "../../components/MyRecordBox"
 
 const RecommendBookPage = () => {
     // 👉 추후 API로 교체될 mock 데이터

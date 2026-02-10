@@ -1,8 +1,8 @@
-import BookTitleLabel from "../components/BookTitleLabel"
-import Divider from "../components/Divider"
-import MenuBarItems from "../components/MenuBarItems"
-import Header from "../components/Header"
-import QnACard from "../components/QnAcard"
+import BookTitleLabel from "../../components/BookTitleLabel"
+import Divider from "../../components/Divider"
+import MenuBarItems from "../../components/MenuBarItems"
+import Header from "../../components/Header"
+import QnACard from "../../components/QnAcard"
 
 const ReadingQuestionPage = () => {
     // 👉 나중에 API로 대체될 mock 데이터

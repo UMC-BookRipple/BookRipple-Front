@@ -34,7 +34,7 @@ const KakaoRedirect: React.FC = () => {
 
     console.log(kakaoCode)
     try {
-      const res = await http.post<LoginResponse>(`${import.meta.env.VITE_API_BASE_URL}/auth/kakao`,
+      const res = await http.post<LoginResponse>(`${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/kakao`,
         {
           content: kakaoCode,
         });

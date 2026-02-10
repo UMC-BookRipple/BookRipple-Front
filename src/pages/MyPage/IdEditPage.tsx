@@ -1,15 +1,15 @@
-import Divider from "../components/Divider"
-import FormLabel from "../components/FormLabel"
-import InputWithButton from "../components/InputWithButton"
-import LoginButton from "../components/LoginButton"
-import EditLabel from "../components/EditLabel"
-import Header from "../components/Header";
+import Divider from "../../components/Divider"
+import FormLabel from "../../components/FormLabel"
+import InputWithButton from "../../components/InputWithButton"
+import LoginButton from "../../components/LoginButton"
+import EditLabel from "../../components/EditLabel"
+import Header from "../../components/Header";
 import { useCallback, useState } from "react"
 import { Navigate, useLocation, useNavigate } from "react-router-dom"
-import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
-import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import CheckIcon from "../assets/icons/checkIcon.svg";
-import { http } from "../types/http";
+import CheckIconGreen from "../../assets/icons/checkIconGreen.svg";
+import CheckIconRed from "../../assets/icons/checkIconRed.svg";
+import CheckIcon from "../../assets/icons/checkIcon.svg";
+import { http } from "../../types/http";
 
 const IdEditPage = () => {
     const location = useLocation();
@@ -45,7 +45,7 @@ const IdEditPage = () => {
         }
         try {
             const response = await http.get(
-                `${import.meta.env.VITE_API_BASE_URL}/members/check-id`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/members/check-id`,
                 {
                     params: { loginId },
                     headers: {
@@ -76,7 +76,7 @@ const IdEditPage = () => {
 
         try {
             const response = await http.patch(
-                `${import.meta.env.VITE_API_BASE_URL}/members/me/login-id`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/members/me/login-id`,
                 {
                     content: loginId,
                 },

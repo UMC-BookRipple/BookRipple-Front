@@ -1,17 +1,17 @@
-import LoginButton from "../components/LoginButton";
-import SignupLabel from "../components/SignupLabel";
-import TopLogo from "../components/TopLogo";
-import FormLabel from "../components/FormLabel";
-import InputWithButton from "../components/InputWithButton";
-import Divider from "../components/Divider";
+import LoginButton from "../../components/LoginButton";
+import SignupLabel from "../../components/SignupLabel";
+import TopLogo from "../../components/TopLogo";
+import FormLabel from "../../components/FormLabel";
+import InputWithButton from "../../components/InputWithButton";
+import Divider from "../../components/Divider";
 import axios from "axios";
 import { useState } from "react";
-import { useSignupStore } from "../stores/signupStore";
-import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
-import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import LoginTextInput from "../components/LoginTextInput";
-import policyCheckIcon from "../assets/icons/policyCheckIcon.svg";
-import checkCompleteIcon from "../assets/icons/checkCompleteIcon.svg";
+import { useSignupStore } from "../../stores/signupStore";
+import CheckIconGreen from "../../assets/icons/checkIconGreen.svg";
+import CheckIconRed from "../../assets/icons/checkIconRed.svg";
+import LoginTextInput from "../../components/LoginTextInput";
+import policyCheckIcon from "../../assets/icons/policyCheckIcon.svg";
+import checkCompleteIcon from "../../assets/icons/checkCompleteIcon.svg";
 import { useNavigate } from "react-router-dom";
 
 const SignupPage = () => {
@@ -32,7 +32,7 @@ const SignupPage = () => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/check-id`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/check-id`,
         { params: { loginId } }
       );
 

@@ -1,16 +1,16 @@
-import LoginButton from "../components/LoginButton";
+import LoginButton from "../../components/LoginButton";
 import { useState } from "react";
-import SignupLabel from "../components/SignupLabel";
-import PassWordForm from "../components/PassWordForm";
-import TopLogo from "../components/TopLogo";
-import LoginTextInput from "../components/LoginTextInput";
-import Divider from "../components/Divider";
-import FormLabel from "../components/FormLabel";
+import SignupLabel from "../../components/SignupLabel";
+import PassWordForm from "../../components/PassWordForm";
+import TopLogo from "../../components/TopLogo";
+import LoginTextInput from "../../components/LoginTextInput";
+import Divider from "../../components/Divider";
+import FormLabel from "../../components/FormLabel";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useSignupStore } from "../stores/signupStore";
-import CheckIconGreen from "../assets/icons/checkIconGreen.svg";
-import CheckIconRed from "../assets/icons/checkIconRed.svg";
-import CheckIcon from "../assets/icons/checkIcon.svg";
+import { useSignupStore } from "../../stores/signupStore";
+import CheckIconGreen from "../../assets/icons/checkIconGreen.svg";
+import CheckIconRed from "../../assets/icons/checkIconRed.svg";
+import CheckIcon from "../../assets/icons/checkIcon.svg";
 
 const SignupPage2 = () => {
   const location = useLocation();

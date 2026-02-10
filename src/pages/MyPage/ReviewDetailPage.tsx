@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import ReviewCommentBox from "../components/ReviewCommentBox";
-import BookTitleLabel from "../components/BookTitleLabel";
-import MenuBarItems from "../components/MenuBarItems";
-import Divider from "../components/Divider";
-import Header from "../components/Header";
-import TextInput from "../components/TextInput";
+import ReviewCommentBox from "../../components/ReviewCommentBox";
+import BookTitleLabel from "../../components/BookTitleLabel";
+import MenuBarItems from "../../components/MenuBarItems";
+import Divider from "../../components/Divider";
+import Header from "../../components/Header";
+import TextInput from "../../components/TextInput";
 import { useNavigate } from "react-router-dom";
-import EditUnderBar from "../components/EditUnderBar";
-import { http } from "../types/http";
+import { http } from "../../types/http";
+import DeleteUnderBar from "../../components/DeleteUnderBar";
 
 interface MyReview {
     id: number;
@@ -86,7 +86,7 @@ export default function ReviewDetailPage() {
     useEffect(() => {
         const fetchReview = async () => {
             const res = await http.get<MyReviewsApiResponse>(
-                `${import.meta.env.VITE_API_BASE_URL}/reviews/me`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/reviews/me`,
                 { headers: authHeader() }
             );
 
@@ -115,7 +115,7 @@ export default function ReviewDetailPage() {
 
             try {
                 const res = await http.get<MyMemosApiResponse>(
-                    `${import.meta.env.VITE_API_BASE_URL}/review-memos/me`,
+                    `${import.meta.env.VITE_API_BASE_URL}/api/v1/review-memos/me`,
                     {
                         headers: {
                             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -159,7 +159,7 @@ export default function ReviewDetailPage() {
         const body: ContentIdBody = { id: review.id, content: reviewDraft };
 
         const res = await http.patch(
-            `${import.meta.env.VITE_API_BASE_URL}/reviews/${review.id}`,
+            `${import.meta.env.VITE_API_BASE_URL}/api/v1/reviews/${review.id}`,
             body,
             { headers: authHeader() }
         );
@@ -185,7 +185,7 @@ export default function ReviewDetailPage() {
         const body: ContentIdBody = { id: review.id, content: memoDraft };
 
         const res = await http.post(
-            `${import.meta.env.VITE_API_BASE_URL}/reviews/${review.id}/review-memos`,
+            `${import.meta.env.VITE_API_BASE_URL}/api/v1/reviews/${review.id}/review-memos`,
             body,
             { headers: authHeader() }
         );
@@ -210,7 +210,7 @@ export default function ReviewDetailPage() {
         const body: ContentIdBody = { id: reviewMemoId, content: memoDraft };
 
         const res = await http.patch(
-            `${import.meta.env.VITE_API_BASE_URL}/review-memos/${reviewMemoId}`,
+            `${import.meta.env.VITE_API_BASE_URL}/api/v1/review-memos/${reviewMemoId}`,
             body,
             { headers: authHeader() }
         );
@@ -235,7 +235,7 @@ export default function ReviewDetailPage() {
 
         try {
             const response = await http.delete(
-                `${import.meta.env.VITE_API_BASE_URL}/review-memos/${memoId}`,
+                `${import.meta.env.VITE_API_BASE_URL}/api/v1/review-memos/${memoId}`,
                 { headers: authHeader() }
             );
 
@@ -277,17 +277,17 @@ export default function ReviewDetailPage() {
                 <Divider />
             </div>
 
-            <div className="w-full px-[16px] flex flex-col gap-[20px]">
+            <div className="w-full flex flex-col">
                 <BookTitleLabel BookTitle={review.bookTitle} />
 
                 {/* 감상평 수정 */}
-                <div className="mt-[20px] flex flex-col gap-[12px]">
+                <div className="flex flex-col">
                     {!isReviewEdit ? (
                         <div onClick={() => setIsReviewEdit(true)}>
                             <ReviewCommentBox content={review.content} />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-3 py-[10px] px-[16px]">
                             <textarea
                                 className="w-full flex flex-col gap-[10px] p-[14px] bg-[#FFF] text-[#58534E] rounded-[10px]"
                                 value={reviewDraft}
@@ -313,27 +313,39 @@ export default function ReviewDetailPage() {
                 </div>
 
                 {reviewMemoId && (
-                    <div className="rounded-[12px] bg-white p-4">
-                        <div className="whitespace-pre-wrap"
-                            onClick={() => isSelectMode ?
-                                toggleSelect(reviewMemoId)
-                                : setIsReviewMemoEdit(prev => !prev)}>{memoDraft}</div>
+                    <div className="flex flex-col px-[16px] py-[10px]">
+                        <div
+                            className={`rounded-[12px] p-[14px] bg-white border ${selectedReviews.includes(reviewMemoId)
+                                ? "border-[#827A74] border-[1px]"
+                                : "border-transparent"
+                                }`}
+                        >
+                            <div
+                                className="whitespace-pre-wrap"
+                                onClick={() =>
+                                    isSelectMode ? toggleSelect(reviewMemoId) : setIsReviewMemoEdit((prev) => !prev)
+                                }
+                            >
+                                {memoDraft}
+                            </div>
+                        </div>
                     </div>
                 )}
+
             </div>
 
             <div className="fixed bottom-0 left-0 right-0 bg-[#F7F5F1]">
                 <div className="w-full max-w-[520px] mx-auto px-[16px] py-[10px]">
                     <TextInput
                         type="text"
-                        value={isReviewMemoEdit ? memoDraft : ""}
+                        value={isReviewMemoEdit || !reviewMemoId ? memoDraft : ""}
                         onChange={(val) => setMemoDraft(val)}
                         onSubmit={reviewMemoId ? handleUpdateMemo : handleCreateMemo}
                     />
                 </div>
             </div>
             {isUnderBarOpen && (
-                <EditUnderBar
+                <DeleteUnderBar
                     onDelete={handleMemoDelete}
                 />
             )}
