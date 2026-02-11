@@ -6,6 +6,9 @@ import BookCommunityPage from "../pages/Community/BookCommunityPage";
 import RecommendWritePage from "../pages/Recommend/RecommendwritePage";
 import RecommendCompletePage from "../pages/Recommend/RecommendCompletePage";
 import RecommendBookSearchPage from "../pages/Recommend/RecommendBookSearchPage";
+import RecommendBookPage from "../pages/RecommendBookPage";
+import ReadingQuestionPage from "../pages/ReadingQuestionPage";
+import ReadingAnswerPage from "../pages/ReadingAnswerPage";
 
 const AppRouter = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -38,6 +41,21 @@ const AppRouter = () => {
                         onBack={() => window.history.back()}
                     />
                 }
+            />
+
+            <Route
+                path="/my/recommend"
+                element={<RecommendBookPage />}
+            />
+
+            <Route
+                path="/my/question"
+                element={<ReadingQuestionPage />}
+            />
+
+            <Route
+                path="/my/answer"
+                element={<ReadingAnswerPage />}
             />
         </Routes>
     );
