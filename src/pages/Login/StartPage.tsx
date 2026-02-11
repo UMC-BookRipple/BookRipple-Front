@@ -44,11 +44,15 @@ const StartPage = () => {
 
       if (!isSuccess) {
         console.log(`${result.memberId}, ${message}`);
+        alert(message);
+        navigate("/start");
         return;
       }
 
     } catch (error) {
       console.log("guest login error", error);
+      alert("로그인에 실패했습니다.");
+      navigate("/start");
     }
   };
 

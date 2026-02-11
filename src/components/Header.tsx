@@ -13,8 +13,8 @@ const Header = () => {
     toggle();
   };
 
-  const handleSearch = () => {
-    console.log('Search clicked!');
+  const handleProfile = () => {
+    navigate('/my-page/menu');
   };
 
   return (
@@ -33,7 +33,7 @@ const Header = () => {
             <button onClick={() => navigate('/notification')}>
               <img src={bellIcon} alt="Notification" className="h-6 w-6" />
             </button>
-            <button onClick={handleSearch}>
+            <button onClick={handleProfile}>
               <img src={profileIcon} alt="Profile" className="h-6 w-6" />
             </button>
           </div>

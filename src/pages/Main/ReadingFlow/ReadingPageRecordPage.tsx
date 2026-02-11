@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from '../../../components/Header';
 import ReadingMark from '../../../components/ReadingMark';
@@ -18,10 +18,10 @@ export default function ReadingPageRecordPage() {
 
   const numericBookId = Number(bookId);
 
-  const { startPage, endPage, setStartPage, setEndPage } = useTimerStore();
+  const { startPage, endPage, setStartPage, setEndPage, resetPages } =
+    useTimerStore();
 
   const state = (location.state as LocationState | null) ?? null;
-
   const bookTitle = state?.bookTitle ?? '책 제목';
 
   const sessionId: number | null =
@@ -32,6 +32,15 @@ export default function ReadingPageRecordPage() {
     })();
 
   const [isLoading, setIsLoading] = useState(false);
+
+  // 로컬 타이머 일시정지 (후에 정지 처리)
+  useEffect(() => {
+    useTimerStore.setState({ status: 'paused' });
+  }, []);
+
+  useEffect(() => {
+    resetPages();
+  }, [bookId, resetPages]);
 
   const totalPages = useMemo(() => {
     if (startPage == null || endPage == null) return 0;
@@ -67,6 +76,9 @@ export default function ReadingPageRecordPage() {
 
       const { completed, progress, recordId, readingTime, totalReadingTime } =
         data.result;
+
+      sessionStorage.removeItem(`reading_session_${bookId ?? ''}`);
+      useTimerStore.setState({ status: 'idle', elapsedSeconds: 0 });
 
       if (completed) {
         try {

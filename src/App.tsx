@@ -5,7 +5,7 @@ import GlobalSpinner from './components/common/GlobalSpinner';
 import HomeRoute from './components/HomeRoute';
 import BookShelfSearchPage from './pages/Main/Bookshelf/BookShelfSearchPage';
 import BookshelfRouter from './pages/Main/Bookshelf/router';
-import BlindBookRouter from './pages/blindBook/router';
+import BlindBookRouter from './pages/BlindBook/router';
 
 // Auth
 import StartPage from './pages/Login/StartPage';
@@ -23,6 +23,7 @@ import PolicyPage from './pages/Login/PolicyPage';
 import NotificationPage from './pages/notification/NotificationPage';
 
 // Reading Flow + Swipe
+import TimerTicker from './components/TimerTicker';
 import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';
 import NonCompletePage from './pages/Main/ReadingFlow/NonCompletePage';
 import ReviewWritePage from './pages/Main/ReadingFlow/ReviewWritePage';
@@ -64,6 +65,8 @@ export default function App() {
   return (
     <>
       <GlobalSpinner />
+      <TimerTicker />
+
       <Routes>
         {/* Root redirect */}
         <Route path="/" element={<HomeRoute />} />
@@ -85,19 +88,43 @@ export default function App() {
         <Route path="/blind-book/*" element={<BlindBookRouter />} />
 
         {/* Reading Flow */}
-        <Route path="/books/:bookId/reading/timer" element={<ReadingTimerPage />} />
-        <Route path="/books/:bookId/reading/pages" element={<ReadingPageRecordPage />} />
+        <Route
+          path="/books/:bookId/reading/timer"
+          element={<ReadingTimerPage />}
+        />
+        <Route
+          path="/books/:bookId/reading/pages"
+          element={<ReadingPageRecordPage />}
+        />
         <Route path="/books/:bookId/complete" element={<CompletePage />} />
-        <Route path="/books/:bookId/non-complete" element={<NonCompletePage />} />
-        <Route path="/books/:bookId/random-question" element={<FinRandomQuestionPage />} />
+        <Route
+          path="/books/:bookId/non-complete"
+          element={<NonCompletePage />}
+        />
+        <Route
+          path="/books/:bookId/random-question"
+          element={<FinRandomQuestionPage />}
+        />
         <Route path="/books/:bookId/review/new" element={<ReviewWritePage />} />
 
         {/* Reading Swipe */}
         <Route path="/books/:bookId/memos" element={<ReadingMemoListPage />} />
-        <Route path="/books/:bookId/memos/new" element={<ReadingMemoWritePage />} />
-        <Route path="/books/:bookId/questions" element={<ReadingQuestionListPage />} />
-        <Route path="/books/:bookId/questions/new" element={<ReadingQuestionWritePage />} />
-        <Route path="/questions/:questionId/answers" element={<ReadingQuestionOthersAnswer />} />
+        <Route
+          path="/books/:bookId/memos/new"
+          element={<ReadingMemoWritePage />}
+        />
+        <Route
+          path="/books/:bookId/questions"
+          element={<ReadingQuestionListPage />}
+        />
+        <Route
+          path="/books/:bookId/questions/new"
+          element={<ReadingQuestionWritePage />}
+        />
+        <Route
+          path="/questions/:questionId/answers"
+          element={<ReadingQuestionOthersAnswer />}
+        />
 
         {/* Community */}
         <Route path="/community" element={<CommunityPage />} />
@@ -127,7 +154,10 @@ export default function App() {
         <Route path="/signup/complete" element={<SignupCompletePage />} />
         <Route path="/find/menu" element={<FindPage />} />
         <Route path="/find-id/email/send" element={<FindIdPage />} />
-        <Route path="/find-password/email/send" element={<FindPasswordPage />} />
+        <Route
+          path="/find-password/email/send"
+          element={<FindPasswordPage />}
+        />
         <Route path="/find-password/reset" element={<ResetPasswordPage />} />
         <Route path="/policy" element={<PolicyPage />} />
 
@@ -150,7 +180,6 @@ export default function App() {
           <Route path="/mypage/memo" element={<MyReadingMemoPage />} />
           <Route path="/mypage/recommend" element={<RecommendBookPage />} />
           <Route path="/answer/me" element={<ReadingAnswerPage />} />
-
         </Route>
 
         {/* Fallback */}

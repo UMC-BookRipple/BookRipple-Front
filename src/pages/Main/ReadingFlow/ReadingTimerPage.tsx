@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Button from '../../../components/Button';
 import Header from '../../../components/Header';
 import ReadingMark from '../../../components/ReadingMark';
@@ -33,12 +33,29 @@ export default function ReadingTimerPage() {
     return saved ? Number(saved) : null;
   });
 
+  // resetTimer
+  const location = useLocation();
+  const navState = (location.state as { resetTimer?: boolean } | null) ?? null;
+
+  useEffect(() => {
+    if (!bookId) return;
+
+    if (navState?.resetTimer) {
+      sessionStorage.removeItem(`reading_session_${bookId}`);
+      setSessionId(null);
+
+      useTimerStore.setState({ status: 'idle', elapsedSeconds: 0 });
+      navigate(location.pathname, { replace: true });
+    }
+  }, [bookId]);
+
   // loading
   const [isLoading, setIsLoading] = useState(false);
 
   // in-flight guard
   const startInFlightRef = useRef(false);
   const pauseInFlightRef = useRef(false);
+  const endInFlightRef = useRef(false);
 
   // navigate: memo
   const goToMemoList = () => {
@@ -60,19 +77,7 @@ export default function ReadingTimerPage() {
     maxVerticalPx: 60,
   });
 
-  const { status, elapsedSeconds, start, pause, resume, end, tick } =
-    useTimerStore();
-
-  // tick
-  useEffect(() => {
-    if (status !== 'running') return undefined;
-
-    const timerId = window.setInterval(() => {
-      tick();
-    }, 1000);
-
-    return () => window.clearInterval(timerId);
-  }, [status, tick]);
+  const { status, elapsedSeconds, start, pause, resume } = useTimerStore();
 
   const formattedTime = useMemo(
     () => formatTime(elapsedSeconds),
@@ -105,11 +110,16 @@ export default function ReadingTimerPage() {
         if (existingSessionId) {
           // 기존 세션 ID를 사용
           setSessionId(existingSessionId);
-          sessionStorage.setItem(`reading_session_${bookId ?? ''}`, String(existingSessionId));
+          sessionStorage.setItem(
+            `reading_session_${bookId ?? ''}`,
+            String(existingSessionId),
+          );
           start();
           console.log('기존 독서 세션을 계속합니다:', existingSessionId);
         } else {
-          alert('이미 진행 중인 독서 세션이 있습니다. 페이지를 새로고침해주세요.');
+          alert(
+            '이미 진행 중인 독서 세션이 있습니다. 페이지를 새로고침해주세요.',
+          );
         }
       } else {
         alert('독서 시작에 실패했습니다. 다시 시도해주세요.');
@@ -146,11 +156,16 @@ export default function ReadingTimerPage() {
         if (existingSessionId) {
           // 기존 세션 ID를 사용
           setSessionId(existingSessionId);
-          sessionStorage.setItem(`reading_session_${bookId ?? ''}`, String(existingSessionId));
+          sessionStorage.setItem(
+            `reading_session_${bookId ?? ''}`,
+            String(existingSessionId),
+          );
           resume();
           console.log('기존 독서 세션을 계속합니다:', existingSessionId);
         } else {
-          alert('이미 진행 중인 독서 세션이 있습니다. 페이지를 새로고침해주세요.');
+          alert(
+            '이미 진행 중인 독서 세션이 있습니다. 페이지를 새로고침해주세요.',
+          );
         }
       } else {
         alert('독서를 계속하는데 실패했습니다. 다시 시도해주세요.');
@@ -181,11 +196,33 @@ export default function ReadingTimerPage() {
   };
 
   // 끝내기
-  const handleEnd = () => {
-    end();
-    navigate(`/books/${bookId}/reading/pages`, {
-      state: { sessionId, bookId: numericBookId, bookTitle },
-    });
+  const handleEnd = async () => {
+    if (!bookId) return;
+    if (endInFlightRef.current) return;
+
+    endInFlightRef.current = true;
+    setIsLoading(true);
+
+    if (status === 'running') pause();
+
+    try {
+      if (sessionId) {
+        await pauseReading(sessionId);
+      }
+    } catch (e: any) {
+      const statusCode = e?.response?.status;
+      const code = e?.response?.data?.code;
+      if (!(statusCode === 429 && code === 'COMMON_429')) {
+        console.error(e);
+      }
+    } finally {
+      navigate(`/books/${bookId}/reading/pages`, {
+        state: { sessionId, bookId: numericBookId, bookTitle },
+      });
+
+      endInFlightRef.current = false;
+      setIsLoading(false);
+    }
   };
 
   return (
