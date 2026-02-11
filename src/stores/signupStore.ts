@@ -1,27 +1,45 @@
-import { create } from 'zustand';
-import type { SignupReq } from '../types/api';
+import { create } from "zustand";
 
 interface SignupState {
-    signupData: SignupReq;
-    setSignupData: (data: Partial<SignupReq>) => void;
-    resetSignupData: () => void;
+  signupData: {
+    name: string;
+    loginId: string;
+    password: string;
+    email: string;
+    birthDate: string;
+    isRequiredAgreed: boolean;
+    isOptionalAgreed: boolean;
+  };
+  setSignupData: (data: Partial<SignupState["signupData"]>) => void;
+  resetSignupData: () => void;
 }
 
-const initialData: SignupReq = {
-    name: '',
-    loginId: '',
-    password: '',
-    email: '',
-    birthDate: '',
-    isTermsAgreedRequired: true,
-    isTermsAgreedOptional: false,
-};
-
 export const useSignupStore = create<SignupState>((set) => ({
-    signupData: initialData,
-    setSignupData: (data) =>
-        set((state) => ({
-            signupData: { ...state.signupData, ...data }
-        })),
-    resetSignupData: () => set({ signupData: initialData }),
+  signupData: {
+    name: "",
+    loginId: "",
+    password: "",
+    email: "",
+    birthDate: "",
+    isRequiredAgreed: false,
+    isOptionalAgreed: false,
+  },
+
+  setSignupData: (data) =>
+    set((state) => ({
+      signupData: { ...state.signupData, ...data },
+    })),
+
+  resetSignupData: () =>
+    set({
+      signupData: {
+        name: "",
+        loginId: "",
+        password: "",
+        email: "",
+        birthDate: "",
+        isRequiredAgreed: false,
+        isOptionalAgreed: false,
+      },
+    }),
 }));

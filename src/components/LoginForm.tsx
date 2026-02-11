@@ -1,14 +1,16 @@
 import FormLabel from "./FormLabel";
 import LoginTextInput from "./LoginTextInput";
 import Divider from "./Divider";
+import CheckIconRed from "../assets/icons/checkIconRed.svg";
 
 type LoginFormBodyProps = {
   userId: string;
   password: string;
   onChangeUserId: (value: string) => void;
   onChangePassword: (value: string) => void;
-  wrongId?: boolean;
-  wrongPassword?: boolean;
+  wrongLogin?: boolean;
+  onToggle?: () => void;
+  showPassword: boolean;
 };
 
 const LoginFormBody = ({
@@ -16,8 +18,9 @@ const LoginFormBody = ({
   password,
   onChangeUserId,
   onChangePassword,
-  wrongId = false,
-  wrongPassword = false,
+  wrongLogin = false,
+  onToggle,
+  showPassword,
 }: LoginFormBodyProps) => {
   return (
     <div className="w-full flex flex-col items-center bg-[#F7F5F1]">
@@ -43,11 +46,6 @@ const LoginFormBody = ({
           value={userId}
           onChange={onChangeUserId}
         />
-        {wrongId && (
-          <p className="ml-[4px] mt-[6px] text-red-500 text-[16px]">
-            잘못된 아이디입니다
-          </p>
-        )}
       </div>
 
       {/* 비밀번호 */}
@@ -56,14 +54,17 @@ const LoginFormBody = ({
       </div>
       <div className="w-full px-[16px] py-[4px]">
         <LoginTextInput
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="비밀번호를 입력하세요"
           value={password}
           onChange={onChangePassword}
+          onToggle={onToggle}
         />
-        {wrongPassword && (
-          <p className="ml-[4px] mt-[6px] text-red-500 text-[16px]">
-            잘못된 비밀번호입니다
+
+        {wrongLogin && (
+          <p className="flex flex-row itmes-start mt-[6px] text-[#DC3545] text-[16px]">
+            <img src={CheckIconRed} alt="" />
+            입력된 정보가 올바르지 않습니다
           </p>
         )}
       </div>
