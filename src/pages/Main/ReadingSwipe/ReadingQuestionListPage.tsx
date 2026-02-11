@@ -28,20 +28,20 @@ import {
 
 type UiItem =
   | {
-      key: string;
-      kind: 'my';
-      id: number;
-      question: string;
-      time: string; // createdAt
-    }
+    key: string;
+    kind: 'my';
+    id: number;
+    question: string;
+    time: string; // createdAt
+  }
   | {
-      key: string;
-      kind: 'ai';
-      id: number;
-      question: string;
-      answer: string;
-      time: string; // updatedAt
-    };
+    key: string;
+    kind: 'ai';
+    id: number;
+    question: string;
+    answer: string;
+    time: string; // updatedAt
+  };
 
 const PAGE_SIZE = 20;
 
@@ -154,7 +154,11 @@ export default function ReadingQuestionListPage() {
         ? (result as any).readingAiQnAS
         : [];
 
-      const list: UiItem[] = rawList.map((x: ReadingAiQnAItem) => ({
+      const answeredOnly = rawList.filter(
+        (x) => typeof x.answer === 'string' && x.answer.trim().length > 0,
+      );
+
+      const list: UiItem[] = answeredOnly.map((x: ReadingAiQnAItem) => ({
         key: `ai-${x.id}`,
         kind: 'ai',
         id: x.id,
@@ -362,11 +366,11 @@ export default function ReadingQuestionListPage() {
                         sel.isSelectionMode
                           ? sel.toggleOne(item.key)
                           : navigate(`/questions/${item.id}/answers`, {
-                              state: {
-                                questionContent: item.question,
-                                bookTitle,
-                              },
-                            })
+                            state: {
+                              questionContent: item.question,
+                              bookTitle,
+                            },
+                          })
                       }
                       onKeyDown={(e) => {
                         if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -374,11 +378,11 @@ export default function ReadingQuestionListPage() {
                         sel.isSelectionMode
                           ? sel.toggleOne(item.key)
                           : navigate(`/questions/${item.id}/answers`, {
-                              state: {
-                                questionContent: item.question,
-                                bookTitle,
-                              },
-                            });
+                            state: {
+                              questionContent: item.question,
+                              bookTitle,
+                            },
+                          });
                       }}
                       className="w-full"
                     >
@@ -491,11 +495,10 @@ export default function ReadingQuestionListPage() {
 
       {/* 토스트 */}
       <div
-        className={`pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 transition-all duration-300 ease-in-out ${
-          toastVisible
+        className={`pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 transition-all duration-300 ease-in-out ${toastVisible
             ? 'bottom-[100px] translate-y-0 opacity-100'
             : 'bottom-[100px] translate-y-[10px] opacity-0'
-        }`}
+          }`}
       >
         <Toast visible={toastVisible} message={toastMessage} />
       </div>
