@@ -175,11 +175,11 @@ export default function MyReadingMemoPage() {
         prev.map((m) =>
           m.memoId === memoId
             ? {
-              ...m,
-              memoTitle: nextTitle,
-              context: nextContext,
-              page: nextPage,
-            }
+                ...m,
+                memoTitle: nextTitle,
+                context: nextContext,
+                page: nextPage,
+              }
             : m,
         ),
       );
@@ -214,25 +214,28 @@ export default function MyReadingMemoPage() {
     <div className="flex min-h-screen flex-col items-center bg-[#F7F5F1] pb-[30px] text-[#4C4540]">
       <Modal />
 
-      <Header />
-      <div className="flex h-[80px] items-center gap-[10px] self-stretch px-[14px] pt-[30px] pb-[10px]">
-        <p className="font-gmarket flex flex-1 items-center gap-[10px] px-[5px] py-[12px] text-[20px] leading-normal font-bold text-[#58534E]">
-          MYPAGE
-        </p>
-      </div>
+      <div className="sticky top-0 w-full bg-[#F7F5F1]">
+        <Header />
+        <div className="flex h-[80px] items-center gap-[10px] self-stretch px-[14px] pt-[30px] pb-[10px]">
+          <p className="font-gmarket flex flex-1 items-center gap-[10px] px-[5px] py-[12px] text-[20px] leading-normal font-bold text-[#58534E]">
+            MYPAGE
+          </p>
+        </div>
 
-      <div className="flex flex-col items-start justify-center gap-[10px] self-stretch px-[14px] py-[6px]">
-        <PageHeader
-          depth1="내 기록 확인"
-          depth2="독서메모"
-          actionLabel={isSelectionMode ? '취소' : '선택'}
-          onAction={toggleSelectionMode}
-        />
+        <div className="flex flex-col items-start justify-center gap-[10px] self-stretch px-[14px] py-[6px]">
+          <PageHeader
+            depth1="내 기록 확인"
+            depth2="독서메모"
+            actionLabel={isSelectionMode ? '취소' : '선택'}
+            onAction={toggleSelectionMode}
+          />
+        </div>
       </div>
 
       <main
-        className={`flex w-full flex-col items-stretch gap-[10px] px-[16px] py-[10px] ${isSelectionMode ? 'pb-[90px]' : ''
-          }`}
+        className={`flex w-full flex-col items-stretch gap-[10px] px-[16px] py-[10px] ${
+          isSelectionMode ? 'pb-[90px]' : ''
+        }`}
       >
         {isLoading && <p>불러오는 중...</p>}
         {error && <p className="text-red-500">{error}</p>}
