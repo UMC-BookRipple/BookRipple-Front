@@ -1,18 +1,18 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
-import Header from '../components/Header';
-import PageHeader from '../components/PageHeader';
-import MemoCard from '../components/Card/MemoCard';
-import EditUnderBar from '../components/EditUnderBar';
-import Modal from '../components/Modal';
-import BookTitleLabel from '../components/BookTitleLabel';
-import { useModalStore } from '../stores/ModalStore';
-import { useSelection } from '../hooks/useSelection';
+import Header from '../../components/Header';
+import PageHeader from '../../components/PageHeader';
+import MemoCard from '../../components/Card/MemoCard';
+import EditUnderBar from '../../components/EditUnderBar';
+import Modal from '../../components/Modal';
+import BookTitleLabel from '../../components/BookTitleLabel';
+import { useModalStore } from '../../stores/ModalStore';
+import { useSelection } from '../../hooks/useSelection';
 import {
   deleteMemo as apiDeleteMemo,
   fetchMyMemoList,
   updateMemo as apiUpdateMemo,
   type MemoUpsertReq,
-} from '../api/memoApi';
+} from '../../api/memoApi';
 
 type MyMemoItem = {
   memoId: number;
@@ -175,11 +175,11 @@ export default function MyReadingMemoPage() {
         prev.map((m) =>
           m.memoId === memoId
             ? {
-                ...m,
-                memoTitle: nextTitle,
-                context: nextContext,
-                page: nextPage,
-              }
+              ...m,
+              memoTitle: nextTitle,
+              context: nextContext,
+              page: nextPage,
+            }
             : m,
         ),
       );
@@ -233,9 +233,8 @@ export default function MyReadingMemoPage() {
       </div>
 
       <main
-        className={`flex w-full flex-col items-stretch gap-[10px] px-[16px] py-[10px] ${
-          isSelectionMode ? 'pb-[90px]' : ''
-        }`}
+        className={`flex w-full flex-col items-stretch gap-[10px] px-[16px] py-[10px] ${isSelectionMode ? 'pb-[90px]' : ''
+          }`}
       >
         {isLoading && <p>불러오는 중...</p>}
         {error && <p className="text-red-500">{error}</p>}

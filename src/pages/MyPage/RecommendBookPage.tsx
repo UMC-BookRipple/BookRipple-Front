@@ -113,12 +113,14 @@ const RecommendBookPage = () => {
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
             <Header />
 
+            {/* MY PAGE */}
             <div className="w-full flex items-center px-[14px] pt-[30px]">
                 <span className="h-[50px] flex items-center font-[GmarketSansBold] text-[20px]">
                     MY PAGE
                 </span>
             </div>
 
+            {/* 메뉴 */}
             <div className="w-full flex flex-col py-[6px] px-[14px]">
                 <Divider />
                 <MenuBarItems

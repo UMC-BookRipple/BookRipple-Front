@@ -15,10 +15,10 @@ type RandomQuestionLocationState = {
   mode: 'during' | 'after';
   bookTitle?: string;
   question: string;
+  bookId?: number;
 
   // during
   readingQuestionId?: number;
-
   // after
   questionId?: number;
 };
