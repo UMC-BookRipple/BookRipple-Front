@@ -153,3 +153,64 @@ export const deleteLibraryBooks = async (
     throw error;
   }
 };
+
+/**
+ * 책장에 책 추가 (진행 중 상태로)
+ * aladinItemId로 책을 조회하거나 생성하여 책장에 추가
+ * @param aladinItemId - 알라딘 아이템 ID
+ * @returns Promise<number> - 추가된 책의 bookId
+ */
+export const addBookToBookshelf = async (
+  aladinItemId: number,
+): Promise<number> => {
+  try {
+    // 1. 알라딘 도서 정보를 DB에 등록/조회하여 bookId 획득
+    const url = `${BASE_URL}/api/v1/books/aladin/${aladinItemId}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch/register book: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    if (!data.isSuccess || !data.result) {
+      throw new Error(data.message || 'Failed to fetch/register book');
+    }
+
+    const { bookId } = data.result;
+
+    // 2. 독서 시작(reading/start) API 호출하여 내 책장(읽고 있는 책)에 추가
+    const readingUrl = `${BASE_URL}/api/v1/reading/start`;
+    const readingResponse = await fetch(readingUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({
+        bookId: bookId,
+      }),
+    });
+
+    if (!readingResponse.ok) {
+      throw new Error(`Failed to start reading: ${readingResponse.statusText}`);
+    }
+
+    const readingData = await readingResponse.json();
+
+    if (!readingData.isSuccess) {
+      throw new Error(readingData.message || 'Failed to start reading');
+    }
+
+    return bookId;
+  } catch (error) {
+    console.error('❌ Add book to bookshelf error:', error);
+    throw error;
+  }
+};
