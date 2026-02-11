@@ -4,22 +4,22 @@ import logo from '/src/assets/icons/logo.svg';
 import likeIcon from '/src/assets/icons/M-like1.svg';
 import likedIcon from '/src/assets/icons/M-like2.svg';
 
-import Header from '../../components/Header';
-import SideBar from '../../components/SideBar';
-import ReadingProgress from '../../components/ReadingProgress';
-import Button from '../../components/Button';
-import BookshelfSection from '../../components/Bookshelf/BookshelfSection';
+import Header from '../../../components/Header';
+import SideBar from '../../../components/SideBar';
+import ReadingProgress from '../../../components/ReadingProgress';
+import Button from '../../../components/Button';
+import BookshelfSection from '../../../components/Bookshelf/BookshelfSection';
 
-import type { BookshelfTabKey, BookItem } from '../../types/bookshelf.type';
-import { isBookshelfTabKey } from '../../utils/bookshelf.utils';
+import type { BookshelfTabKey, BookItem } from '../../../types/bookshelf.type';
+import { isBookshelfTabKey } from '../../../utils/bookshelf.utils';
 import {
   fetchBookDetail,
   toggleBookLike,
   fetchBooksByStatus,
-} from '../../api/bookshelf.api';
-import type { ApiBookItem } from '../../types/bookshelf.type';
-import { statusToTab } from '../../types/bookshelf.type';
-import { useSidebarStore } from '../../stores/SidebarStore';
+} from '../../../api/bookshelf.api';
+import type { ApiBookItem } from '../../../types/bookshelf.type';
+import { statusToTab } from '../../../types/bookshelf.type';
+import { useSidebarStore } from '../../../stores/SidebarStore';
 
 const TABS: Array<{ key: BookshelfTabKey; label: string }> = [
   { key: 'reading', label: '진행 중 도서' },

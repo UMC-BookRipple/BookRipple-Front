@@ -2,23 +2,23 @@ import { useMemo, useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import logo from '/src/assets/icons/logo.svg';
 
-import Header from '../../components/Header';
-import SideBar from '../../components/SideBar';
-import Modal from '../../components/Modal';
-import { useModalStore } from '../../stores/ModalStore';
-import { useBookshelfStore } from '../../stores/BookshelfStore';
-import { useSidebarStore } from '../../stores/SidebarStore';
+import Header from '../../../components/Header';
+import SideBar from '../../../components/SideBar';
+import Modal from '../../../components/Modal';
+import { useModalStore } from '../../../stores/ModalStore';
+import { useBookshelfStore } from '../../../stores/BookshelfStore';
+import { useSidebarStore } from '../../../stores/SidebarStore';
 
-import type { BookshelfTabKey } from '../../types/bookshelf.type';
-import { tabToStatus } from '../../types/bookshelf.type';
-import { filterByTab, isBookshelfTabKey } from '../../utils/bookshelf.utils';
+import type { BookshelfTabKey } from '../../../types/bookshelf.type';
+import { tabToStatus } from '../../../types/bookshelf.type';
+import { filterByTab, isBookshelfTabKey } from '../../../utils/bookshelf.utils';
 
-import BookshelfTabs from '../../components/Bookshelf/BookshelfTabs';
-import BookshelfToolbar from '../../components/Bookshelf/BookshelfToolbar';
-import BookGrid from '../../components/Bookshelf/BookGrid';
-import EditBottomBar from '../../components/Bookshelf/EditBottomBar';
-import BookshelfFooter from '../../components/Bookshelf/BookshelfFooter';
-import { toggleBookLike } from '../../api/bookshelf.api';
+import BookshelfTabs from '../../../components/Bookshelf/BookshelfTabs';
+import BookshelfToolbar from '../../../components/Bookshelf/BookshelfToolbar';
+import BookGrid from '../../../components/Bookshelf/BookGrid';
+import EditBottomBar from '../../../components/Bookshelf/EditBottomBar';
+import BookshelfFooter from '../../../components/Bookshelf/BookshelfFooter';
+import { toggleBookLike } from '../../../api/bookshelf.api';
 
 export default function BookshelfPage() {
   const navigate = useNavigate();

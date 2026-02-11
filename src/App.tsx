@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useState } from "react";
+import { useState } from 'react';
 
 import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';
 import NonCompletePage from './pages/Main/ReadingFlow/NonCompletePage';
@@ -14,24 +14,30 @@ import ReadingPageRecordPage from './pages/Main/ReadingFlow/ReadingPageRecordPag
 import CompletePage from './pages/Main/ReadingFlow/CompletePage';
 import FinRandomQuestionPage from './pages/Main/ReadingFlow/FinRandomQuestionPage';
 
-import CommunityPage from "./pages/Community/CommunityPage";
-import BookCommunityPage from "./pages/Community/BookCommunityPage";
-import RecommendWritePage from "./pages/Recommend/RecommendwritePage";
-import RecommendCompletePage from "./pages/Recommend/RecommendCompletePage";
-import RecommendBookSearchPage from "./pages/Recommend/RecommendBookSearchPage";
-import BookShelfSearchPage from './pages/BookShelfSearchPage';
-import BookshelfPage from './pages/bookshelf/BookshelfPage';
-import BookshelfSelectPage from './pages/bookshelf/BookshelfSelectPage';
+import CommunityPage from './pages/Community/CommunityPage';
+import BookCommunityPage from './pages/Community/BookCommunityPage';
+import RecommendWritePage from './pages/Recommend/RecommendwritePage';
+import RecommendCompletePage from './pages/Recommend/RecommendCompletePage';
+import RecommendBookSearchPage from './pages/Recommend/RecommendBookSearchPage';
+import BookShelfSearchPage from './pages/Main/Bookshelf/BookShelfSearchPage';
+import BookshelfPage from './pages/Main/Bookshelf/BookshelfPage';
+import BookshelfSelectPage from './pages/Main/Bookshelf/BookshelfSelectPage';
 
 export default function App() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
   return (
     <Routes>
       {/* Bookshelf */}
-      <Route path="/bookshelf" element={<Navigate to="/bookshelf/reading" replace />} />
+      <Route
+        path="/bookshelf"
+        element={<Navigate to="/bookshelf/reading" replace />}
+      />
       <Route path="/bookshelf/:tab" element={<BookshelfPage />} />
-      <Route path="/bookshelf/:tab/select/:bookId" element={<BookshelfSelectPage />} />
+      <Route
+        path="/bookshelf/:tab/select/:bookId"
+        element={<BookshelfSelectPage />}
+      />
       <Route
         path="/bookshelf/search"
         element={
@@ -106,7 +112,6 @@ export default function App() {
           />
         }
       />
-
     </Routes>
   );
 }
