@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import axios, { AxiosError } from "axios";
+import React, { useState, useEffect } from "react";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
 import QnACard from "../QnAcard_community";
 import QnASearchTab from "./QnASearchTab";
 import QnAInputTab from "./QnAInputTab"; // QnAInputTab 컴포넌트 추가
-//import { fetchQuestions } from "../../api/Community/qna"; // API 호출 함수 임포트
-import { type Question } from "../../api/Community/qna"; // 타입 임포트
+import {
+    getBookQuestions, type BookQuestionItem, getQuestionAnswers
+    , type AnswerItem
+} from "../../api/questionApi"; // 타입 임포트
+
 
 
 type QnAView = "list" | "search" | "input";
@@ -14,24 +18,88 @@ interface QnATabProps {
 }
 
 const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
+
     const [view, setView] = useState<QnAView>("list");
     const [showMyQuestions, setShowMyQuestions] = useState(true);
     const [searchQuery, setSearchQuery] = useState(""); // 검색어
-    const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null); // 선택된 질문
-    const [questions] = useState<Question[]>([]); // 질문 목록
+    const [selectedQuestion, setSelectedQuestion] = useState<BookQuestionItem | null>(null); // 선택된 질문
+    const [questions, setQuestions] = useState<BookQuestionItem[]>([]); // 질문 목록
+    const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 
-    // 책의 질문 목록을 API에서 불러옴
-    /*useEffect(() => {
-        const fetchData = async () => {
-            if (searchQuery && bookId) {
-                const data = await fetchQuestions(searchQuery, bookId); // 책 ID와 검색어로 질문 목록 가져오기
-                setQuestions(data); // 받아온 데이터를 상태에 저장
+    const handleUpdateQuestionAnswers = (questionId: number, answers: AnswerItem[]) => {
+        setQuestions(prev =>
+            prev.map(q => q.id === questionId ? { ...q, answers } : q)
+        );
+    };
+
+    useEffect(() => {
+        if (!bookId) return;
+
+        const fetchQuestions = async () => {
+            if (!bookId) return;
+
+            try {
+                setLoading(true);
+
+                // 1️⃣ 질문 가져오기
+                const res = await getBookQuestions({
+
+                    bookId,
+                    onlyMine: false, // 서버에서 all 질문 가져오기
+                    keyword: searchQuery || undefined,
+                    size: 20,
+                });
+
+                // 2️⃣ showMyQuestions 필터 적용
+                const filteredQuestions = showMyQuestions
+                    ? res.result.questionList.filter(q => q.isMine)
+                    : res.result.questionList;
+
+                // 3️⃣ 각 질문별 답변 가져오기
+                const questionsWithAnswers = await Promise.all(
+                    filteredQuestions.map(async (q) => {
+                        try {
+                            const ansRes = await getQuestionAnswers(q.id);
+                            return { ...q, answers: ansRes.result.ansList };
+                        } catch {
+                            return { ...q, answers: [] };
+                        }
+                    })
+                );
+
+                // 4️⃣ 상태 업데이트
+                setQuestions(questionsWithAnswers);
+
+            } catch (error: unknown) {
+                console.error("질문 목록 조회 실패:", error);
+
+                // 🔹 독서 세션 없을 때 처
+                if (axios.isAxiosError(error)) {
+                    const axiosError = error as AxiosError<{ code?: string; message?: string }>;
+
+                    if (axiosError.response?.data?.code === "READING_404") {
+                        setErrorMessage("이 책에 대한 독서 세션이 없습니다.");
+                    } else if (axiosError.response?.status === 403) {
+                        setErrorMessage("권한이 없어 질문을 불러올 수 없습니다.");
+                    } else {
+                        setErrorMessage("질문 목록을 불러오는 중 오류가 발생했습니다.");
+                    }
+                } else if (error instanceof Error) {
+                    // 일반 JS 오류
+                    setErrorMessage(error.message);
+                } else {
+                    setErrorMessage("알 수 없는 오류가 발생했습니다.");
+                }
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchData();
-    }, [searchQuery, bookId]); // 검색어와 책 ID가 변경될 때마다 호출*/
+
+        fetchQuestions();
+    }, [bookId, showMyQuestions, searchQuery]);
 
 
 
@@ -44,7 +112,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                 showMyQuestions={showMyQuestions}
                 onToggleQuestions={() => setShowMyQuestions((prev) => !prev)}
                 onBack={() => setView("list")}
-                onSelectQuestion={(question: Question) => {
+                onSelectQuestion={(question: BookQuestionItem) => {
                     setSelectedQuestion(question);
                     setView("input");
                 }}
@@ -61,6 +129,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                 onBack={() => setView("list")}
                 showMyQuestions={showMyQuestions}
                 onToggleQuestions={() => setShowMyQuestions((prev) => !prev)}
+                onUpdateQuestionAnswers={handleUpdateQuestionAnswers}
             />
         );
     }
@@ -68,9 +137,10 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
 
 
     // 질문 목록 필터링
-    const myQuestions = questions.filter((q) => q.type === "USER");
-    const allQuestions = questions.filter((q) => q.type !== "USER");
-    const filteredQuestions = showMyQuestions ? myQuestions : allQuestions;
+    const filteredQuestions = questions;
+
+
+
 
     return (
         <div className="relative flex flex-col h-full">
@@ -94,11 +164,25 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
 
             {/* 질문 & 답변 리스트 */}
             <div className="flex flex-col gap-[20px] px-[16px] py-[10px] pb-[120px]">
-                {filteredQuestions.map((q) => (
+
+                {loading && (
+                    <div className="text-center text-gray-400 py-8">
+                        질문 불러오는 중...
+                    </div>
+                )}
+
+                {errorMessage && (
+                    <div className="text-center text-red-500 py-8">
+                        {errorMessage}
+                    </div>
+                )}
+
+
+                {!loading && filteredQuestions.map((q) => (
                     <div key={q.id} className="flex flex-col gap-[12px]">
                         {/* 질문 카드 버튼 */}
                         <QnACard
-                            variant={q.isMine ? "my-question" : "question"}
+                            variant={q.type === "USER" ? "my-question" : "question"}
                             content={q.content}
                             onClick={() => {
                                 setSelectedQuestion(q); // 선택된 질문 저장

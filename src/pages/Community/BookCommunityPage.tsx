@@ -129,7 +129,7 @@ const BookCommunityPage = () => {
                     style={{ fontFamily: "Freesentation" }}
                 >
                     {loading ? "불러오는 중..." : book?.title ?? "책 정보 없음"}
-                    {book?.title}
+
                 </p>
             </div>
             <div className="sticky top-0 z-10">

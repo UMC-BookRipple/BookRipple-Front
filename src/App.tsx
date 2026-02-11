@@ -1,4 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useState } from "react";
 
 import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';
 import NonCompletePage from './pages/Main/ReadingFlow/NonCompletePage';
@@ -37,15 +38,39 @@ import ReviewDetailPage from './pages/MyPage/ReviewDetailPage';
 import ReadingRecordPage from './pages/MyPage/ReadingRecordPage';
 import GlobalSpinner from './components/common/GlobalSpinner';
 
+import CommunityPage from "./pages/Community/CommunityPage";
+import BookCommunityPage from "./pages/Community/BookCommunityPage";
+import RecommendWritePage from "./pages/Recommend/RecommendwritePage";
+import RecommendCompletePage from "./pages/Recommend/RecommendCompletePage";
+import RecommendBookSearchPage from "./pages/Recommend/RecommendBookSearchPage";
+import BookShelfSearchPage from './pages/BookShelfSearchPage';
+import BookshelfPage from './pages/bookshelf/BookshelfPage';
+import BookshelfSelectPage from './pages/bookshelf/BookshelfSelectPage';
+
 export default function App() {
+  const [searchQuery, setSearchQuery] = useState("");
+
   return (
-    <>
-      <GlobalSpinner />
-      <Routes>
-        <Route
-          path="/"
-          element={<Navigate to="/books/1/reading/timer" replace />}
-        />
+    <Routes>
+      {/* Bookshelf */}
+      <Route path="/bookshelf" element={<Navigate to="/bookshelf/reading" replace />} />
+      <Route path="/bookshelf/:tab" element={<BookshelfPage />} />
+      <Route path="/bookshelf/:tab/select/:bookId" element={<BookshelfSelectPage />} />
+      <Route
+        path="/bookshelf/search"
+        element={
+          <BookShelfSearchPage
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onBack={() => window.history.back()}
+          />
+        }
+      />
+
+      <Route
+        path="/"
+        element={<Navigate to="/books/1/reading/timer" replace />}
+      />
 
         {/* Reading Flow
       (Timer -> PageRecord -> Non/Complete -> RandomQuestion -> Review) */}
@@ -88,39 +113,24 @@ export default function App() {
 
         <Route path="/mypage/memo" element={<MyReadingMemoPage />} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
 
-        <Route path="/start" element={<StartPage />} />
-        <Route path="/oauth/kakao" element={<KakaoRedirect />} />
-        <Route path="/auth/login/local" element={<LoginPage />} />
-        <Route path="/signup/step1" element={<SignupPage />} />
-        <Route path="/signup/step2" element={<SignupPage2 />} />
-        <Route path="/signup/step3" element={<SignupPage3 />} />
-        <Route path="/signup/complete" element={<SignupCompletePage />} />
-        <Route path="/find/menu" element={<FindPage />} />
-        <Route path="/find-id/email/send" element={<FindIdPage />} />
-        <Route path="/find-password/email/send" element={<FindPasswordPage />} />
-        <Route path="/find-password/reset" element={<ResetPasswordPage />} />
-        <Route path="/policy" element={<PolicyPage />} />
+      {/* Community / Recommend */}
+      <Route path="/community" element={<CommunityPage />} />
+      <Route path="/community/book/:bookId" element={<BookCommunityPage />} />
+      <Route path="/recommend/write" element={<RecommendWritePage />} />
+      <Route path="/recommend/complete" element={<RecommendCompletePage />} />
+      <Route
+        path="/recommend/search"
+        element={
+          <RecommendBookSearchPage
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onBack={() => window.history.back()}
+          />
+        }
+      />
 
-        {/* protected (로그인 필요) */}
-
-        <Route element={<ProtectedRoute />}>
-          <Route path="/profile/edit/menu" element={<EditMenuPage />} />
-          <Route path="/profile/edit/id" element={<ProfileEditIdPage />} />
-          <Route path="/profile/edit/pw" element={<ProfileEditPwPage />} />
-
-          <Route path="/members/me/login-id" element={<IdEditPage />} />
-          <Route path="/members/me/password" element={<PasswordEditPage />} />
-
-          <Route path="/my-page/menu" element={<MyPageMenuPage />} />
-          <Route path="/questions/me" element={<ReadingQuestionPage />} />
-          <Route path="/reviews/me" element={<ReviewCommentPage />} />
-          <Route path="/reviews/me/:reviewId" element={<ReviewDetailPage />} />
-          <Route path="/memos/me" element={<MyReadingMemoPage />} />
-          <Route path="/members/me/records" element={<ReadingRecordPage />} />
-        </ Route>
-      </Routes>
-    </>
+    </Routes>
   );
 }

@@ -2,16 +2,21 @@ import React, { useState } from "react";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
 import QnACard from "../QnAcard_community";
 import TextInput from "../TextInput"; // TextInput 컴포넌트 불러오기
-import { type Question } from "../../api/Community/qna";
-import { postAnswer } from "../../api/Community/qna";
+import {
+    type BookQuestionItem,
+    createQuestionAnswer,
+    getQuestionAnswers,
+    type AnswerItem,
+} from "../../api/questionApi"; // 타입 임포트
 
 
 
 interface QnAInputTabProps {
     showMyQuestions: boolean;
     onToggleQuestions: () => void;
-    selectedQuestion: Question | null; // 선택된 질문
+    selectedQuestion: BookQuestionItem | null; // 선택된 질문
     onBack: () => void;
+    onUpdateQuestionAnswers?: (questionId: number, answers: AnswerItem[]) => void;
 }
 
 
@@ -20,21 +25,41 @@ const QnAInputTab: React.FC<QnAInputTabProps> = ({
     onToggleQuestions,
     selectedQuestion,
     //onBack,
+    onUpdateQuestionAnswers,
 }) => {
 
     const [answer, setAnswer] = useState("");
     const [toastVisible, setToastVisible] = useState(false); // 토스트 visible 상태
     const [toastMessage, setToastMessage] = useState(""); // 토스트 메시지 상태
+    const [localQuestion, setLocalQuestion] = useState<BookQuestionItem | null>(selectedQuestion);
+
 
     const handleAnswerSubmit = async () => {
         if (!answer.trim() || !selectedQuestion) return;
 
         try {
-            await postAnswer(selectedQuestion.id, answer);
+            await createQuestionAnswer({
+                questionId: selectedQuestion.id,
+                body: { content: answer }, // ContentReq 형식
+            });
+
+
 
             setToastMessage("답변이 등록되었습니다");
             setToastVisible(true);
             setAnswer("");
+
+            // ✅ 등록 후 화면 갱신: 새로운 답변 가져오기
+            const ansRes = await getQuestionAnswers(selectedQuestion.id);
+
+            setLocalQuestion({
+                ...selectedQuestion,
+                answers: ansRes.result.ansList,
+            });
+
+            onUpdateQuestionAnswers?.(selectedQuestion.id, ansRes.result.ansList);
+
+
 
             setTimeout(() => {
                 setToastVisible(false);
@@ -65,7 +90,7 @@ const QnAInputTab: React.FC<QnAInputTabProps> = ({
                             variant={selectedQuestion.isMine ? "my-question" : "question"}
                             content={selectedQuestion.content}
                         />
-                        {selectedQuestion.answers?.map((answer) => (
+                        {localQuestion?.answers?.map((answer) => (
                             <QnACard
                                 key={answer.id}
                                 variant="answer"

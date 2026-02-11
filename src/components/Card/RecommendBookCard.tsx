@@ -2,24 +2,33 @@ import LikeIcon from "../../assets/icons/M-like1.svg";
 import LikeActiveIcon from "../../assets/icons/M-like2.svg";
 import { useState } from "react";
 import { type RecommendBook } from "../../types/recommendbook";
-import { toggleLikeBook } from "../../api/Community/bookLike";
+import { toggleLikeBook, cancelLikeBook } from "../../api/Community/bookLike";
 
 
 
 interface RecommendBookCardProps {
     book: RecommendBook;
+    onLikeUpdate: (bookId: number, liked: boolean) => void;
 }
 
-const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
-    const [liked, setLiked] = useState(false);
+const RecommendBookCard = ({ book, onLikeUpdate }: RecommendBookCardProps) => {
+    const [liked, setLiked] = useState(book.isLiked || false);
     const [showToast, setShowToast] = useState(false);
 
     const handleLikeClick = async () => {
         try {
-            const result = await toggleLikeBook(book.id);
+            let result;
+            if (liked) {
+                // 좋아요 상태가 true라면, 취소
+                result = await cancelLikeBook(book.id); // 좋아요 취소 API 호출
+            } else {
+                // 좋아요 상태가 false라면, 추가
+                result = await toggleLikeBook(book.id); // 좋아요 추가 API 호출
+            }
 
 
             setLiked(result.liked);
+            onLikeUpdate(book.id, result.liked);
 
             setShowToast(true);
             setTimeout(() => {
@@ -45,7 +54,7 @@ const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
                     />
                 </div>
                 <p className="text-[#58534E] font-[Freesentation] text-[18px] font-medium leading-normal">
-                    닉네임 자리 (API 연결 예정)
+                    {book.nickname}
                 </p>
             </div>
 
@@ -55,27 +64,19 @@ const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
 
                     {/* 추천 도서 제목 */}
                     <p className="text-[#58534E] text-[18px] font-[500] font-[Freesentation] text-center">
-                        추천 도서 제목 (추후 데이터)
+                        {book.sourceBookTitle}를 다 완독한 독자의 추천도서
                     </p>
 
                     {/* 이미지 + 텍스트 */}
                     <div className="flex flex-col items-center gap-[14px]">
 
                         {/* 이미지 */}
-                        <div
-                            className="
-                w-[117px]
-                h-[168px]
-                aspect-[39/56]
-                bg-gray-200
-                bg-center
-                bg-cover
-                bg-no-repeat
-                shadow-[0_2px_4px_rgba(0,0,0,0.25)]
-                rounded-[6px]
-              "
-                            style={{ backgroundImage: `url(${book.targetBookCover})` }}
+                        <img
+                            src={book.targetBookCover}
+                            alt={book.targetBookTitle}
+                            className="w-[117px] h-[168px] object-cover rounded-[6px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]"
                         />
+
 
                         {/* 제목 + 작가 */}
                         <div className="flex flex-col items-center">
@@ -89,7 +90,7 @@ const RecommendBookCard = ({ book }: RecommendBookCardProps) => {
 
                         {/* 추천 텍스트 */}
                         <p className="text-[#827A74] text-[16px] font-[400] font-[Freesentation] text-center">
-                            추천 내용 (추후 데이터 연결)
+                            {book.content}
                         </p>
                     </div>
                 </div>

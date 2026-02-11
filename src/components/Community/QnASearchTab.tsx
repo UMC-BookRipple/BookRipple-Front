@@ -4,12 +4,15 @@ import QnAList from "./QnAList";
 import SearchEmpty from "../Search/SearchEmpty";
 import MyQuestionsHeader from "../Button/MyQuestionHeader";
 import RecentSearchItem from "../RecentSearchItem";
-import { type Question, searchQuestions } from "../../api/Community/qna";
-import { fetchCommunitySearchHistory } from "../../api/books";
-import type { SearchHistoryItem } from "../../api/books";
-import { deleteSearchHistoryById } from "../../api/books";
-import { deleteAllSearchHistory } from "../../api/books";
-import { searchBooks } from "../../api/books"; // 가짜 검색용 API 호출 함수
+import {
+    type BookQuestionItem, searchQuestions, getQuestionAnswers,
+    fetchCommunitySearchHistory,
+    deleteSearchHistoryById, deleteAllSearchHistory
+} from "../../api/questionApi";
+import {
+    type SearchHistoryItem,
+} from "../../api/books";
+
 
 
 
@@ -20,7 +23,7 @@ interface QnASearchTabProps {
     showMyQuestions: boolean;
     onToggleQuestions: () => void;
     onBack: () => void;
-    onSelectQuestion: (question: Question) => void; // 선택된 질문 전달
+    onSelectQuestion: (question: BookQuestionItem) => void; // 선택된 질문 전달
     bookId: number; // 도서 ID 추가
 }
 
@@ -37,11 +40,37 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
     const [query, setQuery] = useState("");
     const [recentSearches, setRecentSearches] =
         useState<SearchHistoryItem[]>([]);
-    const [results, setResults] = useState<Question[]>([]);
+    const [results, setResults] = useState<BookQuestionItem[]>([]);
 
+    const handleSearch = async (keyword: string) => {
+        if (!keyword.trim() || !bookId) return;
 
+        try {
+            // 1️⃣ 질문 검색
+            const questions = await searchQuestions(bookId, keyword,);
 
+            // 2️⃣ 각 질문별 답변 가져오기
+            const questionsWithAnswers = await Promise.all(
+                questions.map(async (q) => {
+                    try {
+                        const ansRes = await getQuestionAnswers(q.id);
+                        return { ...q, answers: ansRes.result.ansList };
+                    } catch {
+                        return { ...q, answers: [] };
+                    }
+                })
+            );
 
+            setResults(questionsWithAnswers);
+
+            // 3️⃣ 커뮤니티 검색 기록 다시 조회
+            const history = await fetchCommunitySearchHistory();
+            setRecentSearches(history);
+        } catch (e) {
+            console.error("질문 검색 실패", e);
+            setResults([]);
+        }
+    };
 
 
     useEffect(() => {
@@ -66,45 +95,13 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
 
     const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key !== "Enter") return;
-        if (!query.trim() || !bookId) return;
-
-        try {
-            // 1️⃣ 질문 검색
-            const data = await searchQuestions(bookId, query);
-            // 🔥 검색 기록 저장용으로 책 검색 API를 "가짜로" 호출
-            await searchBooks(query, "COMMUNITY");
-            setResults(data);
-
-            // 2️⃣ 커뮤니티 검색 기록 다시 조회
-            const history = await fetchCommunitySearchHistory();
-            setRecentSearches(history);
-        } catch (e) {
-            console.error("질문 검색 실패", e);
-            setResults([]);
-        }
+        await handleSearch(query); // 여기서 검색 처리
     };
 
-
-
-
-
-    /** 최근 검색어 클릭 */
     const handleSelectRecent = async (keyword: string) => {
         setQuery(keyword);
         setSearchQuery(keyword);
-
-        if (!bookId) return;
-
-        try {
-            const data = await searchQuestions(bookId, keyword);
-            setResults(data);
-
-            const history = await fetchCommunitySearchHistory();
-            setRecentSearches(history);
-        } catch (e) {
-            console.error("질문 검색 실패", e);
-            setResults([]);
-        }
+        await handleSearch(keyword); // 최근 검색어 클릭 시에도 답변 포함 검색
     };
 
 
@@ -130,6 +127,10 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
         setRecentSearches([]);
     };
 
+    /** showMyQuestions 적용한 필터링 */
+    const filteredResults = showMyQuestions
+        ? results.filter((q) => q.isMine)
+        : results;
 
 
 
@@ -187,15 +188,15 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
 
                         </div>
                     </>
-                ) : results.length === 0 ? (
+                ) : filteredResults.length === 0 ? (
                     <SearchEmpty />
                 ) : (
                     <>
                         <div className="mb-[10px] text-[#827A74]">
-                            총 {results.length}건의 검색 결과가 있습니다.
+                            총 {filteredResults.length}건의 검색 결과가 있습니다.
                         </div>
                         <QnAList
-                            questions={results}
+                            questions={filteredResults}
                             onSelectQuestion={onSelectQuestion} // 클릭 시 부모에 전달
                         />
                     </>
