@@ -1,10 +1,10 @@
-import BookTitleLabel from "../components/BookTitleLabel"
-import Divider from "../components/Divider"
-import MenuBarItems from "../components/MenuBarItems"
-import Header from "../components/Header"
-import QuestionBox from "../components/QuestionBox"
+import BookTitleLabel from "../../components/BookTitleLabel.tsx"
+import Divider from "../../components/Divider.tsx"
+import MenuBarItems from "../../components/MenuBarItems.tsx"
+import Header from "../../components/Header.tsx"
+import QuestionBox from "../../components/QuestionBox.tsx"
 import { useEffect, useState } from 'react';
-import { getMyQuestions, deleteQuestion, type MyQuestionItem } from "../api/questionApi.ts";
+import { getMyQuestions, deleteQuestion, type MyQuestionItem } from "../../api/questionApi.ts";
 
 const ReadingQuestionPage = () => {
     const [questions, setQuestions] = useState<MyQuestionItem[]>([]);

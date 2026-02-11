@@ -1,15 +1,15 @@
-import BookTitleLabel from "../components/BookTitleLabel";
-import Divider from "../components/Divider";
-import MenuBarItems from "../components/MenuBarItems";
-import Header from "../components/Header";
-import MyRecordBox from "../components/MyRecordBox";
+import BookTitleLabel from "../../components/BookTitleLabel";
+import Divider from "../../components/Divider";
+import MenuBarItems from "../../components/MenuBarItems";
+import Header from "../../components/Header";
+import MyRecordBox from "../../components/MyRecordBox";
 import {
     getMyRecommendations,
     updateRecommendation,
     deleteRecommendation,
-} from "../api/recommend";
+} from "../../api/recommend";
 import { useEffect, useState, useCallback } from "react";
-import { type MyRecommendation } from "../api/recommend";
+import { type MyRecommendation } from "../../api/recommend";
 
 const RecommendBookPage = () => {
     const [records, setRecords] = useState<MyRecommendation[]>([]);

@@ -19,9 +19,9 @@ import BookCommunityPage from "./pages/Community/BookCommunityPage";
 import RecommendWritePage from "./pages/Recommend/RecommendwritePage";
 import RecommendCompletePage from "./pages/Recommend/RecommendCompletePage";
 import RecommendBookSearchPage from "./pages/Recommend/RecommendBookSearchPage";
-import RecommendBookPage from "./pages/RecommendBookPage";
-import ReadingQuestionPage from "./pages/ReadingQuestionPage";
-import ReadingAnswerPage from "./pages/ReadingAnswerPage";
+import RecommendBookPage from "./pages/MyPage/RecommendBookPage";
+import ReadingQuestionPage from "./pages/MyPage/ReadingQuestionPage";
+import ReadingAnswerPage from "./pages/MyPage/ReadingAnswerPage";
 
 
 export default function App() {
