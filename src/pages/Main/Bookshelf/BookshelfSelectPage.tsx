@@ -91,7 +91,7 @@ export default function BookshelfSelectPage() {
           progressPercent: response.result.progressPercent ?? 0, // null/undefined일 경우 0으로 설정
           currentPage: Math.round(
             ((response.result.progressPercent ?? 0) / 100) *
-              response.result.totalPages,
+            response.result.totalPages,
           ),
           bookId: response.result.bookId,
         };
@@ -175,9 +175,16 @@ export default function BookshelfSelectPage() {
     navigate('/recommend/write', { state: bookState });
   };
 
-  const handleViewRecommendations = () => {
-    // 커뮤니티 홈으로 이동
-    navigate('/community');
+  const handleWriteRecommendations = () => {
+    if (!book) return;
+
+    const bookState = {
+      bookId: book.bookId,
+      imageUrl: book.coverUrl,
+      title: book.title,
+    };
+
+    navigate("/recommend/search", { state: bookState });
   };
 
   // 로딩 중
@@ -228,9 +235,8 @@ export default function BookshelfSelectPage() {
                     key={t.key}
                     type="button"
                     onClick={() => handleTabChange(t.key)}
-                    className={`relative flex h-[40px] items-center justify-center self-stretch px-[10px] py-[8px] font-[Freesentation] text-[16px] leading-normal text-[#58534E] transition-colors ${
-                      isActive ? 'font-bold' : 'font-normal'
-                    }`}
+                    className={`relative flex h-[40px] items-center justify-center self-stretch px-[10px] py-[8px] font-[Freesentation] text-[16px] leading-normal text-[#58534E] transition-colors ${isActive ? 'font-bold' : 'font-normal'
+                      }`}
                   >
                     {t.label}
                     {isActive && (
@@ -315,8 +321,8 @@ export default function BookshelfSelectPage() {
               <Button variant="secondary" onClick={handleWriteReview}>
                 감상평 작성
               </Button>
-              <Button variant="secondary" onClick={handleViewRecommendations}>
-                추천 도서 보기
+              <Button variant="secondary" onClick={handleWriteRecommendations}>
+                추천 도서 작성
               </Button>
             </>
           ) : (

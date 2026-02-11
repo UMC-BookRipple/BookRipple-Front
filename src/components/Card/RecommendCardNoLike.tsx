@@ -30,7 +30,7 @@ const RecommendBookCardNoLike = ({ book }: RecommendBookCardNoLikeProps) => {
                     />
                 </div>
                 <p className="text-[#58534E] font-[Freesentation] text-[18px] font-medium leading-normal">
-                    닉네임 자리 (API 연결 예정)
+                    {book.recommenderName}
                 </p>
             </div>
 
