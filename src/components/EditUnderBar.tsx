@@ -25,9 +25,8 @@ const EditUnderBar = ({
       <button
         type="button"
         // 기능: 비활성화 시 회색 처리 로직 포함
-        className={`font-weight-[500] cursor-pointer text-[16px] ${
-          deleteDisabled ? 'text-[#D9D6D2]' : 'text-[#D75D59]'
-        }`}
+        className={`font-weight-[500] cursor-pointer text-[16px] ${deleteDisabled ? 'text-[#D9D6D2]' : 'text-[#D75D59]'
+          }`}
         onClick={onDelete}
         disabled={deleteDisabled}
       >
