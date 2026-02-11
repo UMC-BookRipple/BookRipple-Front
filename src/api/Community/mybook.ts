@@ -1,5 +1,5 @@
 // src/api/library.ts
-import api from "../axios";
+import { http } from "../../types/http";
 import { type LibraryBook } from "../../types/mybook";
 
 export type LibraryStatus = "LIKED" | "READING" | "COMPLETED";
@@ -17,7 +17,7 @@ export const getMyLibraryBooks = async (
     status: LibraryStatus,
     lastId?: number
 ): Promise<LibraryResponse> => {
-    const res = await api.get("/v1/library/books", {
+    const res = await http.get("/api/v1/library/books", {
         params: {
             status,
             lastId,

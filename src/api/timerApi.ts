@@ -1,4 +1,4 @@
-import { http } from './http';
+import { http } from '../types/http';
 
 export interface ApiResponse<T> {
   isSuccess: boolean;

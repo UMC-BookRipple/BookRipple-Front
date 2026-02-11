@@ -1,4 +1,4 @@
-import api from "../axios";
+import { http } from "../../types/http";
 
 interface LikeBookResult {
   bookId: number;
@@ -6,7 +6,7 @@ interface LikeBookResult {
 }
 
 export const toggleLikeBook = async (bookId: number): Promise<LikeBookResult> => {
-  const res = await api.post(`/v1/books/likes/${bookId}`);
+  const res = await http.post(`/api/v1/books/likes/${bookId}`);
 
   if (!res.data?.isSuccess || !res.data.result) {
     throw new Error("좋아요 처리 실패");
@@ -18,7 +18,7 @@ export const toggleLikeBook = async (bookId: number): Promise<LikeBookResult> =>
 // 좋아요 취소 API 함수
 export const cancelLikeBook = async (bookId: number): Promise<LikeBookResult> => {
   try {
-    const res = await api.delete(`/v1/books/likes/${bookId}`); // DELETE 요청으로 취소 처리
+    const res = await http.delete(`/api/v1/books/likes/${bookId}`); // DELETE 요청으로 취소 처리
 
     if (res.data.isSuccess) {
       return res.data.result; // liked: false로 변경

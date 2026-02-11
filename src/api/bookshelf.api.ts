@@ -3,9 +3,7 @@ import type {
   BookStatus,
   BookDetailApiResponse,
 } from '../types/bookshelf.type';
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const ACCESS_TOKEN = import.meta.env.VITE_ACCESS_TOKEN;
+import { http } from '../types/http';
 
 /* 책장 아이템 조회 파라미터 */
 export interface FetchBooksParams {
@@ -24,30 +22,18 @@ export const fetchBooksByStatus = async ({
   lastId,
   size = 20,
 }: FetchBooksParams): Promise<BookshelfApiResponse> => {
-  const params = new URLSearchParams({
+  const params: any = {
     status,
-    size: size.toString(),
-  });
+    size,
+  };
 
   if (lastId !== undefined) {
-    params.append('lastId', lastId.toString());
+    params.lastId = lastId;
   }
 
-  const url = `${BASE_URL}/api/v1/library/books?${params.toString()}`;
-
   try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch books: ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    const response = await http.get('/api/v1/library/books', { params });
+    const data = response.data;
 
     if (!data.isSuccess) {
       throw new Error(data.message || 'API request failed');
@@ -68,21 +54,9 @@ export const fetchBooksByStatus = async ({
 export const fetchBookDetail = async (
   bookId: number,
 ): Promise<BookDetailApiResponse> => {
-  const url = `${BASE_URL}/api/v1/library/books/${bookId}`;
-
   try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch book detail: ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    const response = await http.get(`/api/v1/library/books/${bookId}`);
+    const data = response.data;
 
     if (!data.isSuccess) {
       throw new Error(data.message || 'API request failed');
@@ -104,19 +78,11 @@ export const toggleBookLike = async (
   bookId: number,
   isLiked: boolean,
 ): Promise<void> => {
-  const url = `${BASE_URL}/api/v1/books/likes/${bookId}`;
-  const method = isLiked ? 'DELETE' : 'POST';
-
   try {
-    const response = await fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to toggle like: ${response.statusText}`);
+    if (isLiked) {
+      await http.delete(`/api/v1/books/likes/${bookId}`);
+    } else {
+      await http.post(`/api/v1/books/likes/${bookId}`);
     }
   } catch (error) {
     console.error('❌ Toggle like error:', error);
@@ -133,21 +99,10 @@ export const deleteLibraryBooks = async (
   libraryItemIds: number[],
   status: BookStatus,
 ): Promise<void> => {
-  const url = `${BASE_URL}/api/v1/library/books/delete?status=${status}`;
-
   try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-      body: JSON.stringify({ bookIds: libraryItemIds }),
+    await http.post(`/api/v1/library/books/delete?status=${status}`, {
+      bookIds: libraryItemIds,
     });
-
-    if (!response.ok) {
-      throw new Error(`Failed to delete books: ${response.statusText}`);
-    }
   } catch (error) {
     console.error('❌ Delete books error:', error);
     throw error;
@@ -165,19 +120,8 @@ export const addBookToBookshelf = async (
 ): Promise<number> => {
   try {
     // 1. 알라딘 도서 정보를 DB에 등록/조회하여 bookId 획득
-    const url = `${BASE_URL}/api/v1/books/aladin/${aladinItemId}`;
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch/register book: ${response.statusText}`);
-    }
-
-    const data = await response.json();
+    const response = await http.get(`/api/v1/books/aladin/${aladinItemId}`);
+    const data = response.data;
 
     if (!data.isSuccess || !data.result) {
       throw new Error(data.message || 'Failed to fetch/register book');
@@ -186,23 +130,10 @@ export const addBookToBookshelf = async (
     const { bookId } = data.result;
 
     // 2. 독서 시작(reading/start) API 호출하여 내 책장(읽고 있는 책)에 추가
-    const readingUrl = `${BASE_URL}/api/v1/reading/start`;
-    const readingResponse = await fetch(readingUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${ACCESS_TOKEN}`,
-      },
-      body: JSON.stringify({
-        bookId: bookId,
-      }),
+    const readingResponse = await http.post('/api/v1/reading/start', {
+      bookId: bookId,
     });
-
-    if (!readingResponse.ok) {
-      throw new Error(`Failed to start reading: ${readingResponse.statusText}`);
-    }
-
-    const readingData = await readingResponse.json();
+    const readingData = readingResponse.data;
 
     if (!readingData.isSuccess) {
       throw new Error(readingData.message || 'Failed to start reading');

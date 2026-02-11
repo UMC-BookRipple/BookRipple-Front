@@ -1,4 +1,4 @@
-import api from "../axios";
+import { http } from "../../types/http";
 import { type Review } from "../../types/review";
 
 export interface ReviewResult {
@@ -22,9 +22,9 @@ export const fetchReviews = async ({
     lastId,
 }: FetchReviewParams): Promise<ReviewApiResponse> => {
     const url = lastId
-        ? `/v1/books/${bookId}/reviews?lastId=${lastId}`
-        : `/v1/books/${bookId}/reviews`;
+        ? `/api/v1/books/${bookId}/reviews?lastId=${lastId}`
+        : `/api/v1/books/${bookId}/reviews`;
 
-    const { data } = await api.get<ReviewApiResponse>(url);
+    const { data } = await http.get<ReviewApiResponse>(url);
     return data;
 };

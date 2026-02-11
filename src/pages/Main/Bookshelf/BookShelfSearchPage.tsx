@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import SearchBar from '../components/SearchBar_deleteButton'; // 검색바 컴포넌트
-import SearchEmpty from '../components/Search/SearchEmpty'; // 검색 결과 없을 때
-import SearchResult from '../components/Bookshelf/BookshelfSearchResult'; // 검색 결과 리스트
-import RecentSearchItem from '../components/RecentSearchItem';
+import Header from '../../../components/Header';
+import SearchBar from '../../../components/SearchBar_deleteButton'; // 검색바 컴포넌트
+import SearchEmpty from '../../../components/Search/SearchEmpty'; // 검색 결과 없을 때
+import SearchResult from '../../../components/Bookshelf/BookshelfSearchResult'; // 검색 결과 리스트
+import RecentSearchItem from '../../../components/RecentSearchItem';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -13,8 +13,8 @@ import {
   type SearchHistoryItem,
   deleteSearchHistoryById,
   deleteAllSearchHistory,
-} from '../api/books';
-import { addBookToBookshelf } from '../api/bookshelf.api';
+} from '../../../api/books';
+import { addBookToBookshelf } from '../../../api/bookshelf.api';
 
 interface RecommendBookSearchPageProps {
   searchQuery: string;

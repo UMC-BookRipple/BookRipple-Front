@@ -8,7 +8,7 @@ interface BookShelfResultCardProps {
   author: string;
   publisher: string;
   pageCount: number;
-  onSelect: (aladinItemId: number) => void;
+  onSelect: (aladinItemId: number) => Promise<void>;
 }
 
 const BookShelfResultCard = ({
@@ -23,18 +23,24 @@ const BookShelfResultCard = ({
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
 
-  const handleRegister = () => {
-    //  부모로 선택 이벤트 전달 (책장 등록 API 연결용)
-    console.log('책장에 추가:', aladinItemId);
+  const handleRegister = async () => {
+    try {
+      // 부모로 선택 이벤트 전달 (책장 등록 API 호출)
+      console.log('책장에 추가:', aladinItemId);
+      await onSelect(aladinItemId);
 
-    //  토스트 표시
-    setShowToast(true);
+      // 토스트 표시
+      setShowToast(true);
 
-    //  2초 후 책장 페이지로 이동
-    setTimeout(() => {
-      setShowToast(false);
-      navigate('/bookshelf'); //  책장 페이지 경로 (이 부분 수정 필요)
-    }, 2000);
+      // 2초 후 책장 페이지로 이동
+      setTimeout(() => {
+        setShowToast(false);
+        navigate('/bookshelf/reading');
+      }, 2000);
+    } catch (error) {
+      console.error('책장 등록 실패:', error);
+      alert('책을 책장에 추가하는데 실패했습니다.');
+    }
   };
 
   return (

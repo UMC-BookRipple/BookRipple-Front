@@ -1,25 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import logo from '/src/assets/icons/logo.svg';
 import likeIcon from '/src/assets/icons/M-like1.svg';
 import likedIcon from '/src/assets/icons/M-like2.svg';
 
-import Header from '../../components/Header';
-import SideBar from '../../components/SideBar';
-import ReadingProgress from '../../components/ReadingProgress';
-import Button from '../../components/Button';
-import BookshelfSection from '../../components/Bookshelf/BookshelfSection';
+import Header from '../../../components/Header';
+import ReadingProgress from '../../../components/ReadingProgress';
+import Button from '../../../components/Button';
+import BookshelfSection from '../../../components/Bookshelf/BookshelfSection';
 
-import type { BookshelfTabKey, BookItem } from '../../types/bookshelf.type';
-import { isBookshelfTabKey } from '../../utils/bookshelf.utils';
+import type { BookshelfTabKey, BookItem } from '../../../types/bookshelf.type';
+import { isBookshelfTabKey } from '../../../utils/bookshelf.utils';
 import {
   fetchBookDetail,
   toggleBookLike,
   fetchBooksByStatus,
-} from '../../api/bookshelf.api';
-import type { ApiBookItem } from '../../types/bookshelf.type';
-import { statusToTab } from '../../types/bookshelf.type';
-import { useSidebarStore } from '../../stores/SidebarStore';
+} from '../../../api/bookshelf.api';
+import type { ApiBookItem } from '../../../types/bookshelf.type';
+import { statusToTab } from '../../../types/bookshelf.type';
+import {
+  fetchMyBookMemoList,
+  type MemoItem,
+} from '../../../api/memoApi';
 
 const TABS: Array<{ key: BookshelfTabKey; label: string }> = [
   { key: 'reading', label: '진행 중 도서' },
@@ -35,8 +37,9 @@ export default function BookshelfSelectPage() {
   const [book, setBook] = useState<BookItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { isOpen, close } = useSidebarStore();
 
+  // 독서메모 상태
+  const [memos, setMemos] = useState<MemoItem[]>([]);
   const tabParam = params.tab ?? 'reading';
   const tab: BookshelfTabKey = isBookshelfTabKey(tabParam)
     ? tabParam
@@ -109,6 +112,26 @@ export default function BookshelfSelectPage() {
     loadBookDetail();
   }, [bookId]);
 
+  // 메모 목록 불러오기
+  const loadMemos = useCallback(async () => {
+    if (!bookId) return;
+    try {
+      const res = await fetchMyBookMemoList(Number(bookId), undefined, 50);
+      if (res.isSuccess) {
+        setMemos(res.result.items ?? []);
+      }
+    } catch (e) {
+      console.error('메모 목록 조회 실패:', e);
+    }
+  }, [bookId]);
+
+  // 독서메모 토글 열릴 때 메모 목록 불러오기
+  useEffect(() => {
+    if (isMemoOpen) {
+      void loadMemos();
+    }
+  }, [isMemoOpen, loadMemos]);
+
   const handleLikeToggle = async () => {
     if (!book || !book.bookId) return;
 
@@ -134,6 +157,27 @@ export default function BookshelfSelectPage() {
   const handleStartReading = () => {
     if (!book || !book.bookId) return;
     navigate(`/books/${book.bookId}/reading/timer`);
+  };
+
+  const handleWriteReview = () => {
+    if (!book || !book.bookId) return;
+
+    // BookState 형식으로 데이터 변환하여 감상평 작성 페이지로 이동
+    const bookState = {
+      bookId: book.bookId,
+      imageUrl: book.coverUrl,
+      title: book.title,
+      author: book.author || '',
+      publisher: book.publisher || '',
+      pageCount: book.pages || 0,
+    };
+
+    navigate('/recommend/write', { state: bookState });
+  };
+
+  const handleViewRecommendations = () => {
+    // 커뮤니티 홈으로 이동
+    navigate('/community');
   };
 
   // 로딩 중
@@ -166,7 +210,6 @@ export default function BookshelfSelectPage() {
   return (
     <div className="min-h-screen bg-[#F7F5F1]">
       <Header />
-      <SideBar isOpen={isOpen} onClose={close} />
 
       <div className="mx-auto w-full max-w-[402px] bg-[#F7F5F1]">
         {/* Logo Section */}
@@ -269,8 +312,12 @@ export default function BookshelfSelectPage() {
         <div className="mt-[15px] flex flex-col items-center justify-center gap-[10px] self-stretch px-[16px] py-0">
           {isFinishedView ? (
             <>
-              <Button variant="secondary">감상평 작성</Button>
-              <Button variant="secondary">추천 도서 보기</Button>
+              <Button variant="secondary" onClick={handleWriteReview}>
+                감상평 작성
+              </Button>
+              <Button variant="secondary" onClick={handleViewRecommendations}>
+                추천 도서 보기
+              </Button>
             </>
           ) : (
             <Button variant="primary" onClick={handleStartReading}>
@@ -288,40 +335,38 @@ export default function BookshelfSelectPage() {
             isOpen={isMemoOpen}
             onToggle={() => setIsMemoOpen((prev) => !prev)}
           >
-            {/* Mock memo data - 추후 API 연동 */}
-            {[
-              {
-                id: '1',
-                title: '제목',
-                content:
-                  '물결이 잔잔한 오후, 창가에 앉아 커피를 한 모금 마셨다. 오래 미뤄둔 메모장을 펼치자 머릿속에 흩어져 있던 생각들이 천천히 줄을 맞추기 시작했다. 오늘은 거창한 목표 대신, 작은 일을 하나씩 끝내는 날로 정했다.',
-              },
-            ].map((memo) => (
-              <button
-                key={memo.id}
-                type="button"
-                onClick={() => {
-                  // 메모 페이지 라우팅 필요
-                  console.log('Navigate to memo:', memo.id);
-                }}
-                className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[16px] py-[10px]"
-              >
-                <div className="flex-1 text-left font-[Freesentation] text-[16px] leading-snug font-[500] text-[#58534E]">
-                  {memo.title}
-                  <br />
-                  <br />
-                  {memo.content}
+            {/* 저장된 메모 목록 */}
+            {memos.length === 0 ? (
+              <div className="flex w-full items-center justify-center rounded-[10px] bg-white px-[16px] py-[20px]">
+                <span className="font-[Freesentation] text-[14px] text-[#A6A29C]">
+                  작성된 내용이 없습니다.
+                </span>
+              </div>
+            ) : (
+              memos.map((memo) => (
+                <div
+                  key={memo.memoId}
+                  className="flex w-full flex-col gap-[6px] self-stretch rounded-[10px] bg-white px-[16px] py-[10px]"
+                >
+                  <span className="font-[Freesentation] text-[16px] font-[500] text-[#58534E]">
+                    {memo.memoTitle}
+                  </span>
+                  {memo.page && memo.page !== '0' && (
+                    <span className="font-[Freesentation] text-[12px] text-[#A6A29C]">
+                      p.{memo.page}
+                    </span>
+                  )}
+                  <p className="font-[Freesentation] text-[14px] leading-snug font-normal text-[#58534E]">
+                    {memo.context}
+                  </p>
                 </div>
-              </button>
-            ))}
+              ))
+            )}
 
-            {/* Write button */}
+            {/* 작성하기 버튼 → 메모 목록 페이지로 이동 */}
             <button
               type="button"
-              onClick={() => {
-                // 메모 작성 페이지 라우팅
-                console.log('Navigate to write memo');
-              }}
+              onClick={() => navigate(`/books/${bookId}/memos`)}
               className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[12px] py-[14px]"
             >
               <span className="flex-1 text-center font-[Freesentation] text-[16px] leading-normal font-[500] text-[#58534E]">
@@ -335,7 +380,8 @@ export default function BookshelfSelectPage() {
             title="질문답변"
             type="navigation"
             onClick={() => {
-              console.log('Navigate to Q&A');
+              // 커뮤니티 홈으로 이동
+              navigate('/community');
             }}
           />
 
@@ -344,7 +390,8 @@ export default function BookshelfSelectPage() {
             title="사람들의 질문 답변"
             type="navigation"
             onClick={() => {
-              console.log('Navigate to community Q&A');
+              // 커뮤니티 홈으로 이동
+              navigate('/community');
             }}
           />
         </div>

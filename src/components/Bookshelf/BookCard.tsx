@@ -75,7 +75,7 @@ export default function BookCard({
         )}
       </div>
 
-      <div className="mt-[5px] flex w-full items-center self-stretch py-[5px] font-[Freesentation] text-[14px] leading-tight font-medium text-[#58534E]">
+      <div className="mt-[5px] w-full truncate py-[5px] font-[Freesentation] text-[14px] leading-tight font-medium text-[#58534E]">
         {book.title}
       </div>
     </button>

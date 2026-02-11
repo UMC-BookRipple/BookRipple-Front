@@ -1,5 +1,5 @@
 // src/api/books.ts
-import api from "./axios"; // 아까 만든 axios instance
+import { http } from "../types/http";
 
 export interface Book {
     aladinItemId: number;
@@ -85,8 +85,19 @@ interface DeleteHistoryResponse {
 export const getBookDetailByAladinId = async (
     aladinItemId: number
 ): Promise<BookDetail> => {
-    const response = await api.get<BookDetailResponse>(
-        `/v1/books/aladin/${aladinItemId}`
+    const response = await http.get<BookDetailResponse>(
+        `/api/v1/books/aladin/${aladinItemId}`
+    );
+
+    return response.data.result;
+};
+
+// 내부 bookId로 책 상세 정보 조회 (aladinItemId 포함)
+export const getBookDetailByBookId = async (
+    bookId: number
+): Promise<BookDetail> => {
+    const response = await http.get<BookDetailResponse>(
+        `/api/v1/books/${bookId}`
     );
 
     return response.data.result;
@@ -98,7 +109,7 @@ export const searchBooks = async (keyword: string,
     type: "BOOK" | "COMMUNITY" = "BOOK"
 ) => {
     try {
-        const response = await api.get<SearchResponse>("/v1/books/aladin/search", {
+        const response = await http.get<SearchResponse>("/api/v1/books/aladin/search", {
             params: {
                 keyword,
                 start: 1,
@@ -118,8 +129,8 @@ export const searchBooks = async (keyword: string,
 // 🔍 커뮤니티 검색 기록 조회
 export const fetchCommunitySearchHistory = async (): Promise<SearchHistoryItem[]> => {
     try {
-        const response = await api.get<SearchHistoryResponse>(
-            "/v1/books/search/history",
+        const response = await http.get<SearchHistoryResponse>(
+            "/api/v1/books/search/history",
             {
                 params: {
                     type: "COMMUNITY",
@@ -140,8 +151,8 @@ export const fetchCommunitySearchHistory = async (): Promise<SearchHistoryItem[]
 };
 
 export const deleteAllSearchHistory = async (type: "BOOK" | "COMMUNITY") => {
-    const response = await api.delete<DeleteAllHistoryResponse>(
-        "/v1/books/search/history",
+    const response = await http.delete<DeleteAllHistoryResponse>(
+        "/api/v1/books/search/history",
         { params: { type } }
     );
     if (!response.data.isSuccess) throw new Error(response.data.message);
@@ -151,8 +162,8 @@ export const deleteAllSearchHistory = async (type: "BOOK" | "COMMUNITY") => {
 export const deleteSearchHistoryById = async (
     historyId: number
 ): Promise<boolean> => {
-    const response = await api.delete<DeleteHistoryResponse>(
-        `/v1/books/search/history/${historyId}`
+    const response = await http.delete<DeleteHistoryResponse>(
+        `/api/v1/books/search/history/${historyId}`
     );
 
     if (!response.data.isSuccess) {
@@ -165,8 +176,8 @@ export const deleteSearchHistoryById = async (
 // 🔍 BOOK 타입 검색 기록 조회
 export const fetchBookSearchHistory = async (): Promise<SearchHistoryItem[]> => {
     try {
-        const response = await api.get<SearchHistoryResponse>(
-            "/v1/books/search/history",
+        const response = await http.get<SearchHistoryResponse>(
+            "/api/v1/books/search/history",
             {
                 params: {
                     type: "BOOK",
