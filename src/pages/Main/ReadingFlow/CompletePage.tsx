@@ -98,7 +98,7 @@ export default function CompletePage() {
     };
   }, []);
 
-  const totalReadingTime = state?.totalReadingTime ?? 0;
+  const readingTime = state?.readingTime ?? 0;
 
   const progressValue = useMemo(() => {
     const p = Number(state?.progress ?? 100);
@@ -107,13 +107,13 @@ export default function CompletePage() {
   }, [state?.progress]);
 
   const readingTimeLabel = useMemo(
-    () => formatHHMMSS(totalReadingTime),
-    [totalReadingTime],
+    () => formatHHMMSS(readingTime),
+    [readingTime],
   );
 
   const readingTimeSummary = useMemo(
-    () => formatKoreanDuration(totalReadingTime),
-    [totalReadingTime],
+    () => formatKoreanDuration(readingTime),
+    [readingTime],
   );
 
   const currentQuestion = useMemo(() => {
