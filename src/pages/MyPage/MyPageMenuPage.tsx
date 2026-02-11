@@ -137,10 +137,10 @@ const MyPageMenuPage = () => {
 
             <div className="w-full flex flex-col items-start px-[24px] py-[10px] text-[16px] font-weight-[500] text-[#58534E] gap-[16px]">
                 <span onClick={() => navigate("/reviews/me")}>작성한 감상평 확인</span>
-
-                {/* 메모 API 안 보임 감상평과 동일?? */}
                 <span onClick={() => navigate("/memos/me")}>메모 전체 기록 관리</span>
-                <span onClick={() => navigate("/questions/me")}>질문 답변 전체 기록 관리</span>
+                <span onClick={() => navigate("/questions/me")}>질문 전체 기록 관리</span>
+                <span onClick={() => navigate("/answers/me")}>답변 전체 기록 관리</span>
+                <span onClick={() => navigate("/mypage/recommend")}>추천 도서 기록 관리</span>
             </div>
 
             <div className="w-full flex flex-col items-center justify-center py-[4px] px-[10px] pb-[20px]">
