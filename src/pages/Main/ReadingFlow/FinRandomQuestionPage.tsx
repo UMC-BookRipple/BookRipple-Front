@@ -116,7 +116,7 @@ export default function RandomQuestionPage() {
             className="h-[18px] w-[9px]"
             onClick={() => navigate(-1)}
           />
-          <p className="text-center font-sans text-[18px] leading-normal font-medium text-[#58534E]">
+          <p className="mx-auto max-w-[260px] truncate text-center font-sans text-[18px] leading-normal font-medium text-[#58534E]">
             {bookTitle}
           </p>
         </div>

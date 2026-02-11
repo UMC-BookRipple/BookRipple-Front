@@ -224,7 +224,7 @@ export default function NonCompletePage() {
 
       {/* 하단 */}
       <section className="flex flex-col items-center justify-center gap-[12px] self-stretch px-[20px] pt-[14px] pb-[4px]">
-        <Button onClick={() => navigate(`/${tab}/select/${bookId}`)}>
+        <Button onClick={() => navigate(`/bookshelf/${tab}/select/${bookId}`)}>
           나가기
         </Button>
       </section>

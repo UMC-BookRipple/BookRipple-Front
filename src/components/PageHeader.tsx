@@ -3,6 +3,7 @@ interface PageHeaderProps {
   depth2: string;
   actionLabel?: string;
   onAction?: () => void;
+  onBack?: () => void;
   className?: string;
 }
 
@@ -16,6 +17,7 @@ export default function PageHeader({
   depth2,
   actionLabel,
   onAction,
+  onBack,
   className = '',
 }: PageHeaderProps) {
   const depth1Clamped = clampText(depth1, 15);
@@ -26,7 +28,9 @@ export default function PageHeader({
     >
       <div className="min-w-0 flex-1 font-sans text-[16px] leading-normal font-medium text-[#58534E]">
         <div className="truncate">
-          <span>{depth1Clamped}</span>
+          <span onClick={onBack} className="cursor-pointer">
+            {depth1Clamped}
+          </span>
           <span className="mx-[10px]">&gt;</span>
           <span>{depth2}</span>
         </div>
