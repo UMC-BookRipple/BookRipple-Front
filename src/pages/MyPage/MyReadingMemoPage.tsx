@@ -61,11 +61,6 @@ export default function MyReadingMemoPage() {
 
       const items = (res.result.items ?? []) as unknown as MyMemoItem[];
       setMemos(items);
-
-      // 최초에는 "책 제목만 쭉 나열"이 아니라, 클릭하면 아래로 펼쳐지는 형태이므로
-      // 자동 펼침을 원하면 아래 2줄을 활성화하세요.
-      // const firstBookId = items[0]?.bookId;
-      // if (firstBookId) setExpandedBookIds(new Set([firstBookId]));
     } catch (e: any) {
       setError(e?.message ?? '내 메모 목록 조회 실패');
     } finally {
@@ -95,7 +90,6 @@ export default function MyReadingMemoPage() {
     return map;
   }, [memos]);
 
-  // selection은 "현재 펼쳐져서 화면에 보이는 메모" 기준으로만 동작
   const visibleMemos = useMemo(() => {
     if (expandedBookIds.size === 0) return [];
     return memos.filter((m) => expandedBookIds.has(m.bookId));
@@ -175,11 +169,11 @@ export default function MyReadingMemoPage() {
         prev.map((m) =>
           m.memoId === memoId
             ? {
-              ...m,
-              memoTitle: nextTitle,
-              context: nextContext,
-              page: nextPage,
-            }
+                ...m,
+                memoTitle: nextTitle,
+                context: nextContext,
+                page: nextPage,
+              }
             : m,
         ),
       );
@@ -197,7 +191,6 @@ export default function MyReadingMemoPage() {
       if (next.has(bookId)) {
         next.delete(bookId);
 
-        // 접는 책의 메모는 selection에서 제외(선택모드 UX 안정)
         const list = memosByBookId.get(bookId) ?? [];
         for (const m of list) removeFromSelection(m.memoId);
 
@@ -231,8 +224,9 @@ export default function MyReadingMemoPage() {
       </div>
 
       <main
-        className={`flex w-full flex-col items-stretch gap-[10px] px-[16px] py-[10px] ${isSelectionMode ? 'pb-[90px]' : ''
-          }`}
+        className={`flex w-full flex-col items-stretch gap-[10px] px-[16px] py-[10px] ${
+          isSelectionMode ? 'pb-[90px]' : ''
+        }`}
       >
         {isLoading && <p>불러오는 중...</p>}
         {error && <p className="text-red-500">{error}</p>}
@@ -252,7 +246,7 @@ export default function MyReadingMemoPage() {
                   {/* BookTitleLabel 클릭 영역 */}
                   <button
                     type="button"
-                    className="w-full text-left"
+                    className="w-full pb-[10px] text-left"
                     onClick={() => toggleBook(b.bookId)}
                   >
                     <BookTitleLabel BookTitle={b.bookTitle} />

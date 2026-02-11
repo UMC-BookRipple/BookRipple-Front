@@ -18,10 +18,7 @@ import {
 } from '../../../api/bookshelf.api';
 import type { ApiBookItem } from '../../../types/bookshelf.type';
 import { statusToTab } from '../../../types/bookshelf.type';
-import {
-  fetchMyBookMemoList,
-  type MemoItem,
-} from '../../../api/memoApi';
+import { fetchMyBookMemoList, type MemoItem } from '../../../api/memoApi';
 
 const TABS: Array<{ key: BookshelfTabKey; label: string }> = [
   { key: 'reading', label: '진행 중 도서' },
@@ -156,7 +153,10 @@ export default function BookshelfSelectPage() {
 
   const handleStartReading = () => {
     if (!book || !book.bookId) return;
-    navigate(`/books/${book.bookId}/reading/timer`);
+
+    navigate(`/books/${book.bookId}/reading/timer`, {
+      state: { resetTimer: true, from: 'BookshelfSelectPage' },
+    });
   };
 
   const handleWriteReview = () => {
