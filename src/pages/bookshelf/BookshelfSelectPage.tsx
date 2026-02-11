@@ -131,6 +131,11 @@ export default function BookshelfSelectPage() {
     navigate(`/bookshelf/${newTab}`);
   };
 
+  const handleStartReading = () => {
+    if (!book || !book.bookId) return;
+    navigate(`/books/${book.bookId}/reading/timer`);
+  };
+
   // 로딩 중
   if (isLoading) {
     return (
@@ -268,7 +273,9 @@ export default function BookshelfSelectPage() {
               <Button variant="secondary">추천 도서 보기</Button>
             </>
           ) : (
-            <Button variant="primary">독서하기</Button>
+            <Button variant="primary" onClick={handleStartReading}>
+              독서하기
+            </Button>
           )}
         </div>
 

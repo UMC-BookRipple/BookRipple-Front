@@ -19,12 +19,30 @@ import BookCommunityPage from "./pages/Community/BookCommunityPage";
 import RecommendWritePage from "./pages/Recommend/RecommendwritePage";
 import RecommendCompletePage from "./pages/Recommend/RecommendCompletePage";
 import RecommendBookSearchPage from "./pages/Recommend/RecommendBookSearchPage";
+import BookShelfSearchPage from './pages/BookShelfSearchPage';
+import BookshelfPage from './pages/bookshelf/BookshelfPage';
+import BookshelfSelectPage from './pages/bookshelf/BookshelfSelectPage';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <Routes>
+      {/* Bookshelf */}
+      <Route path="/bookshelf" element={<Navigate to="/bookshelf/reading" replace />} />
+      <Route path="/bookshelf/:tab" element={<BookshelfPage />} />
+      <Route path="/bookshelf/:tab/select/:bookId" element={<BookshelfSelectPage />} />
+      <Route
+        path="/bookshelf/search"
+        element={
+          <BookShelfSearchPage
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onBack={() => window.history.back()}
+          />
+        }
+      />
+
       <Route
         path="/"
         element={<Navigate to="/books/1/reading/timer" replace />}
