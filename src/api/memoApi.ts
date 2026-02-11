@@ -1,4 +1,4 @@
-import { http } from './http';
+import { http } from '../types/http';
 
 export type GlobalResponse<T> = {
   isSuccess: boolean;

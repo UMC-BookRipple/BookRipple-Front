@@ -40,7 +40,7 @@ const StartPage = () => {
       localStorage.setItem("memberId", result.memberId);
 
       console.log("guest login success", message);
-      navigate("/");
+      navigate("/bookshelf/reading");
 
       if (!isSuccess) {
         console.log(`${result.memberId}, ${message}`);

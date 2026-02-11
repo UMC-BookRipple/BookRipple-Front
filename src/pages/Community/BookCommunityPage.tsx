@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import ReviewTab from "../../components/Community/ReviewTab";
 import QnATab from "../../components/Community/QnATab";
 import RecommendTab from "../../components/Community/RecommendTab";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getBookDetailByAladinId, type BookDetail } from "../../api/books";
 
 
@@ -19,11 +18,15 @@ const TABS = [
 
 const BookCommunityPage = () => {
     const { bookId: aladinItemId } = useParams<{ bookId: string }>();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     const [book, setBook] = useState<BookDetail | null>(null);
     const [loading, setLoading] = useState(true);
 
-
+    // location.state에서 initialTab을 가져와서 activeIndex 초기화
+    const initialTab = (location.state as { initialTab?: number })?.initialTab ?? 0;
+    const [activeIndex, setActiveIndex] = useState(initialTab);
 
     useEffect(() => {
         if (!aladinItemId) return;
@@ -42,12 +45,6 @@ const BookCommunityPage = () => {
 
         fetchBook();
     }, [aladinItemId]);
-
-
-
-    const navigate = useNavigate();
-
-    const [activeIndex, setActiveIndex] = useState(0);
 
 
     return (

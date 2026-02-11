@@ -95,8 +95,25 @@ export default function ReadingTimerPage() {
       sessionStorage.setItem(`reading_session_${bookId ?? ''}`, String(sid));
 
       start();
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      console.error('독서 시작 오류:', e);
+
+      // 409 Conflict - 이미 진행 중인 세션이 있는 경우
+      if (e?.response?.status === 409) {
+        const existingSessionId = e?.response?.data?.result?.sessionId;
+
+        if (existingSessionId) {
+          // 기존 세션 ID를 사용
+          setSessionId(existingSessionId);
+          sessionStorage.setItem(`reading_session_${bookId ?? ''}`, String(existingSessionId));
+          start();
+          console.log('기존 독서 세션을 계속합니다:', existingSessionId);
+        } else {
+          alert('이미 진행 중인 독서 세션이 있습니다. 페이지를 새로고침해주세요.');
+        }
+      } else {
+        alert('독서 시작에 실패했습니다. 다시 시도해주세요.');
+      }
     } finally {
       startInFlightRef.current = false;
       setIsLoading(false);
@@ -119,8 +136,25 @@ export default function ReadingTimerPage() {
       sessionStorage.setItem(`reading_session_${bookId ?? ''}`, String(sid));
 
       resume();
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      console.error('독서 계속하기 오류:', e);
+
+      // 409 Conflict - 이미 진행 중인 세션이 있는 경우
+      if (e?.response?.status === 409) {
+        const existingSessionId = e?.response?.data?.result?.sessionId;
+
+        if (existingSessionId) {
+          // 기존 세션 ID를 사용
+          setSessionId(existingSessionId);
+          sessionStorage.setItem(`reading_session_${bookId ?? ''}`, String(existingSessionId));
+          resume();
+          console.log('기존 독서 세션을 계속합니다:', existingSessionId);
+        } else {
+          alert('이미 진행 중인 독서 세션이 있습니다. 페이지를 새로고침해주세요.');
+        }
+      } else {
+        alert('독서를 계속하는데 실패했습니다. 다시 시도해주세요.');
+      }
     } finally {
       startInFlightRef.current = false;
       setIsLoading(false);

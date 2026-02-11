@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import BookShelfResultCard from './BookShelfSearchResultCard'; // 카드만 변경
+import BookShelfResultCard from '././BookShelfSearchResultCard'; // 카드만 변경
 import { searchBooks, type Book } from '../../api/books';
 
 interface BookShelfSearchResultProps {

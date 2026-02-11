@@ -36,7 +36,7 @@ const LoginPage = () => {
                 localStorage.setItem("memberId", result.memberId);
 
                 console.log("로그인 성공", result);
-                navigate("/");
+                navigate("/bookshelf/reading");
             } else {
                 console.log(`코드:${code}, 메시지:${message}`);
                 setWrongLogin(true);

@@ -1,5 +1,5 @@
 // api/Community/recommend.ts
-import api from "../axios";
+import { http } from "../../types/http";
 import { type RecommendBook } from "../../types/recommendbook";
 
 export interface RecommendResponse {
@@ -25,9 +25,9 @@ export const fetchRecommendBooks = async ({
     lastId,
 }: FetchRecommendParams): Promise<RecommendApiResponse> => {
     const url = lastId
-        ? `/v1/books/${bookId}/recommendations?lastId=${lastId}`
-        : `/v1/books/${bookId}/recommendations`;
+        ? `/api/v1/books/${bookId}/recommendations?lastId=${lastId}`
+        : `/api/v1/books/${bookId}/recommendations`;
 
-    const { data } = await api.get<RecommendApiResponse>(url);
+    const { data } = await http.get<RecommendApiResponse>(url);
     return data;
 };

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface SidebarProps {
@@ -12,16 +13,15 @@ interface MenuSection {
   items: { label: string; path: string }[];
 }
 
-// 페이지 라우트 테스트를 위한 임의의 주소 설정 (추후 수정 예정)
 const menuSections: MenuSection[] = [
   {
     title: 'MY BOOK SHELF',
     koreanLabel: '독서기록',
-    path: '/library',
+    path: '/bookshelf',
     items: [
-      { label: '진행중 도서', path: '/library/reading' },
-      { label: '완독 도서', path: '/library/completed' },
-      { label: '좋아요 한 도서', path: '/library/liked' },
+      { label: '진행중 도서', path: '/bookshelf/reading' },
+      { label: '완독 도서', path: '/bookshelf/finished' },
+      { label: '좋아요 한 도서', path: '/bookshelf/liked' },
     ],
   },
   {
@@ -29,9 +29,7 @@ const menuSections: MenuSection[] = [
     koreanLabel: '커뮤니티',
     path: '/community',
     items: [
-      { label: '도서별 질문 답변', path: '/community/qna' },
-      { label: '도서별 감상평 읽기', path: '/community/reviews' },
-      { label: '도서별 추천 도서', path: '/community/recommendations' },
+      { label: '도서별로 보기', path: '/community' },
     ],
   },
   {
@@ -46,16 +44,23 @@ const menuSections: MenuSection[] = [
   {
     title: 'MY PAGE',
     koreanLabel: '마이페이지',
-    path: '/mypage',
+    path: '/my-page/menu',
     items: [
-      { label: '내 정보 수정', path: '/mypage/profile' },
-      { label: '기록 관리', path: '/mypage/records' },
+      { label: '내 정보 수정', path: '/profile/edit/menu' },
+      { label: '기록 관리', path: '/members/me/records' },
     ],
   },
 ];
 
 const SideBar = ({ isOpen, onClose }: SidebarProps) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   const handleNavigation = (path: string) => {
     navigate(path);

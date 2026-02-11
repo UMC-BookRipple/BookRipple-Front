@@ -1,9 +1,13 @@
+import { useNavigate } from 'react-router-dom';
 import { useSidebarStore } from '../stores/SidebarStore';
 import menuIcon from '/src/assets/icons/menu1.svg';
+import bellIcon from '/src/assets/icons/bell.svg';
 import profileIcon from '/src/assets/icons/M-profile1.svg';
+import SideBar from './SideBar';
 
 const Header = () => {
-  const { toggle } = useSidebarStore();
+  const navigate = useNavigate();
+  const { isOpen, toggle, close } = useSidebarStore();
 
   const handleMenu = () => {
     toggle();
@@ -14,25 +18,29 @@ const Header = () => {
   };
 
   return (
-    <>
-      {/* 가로 전체 채우는 영역 */}
+    <div className="sticky top-0 z-50 w-full">
       <div className="w-full border-b border-[#58534E] bg-[#F7F5F1]">
-        {/* 가운데 정렬 + 고정폭은 이 안에 */}
-        <header className="flex w-full items-center justify-between px-[14px] pt-[14px] pb-[10px]">
+        <header className="relative flex w-full items-center px-[14px] pt-[14px] pb-[10px]">
           <button onClick={handleMenu} className="menu-button">
             <img src={menuIcon} alt="Menu" className="menu-icon h-6 w-6" />
           </button>
 
-          <h1 className="text-center font-[GmarketSansBold] text-[16px] leading-normal font-normal tracking-[-0.16px] text-[#58534E]">
+          <h1 className="absolute inset-x-0 text-center font-[GmarketSansBold] text-[16px] leading-normal font-normal tracking-[-0.16px] text-[#58534E] pointer-events-none">
             BOOK RIPPLE
           </h1>
 
-          <button onClick={handleSearch}>
-            <img src={profileIcon} alt="Profile" className="h-6 w-6" />
-          </button>
+          <div className="ml-auto flex items-center gap-[10px]">
+            <button onClick={() => navigate('/notification')}>
+              <img src={bellIcon} alt="Notification" className="h-6 w-6" />
+            </button>
+            <button onClick={handleSearch}>
+              <img src={profileIcon} alt="Profile" className="h-6 w-6" />
+            </button>
+          </div>
         </header>
       </div>
-    </>
+      <SideBar isOpen={isOpen} onClose={close} />
+    </div>
   );
 };
 

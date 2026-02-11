@@ -49,7 +49,7 @@ const KakaoRedirect: React.FC = () => {
         localStorage.setItem("userName", result.userName);
 
         console.log("카카오 로그인 완료", code)
-        navigate("/");
+        navigate("/bookshelf/reading");
       } else {
         alert(message);
         navigate("/");
