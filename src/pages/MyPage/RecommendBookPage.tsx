@@ -1,28 +1,113 @@
-import BookTitleLabel from "../../components/BookTitleLabel"
-import Divider from "../../components/Divider"
-import MenuBarItems from "../../components/MenuBarItems"
-import Header from "../../components/Header"
-import MyRecordBox from "../../components/MyRecordBox"
+import BookTitleLabel from "../../components/BookTitleLabel";
+import Divider from "../../components/Divider";
+import MenuBarItems from "../../components/MenuBarItems";
+import Header from "../../components/Header";
+import MyRecordBox from "../../components/RecommendBox";
+import {
+    getMyRecommendations,
+    updateRecommendation,
+    deleteRecommendation,
+} from "../../api/recommend";
+import { useEffect, useState, useCallback } from "react";
+import { type MyRecommendation } from "../../api/recommend";
 
 const RecommendBookPage = () => {
-    // 👉 추후 API로 교체될 mock 데이터
-    const records = [
-        {
-            id: 1,
-            bookName: "브람스를 좋아하세요...",
-            content: "이 장면에서 주인공의 감정 변화가 인상 깊었다.",
-        },
-        {
-            id: 2,
-            bookName: "브람스를 좋아하세요...",
-            content: "문장이 잔잔해서 계속 곱씹게 된다.",
-        },
-        {
-            id: 3,
-            bookName: "브람스를 좋아하세요...",
-            content: "다시 읽어보고 싶은 책.",
-        },
-    ]
+    const [records, setRecords] = useState<MyRecommendation[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    // 페이징
+    const [lastId, setLastId] = useState<number | null>(null);
+    const [lastSourceBookTitle, setLastSourceBookTitle] = useState<string | null>(null);
+
+    const fetchRecords = async () => {
+        try {
+            setLoading(true);
+            const res = await getMyRecommendations(lastId ?? undefined, lastSourceBookTitle ?? undefined);
+
+            setRecords((prevRecords) => {
+                const newRecords = res.myRecommendList.filter((newRecord) =>
+                    !prevRecords.some((existingRecord) => existingRecord.id === newRecord.id)
+                );
+                return [...prevRecords, ...newRecords];
+            });
+
+            setLastId(res.lastId);
+            setLastSourceBookTitle(res.lastSourceBookTitle);
+        } catch (error) {
+            console.error("추천글 조회 실패", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchRecords();
+    }, []);
+
+    const handleEdit = async (recordId: number, newContent: string) => {
+        try {
+            await updateRecommendation(recordId, { content: newContent });
+            setRecords((prev) =>
+                prev.map((r) => (r.id === recordId ? { ...r, content: newContent } : r))
+            );
+        } catch (error) {
+            console.error("추천글 수정 실패", error);
+        }
+    };
+
+    const handleDelete = async (recordId: number) => {
+        const confirmDelete = window.confirm("정말 삭제하시겠습니까?");
+        if (!confirmDelete) return;
+
+        try {
+            await deleteRecommendation(recordId);
+            setRecords((prev) => prev.filter((r) => r.id !== recordId));
+        } catch (error) {
+            console.error("추천글 삭제 실패", error);
+        }
+    };
+
+    const renderRecordsByBook = () => {
+        const bookTitles = Array.from(new Set(records.map((r) => r.sourceBookTitle)));
+
+        return bookTitles.map((bookTitle) => {
+            const filteredRecords = records.filter((r) => r.sourceBookTitle === bookTitle);
+
+            return (
+                <div key={bookTitle} className="w-full px-[16px] flex flex-col gap-[20px]">
+                    <BookTitleLabel BookTitle={bookTitle} />
+
+                    {filteredRecords.map((item) => (
+                        <MyRecordBox
+                            key={`${item.id}-${item.updatedAt}-${item.targetBookTitle}`}
+                            bookName={item.targetBookTitle}
+                            content={item.content}
+                            canEdit
+                            canDelete
+                            onEdit={(newContent) => handleEdit(item.id, newContent)}
+                            onDelete={() => handleDelete(item.id)}
+                        />
+                    ))}
+
+
+                </div>
+            );
+        });
+    };
+
+    const handleScroll = useCallback(() => {
+        const bottom = document.documentElement.scrollHeight ===
+            document.documentElement.scrollTop + window.innerHeight;
+
+        if (bottom && !loading && records.length > 0) {
+            fetchRecords();
+        }
+    }, [loading, records]);
+
+    useEffect(() => {
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [handleScroll]);
 
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
@@ -46,28 +131,13 @@ const RecommendBookPage = () => {
                 <Divider />
             </div>
 
-            <BookTitleLabel BookTitle="브람스를 좋아하세요..." />
-
-            {/* 기록 리스트 */}
             <div className="w-full px-[16px] flex flex-col gap-[20px]">
-                {records.map((record) => (
-                    <MyRecordBox
-                        key={record.id}
-                        bookName={record.bookName}
-                        content={record.content}
-                        canEdit
-                        canDelete
-                        onEdit={() => {
-                            console.log("메모 수정:", record.id)
-                        }}
-                        onDelete={() => {
-                            console.log("메모 삭제:", record.id)
-                        }}
-                    />
-                ))}
+                {loading && <p>로딩 중...</p>}
+                {!loading && records.length === 0 && <p>추천글이 없습니다.</p>}
+                {renderRecordsByBook()}
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default RecommendBookPage;

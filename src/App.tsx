@@ -20,7 +20,7 @@ import FindIdPage from './pages/Login/FIndIdPage';
 import FindPasswordPage from './pages/Login/FindPasswordPage';
 import ResetPasswordPage from './pages/MyPage/ResetPasswordPage';
 import PolicyPage from './pages/Login/PolicyPage';
-import NotificationPage from './pages/Notification/NotificationPage';
+import NotificationPage from './pages/notification/NotificationPage';
 
 // Reading Flow + Swipe
 import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';
@@ -55,6 +55,8 @@ import ReviewCommentPage from './pages/MyPage/ReviewCommentPage';
 import ReviewDetailPage from './pages/MyPage/ReviewDetailPage';
 import ReadingRecordPage from './pages/MyPage/ReadingRecordPage';
 import MyReadingMemoPage from './pages/MyPage/MyReadingMemoPage';
+import RecommendBookPage from './pages/MyPage/RecommendBookPage';
+import ReadingAnswerPage from './pages/MyPage/ReadingAnswerPage';
 
 export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -146,6 +148,9 @@ export default function App() {
           <Route path="/memos/me" element={<MyReadingMemoPage />} />
           <Route path="/members/me/records" element={<ReadingRecordPage />} />
           <Route path="/mypage/memo" element={<MyReadingMemoPage />} />
+          <Route path="/mypage/recommend" element={<RecommendBookPage />} />
+          <Route path="/answer/me" element={<ReadingAnswerPage />} />
+
         </Route>
 
         {/* Fallback */}

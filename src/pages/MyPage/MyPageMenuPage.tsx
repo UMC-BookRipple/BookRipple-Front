@@ -1,85 +1,81 @@
-import Divider from "../../components/Divider";
-import MenuBarItems from "../../components/MenuBarItems";
-import Header from "../../components/Header";
-import { http } from "../../types/http";
-import { useNavigate } from "react-router-dom";
-import arrowIcon from "../../assets/icons/arrowIcon.svg";
-import { useModalStore } from "../../stores/ModalStore";
-import Modal from "../../components/Modal";
+import Divider from '../../components/Divider';
+import MenuBarItems from '../../components/MenuBarItems';
+import Header from '../../components/Header';
+import { http } from '../../types/http';
+import { useNavigate } from 'react-router-dom';
+import arrowIcon from '../../assets/icons/arrowIcon.svg';
+import { useModalStore } from '../../stores/ModalStore';
+import Modal from '../../components/Modal';
 
 const MyPageMenuPage = () => {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const K_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY as string;
+  const K_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI as string;
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
 
-    const K_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY as string;
-    const K_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI as string;
-    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
+  const handleKakaoLogin = () => {
+    window.location.href = KAKAO_AUTH_URL;
+  };
 
-    const handleKakaoLogin = () => {
-        window.location.href = KAKAO_AUTH_URL;
-    };
+  const handleLogout = async () => {
+    try {
+      const response = await http.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
+        { refreshToken: localStorage.getItem('refreshToken') },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        },
+      );
+      const { isSuccess, code, message, result } = response.data;
 
-    const handleLogout = async () => {
-
-        try {
-            const response = await http.post(
-                `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/logout`,
-                { refreshToken: localStorage.getItem("refreshToken") },
-                {
-                    headers: {
-                        Authorization:
-                            `Bearer ${localStorage.getItem("accessToken")}`,
-                    },
-                }
-            );
-            const { isSuccess, code, message, result } = response.data;
-
-            if (isSuccess) {
-                console.log("로그아웃 성공", result);
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                navigate("/auth/login/local");
-            } else {
-                console.log(`코드:${code}, 메시지:${message}`);
-            }
-        } catch (error) {
-            console.error('로그아웃 실패:', error);
-        }
-    };
-
-    const { open: openModal } = useModalStore()
-
-    const confirmAction = () => {
-        console.log("confirmAction")
-        openModal("회원 탈퇴를 진행하시겠습니까?", handleDelete)
+      if (isSuccess) {
+        console.log('로그아웃 성공', result);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        navigate('/auth/login/local');
+      } else {
+        console.log(`코드:${code}, 메시지:${message}`);
+      }
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
     }
+  };
 
-    const handleDelete = async () => {
-        try {
-            const response = await http.delete(
-                `${import.meta.env.VITE_API_BASE_URL}/api/v1/members/me`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
-                    },
-                }
-            );
+  const { open: openModal } = useModalStore();
 
-            const { isSuccess, code, message, result } = response.data;
+  const confirmAction = () => {
+    console.log('confirmAction');
+    openModal('회원 탈퇴를 진행하시겠습니까?', handleDelete);
+  };
 
-            if (isSuccess) {
-                console.log("회원탈퇴 성공", result);
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                localStorage.removeItem("userName");
-                localStorage.removeItem("memberId");
-                navigate("/auth/login/local");
-            } else {
-                console.log(`코드:${code}, 메시지:${message}`);
-            }
-        } catch (error) {
-            console.error('회원탈퇴 실패:', error);
-        }
+  const handleDelete = async () => {
+    try {
+      const response = await http.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/members/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('refreshToken')}`,
+          },
+        },
+      );
+
+      const { isSuccess, code, message, result } = response.data;
+
+      if (isSuccess) {
+        console.log('회원탈퇴 성공', result);
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('memberId');
+        navigate('/auth/login/local');
+      } else {
+        console.log(`코드:${code}, 메시지:${message}`);
+      }
+    } catch (error) {
+      console.error('회원탈퇴 실패:', error);
     }
     return (
         <div
@@ -153,7 +149,9 @@ const MyPageMenuPage = () => {
             </div>
 
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+};
 
 export default MyPageMenuPage;

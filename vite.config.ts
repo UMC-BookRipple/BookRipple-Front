@@ -13,6 +13,7 @@ export default defineConfig({
         target: 'https://bookripple.site',
         changeOrigin: true,
         secure: false,
+
       },
     },
   },
