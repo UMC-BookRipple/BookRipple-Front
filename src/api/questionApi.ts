@@ -1,4 +1,36 @@
-import { http } from '../types/http';
+import { http } from './http';
+
+export type MyAnswerItem = {
+    questionId: number;
+    questionContent: string;
+    answerId: number;
+    answerContent: string;
+    updatedAt: string;
+    bookTitle: string;
+};
+
+export type MyAnswerListResult = {
+    myAnswerList: MyAnswerItem[];
+    hasNext: boolean;
+    lastAnswerId: number | null;
+};
+
+
+export type MyQuestionItem = {
+    id: number;
+    bookTitle: string;
+    type: 'USER' | string;
+    content: string;
+    createdAt: string;
+};
+
+export type MyQuestionListResult = {
+    questionList: MyQuestionItem[];
+    hasNext: boolean;
+    lastBookTitle: string | null;
+    lastId: number | null;
+};
+
 
 export type ApiResponse<T> = {
     isSuccess: boolean;
@@ -59,6 +91,16 @@ export type AiDuringQuestionResult = {
     content: string;
     createdAt: string;
 };
+
+export type UpdateAnswerBody = {
+    content: string; // 수정할 답변 내용
+};
+
+export type DeleteAnswerResult = {
+    id: number; // 삭제된 답변 ID
+};
+
+
 
 /** ===== API functions ===== */
 
@@ -254,3 +296,119 @@ export const deleteAllSearchHistory = async () => {
     }
 };
 
+/**
+ * 내가 작성한 질문 목록 조회
+ * @param lastId 마지막 질문 ID (페이징용)
+ * @param lastBookTitle 마지막 책 제목 (페이징용)
+ * @param size 한 번에 가져올 질문 수 (기본 10)
+ */
+export const getMyQuestions = async (params?: {
+    lastId?: number;
+    lastBookTitle?: string;
+    size?: number;
+}): Promise<ApiResponse<MyQuestionListResult>> => {
+    try {
+        const res = await http.get<ApiResponse<MyQuestionListResult>>(
+            '/api/v1/questions/me',
+            {
+                params: {
+                    size: params?.size || 10,
+                    lastId: params?.lastId,
+                    lastBookTitle: params?.lastBookTitle,
+                },
+            },
+        );
+
+        if (!res.data.isSuccess || !res.data.result) {
+            throw new Error(res.data.message || '내 질문 목록 조회 실패');
+        }
+
+        return res.data;
+    } catch (error) {
+        console.error('내 질문 목록 조회 실패:', error);
+        throw error;
+    }
+};
+
+
+export type GetMyAnswersParams = {
+    lastAnswerId?: number;
+    size?: number;
+    lastBookTitle?: string;  // lastBookTitle 추가
+};
+
+
+/**
+ * 내가 작성한 답변 목록 조회
+ * @param lastAnswerId 마지막 답변 ID (페이징용)
+ * @param size 한 번에 가져올 답변 수 (기본 10)
+ */
+export const getMyAnswers = async (params: GetMyAnswersParams): Promise<ApiResponse<MyAnswerListResult>> => {
+    try {
+        const res = await http.get<ApiResponse<MyAnswerListResult>>(
+            '/api/v1/answers/me',
+            {
+
+                params
+            },
+        );
+
+        if (!res.data.isSuccess || !res.data.result) {
+            throw new Error(res.data.message || '내 답변 목록 조회 실패');
+        }
+
+        return res.data;
+    } catch (error) {
+        console.error('내 답변 목록 조회 실패:', error);
+        throw error;
+    }
+};
+
+/**
+ * 답변 수정 API
+ * @param answerId 수정할 답변 ID
+ * @param body 수정할 내용 { content: string }
+ */
+export const updateAnswer = async (
+    answerId: number,
+    body: UpdateAnswerBody
+): Promise<ApiResponse<{ id: number }>> => {
+    try {
+        const res = await http.patch<ApiResponse<{ id: number }>>(
+            `/api/v1/answers/${answerId}`,
+            body
+        );
+
+        if (!res.data.isSuccess || !res.data.result) {
+            throw new Error(res.data.message || '답변 수정 실패');
+        }
+
+        return res.data;
+    } catch (error) {
+        console.error('답변 수정 실패:', error);
+        throw error;
+    }
+};
+
+/**
+ * 답변 삭제 API
+ * @param answerId 삭제할 답변 ID
+ */
+export const deleteAnswer = async (
+    answerId: number
+): Promise<ApiResponse<DeleteAnswerResult>> => {
+    try {
+        const res = await http.delete<ApiResponse<DeleteAnswerResult>>(
+            `/api/v1/answers/${answerId}`
+        );
+
+        if (!res.data.isSuccess || !res.data.result) {
+            throw new Error(res.data.message || '답변 삭제 실패');
+        }
+
+        return res.data;
+    } catch (error) {
+        console.error('답변 삭제 실패:', error);
+        throw error;
+    }
+};
