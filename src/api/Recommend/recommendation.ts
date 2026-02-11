@@ -1,4 +1,4 @@
-import api from "../axios";
+import { http } from "../../types/http";
 
 export interface RecommendationResponse {
     isSuccess: boolean;
@@ -13,8 +13,8 @@ export const submitRecommendation = async (
     content: string
 ): Promise<RecommendationResponse> => {
     try {
-        const response = await api.post<RecommendationResponse>(
-            `/v1/books/${baseBookId}/recommendations`,
+        const response = await http.post<RecommendationResponse>(
+            `/api/v1/books/${baseBookId}/recommendations`,
             {
                 targetBookAladinId, // ✅ 서버 스펙에 맞게 수정
                 content,
