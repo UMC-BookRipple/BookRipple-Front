@@ -26,7 +26,7 @@ const KakaoRedirect: React.FC = () => {
       handleLogin(kakaoCode);
     } else {
       alert("인가 코드가 없습니다.");
-      navigate("/");
+      navigate("/start");
     }
   }, [navigate]);
 
@@ -52,12 +52,12 @@ const KakaoRedirect: React.FC = () => {
         navigate("/bookshelf/reading");
       } else {
         alert(message);
-        navigate("/");
+        navigate("/start");
       }
     } catch (error) {
       console.error("카카오 로그인 통신 에러:", error);
       alert("서버와 통신 중 에러가 발생했습니다.");
-      navigate("/");
+      navigate("/start");
     }
   };
 

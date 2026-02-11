@@ -77,83 +77,77 @@ const MyPageMenuPage = () => {
     } catch (error) {
       console.error('회원탈퇴 실패:', error);
     }
-  };
-  return (
-    <div className="font-weight-[500] flex min-h-dvh w-full flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
-      <Header />
+    return (
+        <div
+            className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation] font-weight-[500] text-[#58534E]">
+            <Header />
 
-      {/* MyPageLabel */}
-      <div className="flex w-full flex-row items-center justify-between px-[14px] pt-[30px]">
-        <span className="flex h-[50px] items-center gap-[10px] px-[5px] py-[12px] font-[GmarketSansBold] text-[20px] whitespace-nowrap text-[#58534E]">
-          <img src={arrowIcon} alt="" />
-          MY PAGE
-        </span>
-        <button
-          onClick={handleLogout}
-          className="flex h-[28px] w-[58px] items-center justify-center gap-[10px] rounded-[30px] bg-[#827A74] px-[8px] py-[6px] text-[14px] text-[#FFFFFF]"
-        >
-          로그아웃
-        </button>
-      </div>
+            {/* MyPageLabel */}
+            <div
+                className="w-full flex flex-row items-center justify-between px-[14px] pt-[30px]">
+                <span
+                    className="h-[50px] py-[12px] px-[5px] gap-[10px] flex items-center whitespace-nowrap font-[GmarketSansBold] text-[20px] text-[#58534E]">
+                    <img src={arrowIcon} alt="" />MY PAGE</span>
+                <button
+                    onClick={handleLogout}
+                    className="h-[28px] w-[58px] text-[14px] text-[#FFFFFF] bg-[#827A74] px-[8px] py-[6px] rounded-[30px] gap-[10px] flex items-center justify-center"
+                >
+                    로그아웃
+                </button>
+            </div>
 
-      <div className="flex w-full flex-col px-[14px] py-[6px]">
-        <Divider />
-        <div className="w-full">
-          <MenuBarItems
-            mainLabel="프로필"
-            MenuBarLabel=""
-            plusMenuLabel="수정"
-            onClickPlus={() => navigate('/profile/edit/menu')}
-          />
-        </div>
-        <Divider />
-      </div>
+            <div className="w-full flex flex-col py-[6px] px-[14px]">
 
-      <div className="flex w-full flex-col items-start gap-[6px] px-[14px] py-[10px]">
-        <div className="px-[4px]">
-          <span className="rounded-[20px] bg-[#E6E6E6] px-[8px] py-[4px]">
-            {localStorage.getItem('userName')}
-          </span>
-        </div>
-        <span className="px-[10px]" onClick={handleKakaoLogin}>
-          카카오로 로그인
-        </span>
-      </div>
-      <Modal label="진행하기" />
-      <div className="flex w-full flex-col px-[14px] py-[6px]">
-        <Divider />
-        <MenuBarItems mainLabel="내 도서 기록" MenuBarLabel="" />
-        <Divider />
-      </div>
+                <Divider />
+                <div className="w-full">
+                    <MenuBarItems mainLabel="프로필" MenuBarLabel="" plusMenuLabel="수정" onClickPlus={() => navigate('/profile/edit/menu')} />
+                </div>
+                <Divider />
+            </div>
 
-      <div className="font-weight-[500] flex w-full flex-col items-start gap-[6px] px-[24px] py-[10px] text-[16px] text-[#58534E]">
-        <span onClick={() => navigate('/members/me/records')}>
-          내 도서 기록 확인하기
-        </span>
-      </div>
+            <div className="w-full flex flex-col items-start px-[14px] py-[10px] gap-[6px]">
+                <div className="px-[4px]">
+                    <span className="px-[8px] py-[4px] bg-[#E6E6E6] rounded-[20px]">{localStorage.getItem("userName")}</span>
+                </div>
+                <span className="px-[10px]"
+                    onClick={handleKakaoLogin}
+                >카카오로 로그인</span>
+            </div>
+            <Modal label="진행하기" />
+            <div className="w-full flex flex-col py-[6px] px-[14px]">
+                <Divider />
+                <MenuBarItems mainLabel="내 도서 기록" MenuBarLabel="" />
+                <Divider />
+            </div>
 
-      <div className="flex w-full flex-col px-[14px] py-[6px]">
-        <Divider />
-        <MenuBarItems mainLabel="내 기록 확인" MenuBarLabel="" />
-        <Divider />
-      </div>
+            <div className="w-full flex flex-col items-start px-[24px] py-[10px] text-[16px] font-weight-[500] text-[#58534E] gap-[6px]">
+                <span
+                    onClick={() => navigate("/members/me/records")}>내 도서 기록 확인하기</span>
+            </div>
 
-      <div className="font-weight-[500] flex w-full flex-col items-start gap-[16px] px-[24px] py-[10px] text-[16px] text-[#58534E]">
-        <span onClick={() => navigate('/reviews/me')}>작성한 감상평 확인</span>
+            <div className="w-full flex flex-col py-[6px] px-[14px]">
+                <Divider />
+                <MenuBarItems mainLabel="내 기록 확인" MenuBarLabel="" />
+                <Divider />
+            </div>
 
-        {/* 메모 API 안 보임 감상평과 동일?? */}
-        <span onClick={() => navigate('/memos/me')}>메모 전체 기록 관리</span>
-        <span onClick={() => navigate('/questions/me')}>
-          질문 답변 전체 기록 관리
-        </span>
-      </div>
+            <div className="w-full flex flex-col items-start px-[24px] py-[10px] text-[16px] font-weight-[500] text-[#58534E] gap-[16px]">
+                <span onClick={() => navigate("/reviews/me")}>작성한 감상평 확인</span>
+                <span onClick={() => navigate("/memos/me")}>메모 전체 기록 관리</span>
+                <span onClick={() => navigate("/questions/me")}>질문 전체 기록 관리</span>
+                <span onClick={() => navigate("/answers/me")}>답변 전체 기록 관리</span>
+                <span onClick={() => navigate("/mypage/recommend")}>추천 도서 기록 관리</span>
+            </div>
 
-      <div className="flex w-full flex-col items-center justify-center px-[10px] py-[4px] pb-[20px]">
-        <Divider />
-        <div className="h-[189px]" />
-        <div className="flex w-full flex-col items-center gap-[8px]">
-          <span onClick={() => navigate('/policy')}>약관 및 정보</span>
-          <span onClick={confirmAction}>회원 탈퇴</span>
+            <div className="w-full flex flex-col items-center justify-center py-[4px] px-[10px] pb-[20px]">
+                <Divider />
+                <div className="h-[189px]" />
+                <div className="w-full flex flex-col items-center gap-[8px]">
+                    <span onClick={() => navigate('/policy')}>약관 및 정보</span>
+                    <span onClick={confirmAction}>회원 탈퇴</span>
+                </div>
+            </div>
+
         </div>
       </div>
     </div>
