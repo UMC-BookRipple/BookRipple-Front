@@ -7,7 +7,7 @@ import RecommendTab from "../../components/Community/RecommendTab";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { getBookDetailByAladinId, type BookDetail } from "../../api/books";
 import { fetchBookDetail, fetchBooksByStatus } from "../../api/bookshelf.api";
-import type { BookDetailApiResponse } from "../../types/bookshelf.type";
+import { deleteLibraryBooks } from "../../api/bookshelf.api";
 
 
 const TABS = [

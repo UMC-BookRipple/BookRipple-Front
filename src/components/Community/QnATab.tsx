@@ -8,6 +8,7 @@ import {
     getBookQuestions, type BookQuestionItem, getQuestionAnswers
     , type AnswerItem
 } from "../../api/questionApi"; // 타입 임포트
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -26,6 +27,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
     const [questions, setQuestions] = useState<BookQuestionItem[]>([]); // 질문 목록
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     const handleUpdateQuestionAnswers = (questionId: number, answers: AnswerItem[]) => {
         setQuestions(prev =>
@@ -88,7 +90,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                     if (axiosError.response?.data?.code === "READING_404") {
                         setErrorMessage("이 책에 대한 독서 세션이 없습니다.");
                     } else if (axiosError.response?.status === 403) {
-                        setErrorMessage("권한이 없어 질문을 불러올 수 없습니다.");
+                        setErrorMessage("질문은 책을 30% 이상 읽어야 합니다.");
                     } else {
                         setErrorMessage("질문 목록을 불러오는 중 오류가 발생했습니다.");
                     }
@@ -218,6 +220,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                             fontWeight: 500,
                             color: "#FFF",
                         }}
+                        onClick={() => navigate(`/books/${bookId}/questions/new`)}
                     >
                         질문 등록하기
                     </button>

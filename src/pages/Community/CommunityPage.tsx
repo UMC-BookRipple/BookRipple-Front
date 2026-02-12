@@ -105,7 +105,7 @@ const CommunityPage = () => {
             </div>
 
             {/* COMMUNITY 텍스트 영역 */}
-            <div className="flex justify-center items-center w-full px-[14px] py-[10px] text-[#58534E] font-[GmarketSans] text-[20px] font-bold">
+            <div className="flex justify-center items-center w-full px-[14px] py-[10px] text-[#58534E] font-[GmarketSans TTF] text-[20px] font-bold">
                 COMMUNITY
             </div>
 
