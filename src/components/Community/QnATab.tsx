@@ -8,6 +8,7 @@ import {
     getBookQuestions, type BookQuestionItem, getQuestionAnswers
     , type AnswerItem
 } from "../../api/questionApi"; // 타입 임포트
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -26,9 +27,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
     const [questions, setQuestions] = useState<BookQuestionItem[]>([]); // 질문 목록
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-    // 하드코딩된 진행률 (50% 이상이라고 가정)
-    const readingProgress = 50; // 실제 진행률을 50으로 하드코딩
+    const navigate = useNavigate();
 
     const handleUpdateQuestionAnswers = (questionId: number, answers: AnswerItem[]) => {
         setQuestions(prev =>
@@ -49,15 +48,20 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                 const res = await getBookQuestions({
 
                     bookId,
-                    onlyMine: false, // 서버에서 all 질문 가져오기
+                    onlyMine: showMyQuestions,
                     keyword: searchQuery || undefined,
                     size: 20,
                 });
 
+                console.log("질문 목록 응답:", res);  // 응답 확인
+
                 // 2️⃣ showMyQuestions 필터 적용
                 const filteredQuestions = showMyQuestions
-                    ? res.result.questionList.filter(q => q.isMine)
+                    ? res.result.questionList.filter(q => q.type === "USER")  // type이 "USER"인 질문만 필터링
                     : res.result.questionList;
+
+
+                console.log("필터링된 질문 목록:", filteredQuestions);
 
                 // 3️⃣ 각 질문별 답변 가져오기
                 const questionsWithAnswers = await Promise.all(
@@ -70,6 +74,8 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                         }
                     })
                 );
+
+                console.log("질문과 답변:", questionsWithAnswers);
 
                 // 4️⃣ 상태 업데이트
                 setQuestions(questionsWithAnswers);
@@ -84,7 +90,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                     if (axiosError.response?.data?.code === "READING_404") {
                         setErrorMessage("이 책에 대한 독서 세션이 없습니다.");
                     } else if (axiosError.response?.status === 403) {
-                        setErrorMessage("권한이 없어 질문을 불러올 수 없습니다.");
+                        setErrorMessage("질문은 책을 30% 이상 읽어야 합니다.");
                     } else {
                         setErrorMessage("질문 목록을 불러오는 중 오류가 발생했습니다.");
                     }
@@ -214,6 +220,7 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                             fontWeight: 500,
                             color: "#FFF",
                         }}
+                        onClick={() => navigate(`/books/${bookId}/questions/new`)}
                     >
                         질문 등록하기
                     </button>

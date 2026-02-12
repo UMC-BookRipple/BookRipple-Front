@@ -12,7 +12,7 @@ import {
 import {
     type SearchHistoryItem,
 } from "../../api/books";
-import { getBookQuestions } from "../../api/questionApi";
+
 
 
 
@@ -49,35 +49,25 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
     const fetchQuestions = async (keyword: string) => {
         setLoading(true);
         try {
-            // 1️⃣ 책에 대한 질문 목록을 가져오기 (전체 질문 + 검색어 필터링)
-            const response = await getBookQuestions({
-                bookId,          // 책 ID
-                onlyMine: showMyQuestions,  // '나의 질문'만 필터링할지 여부
-                keyword,         // 검색어
-                size: 20
-            });
+            // 1️⃣ searchQuestions API 호출하여 질문과 답변을 가져오기
+            const questionList = await searchQuestions(bookId, keyword, showMyQuestions);
 
-            if (response.result.questionList.length > 0) {
-                // 2️⃣ "내 질문"만 필터링
-                const filteredQuestions = showMyQuestions
-                    ? response.result.questionList.filter(q => q.isMine) // 나의 질문만 필터링
-                    : response.result.questionList; // 모든 질문을 보여줌
-
-                // 3️⃣ 각 질문별 답변 가져오기
+            if (questionList.length > 0) {
+                // 2️⃣ 각 질문별 답변 가져오기
                 const questionsWithAnswers = await Promise.all(
-                    filteredQuestions.map(async (q) => {
+                    questionList.map(async (q) => {
                         try {
                             const ansRes = await getQuestionAnswers(q.id);
                             return { ...q, answers: ansRes.result.ansList };
                         } catch {
-                            return { ...q, answers: [] };
+                            return { ...q, answers: [] }; // 답변이 없는 경우 빈 배열 반환
                         }
                     })
                 );
 
-                // 4️⃣ 상태 업데이트
-                setQuestions(questionsWithAnswers); // 답변 포함된 질문 목록 상태 업데이트
-                setResults(filteredQuestions); // 필터링된 질문 목록 상태 업데이트
+                // 3️⃣ 상태 업데이트
+                //setQuestions(questionsWithAnswers); // 답변 포함된 질문 목록 상태 업데이트
+                setResults(questionsWithAnswers); // 필터링된 질문 목록 상태 업데이트
             }
         } catch (error) {
             console.error("질문 목록 조회 실패", error);
@@ -91,6 +81,20 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
         setSearchQuery(keyword);
         setQuery(keyword);
         await fetchQuestions(keyword); // 검색어로 질문 목록을 가져오고 필터링
+
+        // 검색 후 최근 검색어 갱신
+        await updateRecentSearches();
+    };
+
+    // 검색 기록 갱신 함수
+    const updateRecentSearches = async () => {
+        try {
+            const items = await fetchCommunitySearchHistory();
+            setRecentSearches(items); // 최근 검색어 업데이트
+        } catch (e) {
+            console.error("검색 기록 조회 실패", e);
+            setRecentSearches([]); // 에러 시 빈 배열로 초기화
+        }
     };
 
     useEffect(() => {

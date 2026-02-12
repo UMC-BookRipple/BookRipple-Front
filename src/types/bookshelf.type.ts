@@ -41,6 +41,7 @@ export type BookItem = {
 // API 응답 타입
 export interface ApiBookItem {
   libraryItemId: number;
+  aladinItemId: number;
   bookId: number;
   title: string;
   coverUrl: string;

@@ -93,6 +93,12 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
     return (
         <div className="flex flex-col gap-[10px] px-[10px] py-[24px] w-full">
             <div className="flex flex-col items-center gap-[10px] w-full">
+                {/* 추천 도서가 없을 때 */}
+                {books.length === 0 && !isLoading && (
+                    <div className="text-center text-gray-400 py-8">
+                        아직 등록된 추천도서가 없습니다.
+                    </div>
+                )}
                 {books.map((book, index) => (
                     <div key={`${book.id}-${index}`} className="px-[24px] py-[10px] w-full">
                         <RecommendBookCard book={book} onLikeUpdate={handleLikeUpdate} />
