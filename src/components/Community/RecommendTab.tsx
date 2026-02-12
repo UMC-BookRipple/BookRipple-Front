@@ -77,9 +77,55 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
         if (entry.isIntersecting) {
           loadRecommendBooks(); // 더 많은 책을 불러오기
         }
-      },
-      { threshold: 1 }, // 요소가 100% 화면에 보일 때 실행
-    );
+    };
+
+    // 최초 로딩
+    useEffect(() => {
+        loadRecommendBooks();
+    }, [bookId]);  // bookId가 변경되면 새로 불러오기
+
+    // 무한 스크롤 감지
+    useEffect(() => {
+        if (!hasNext) return;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    loadRecommendBooks();  // 더 많은 책을 불러오기
+                }
+            },
+            { threshold: 1 }  // 요소가 100% 화면에 보일 때 실행
+        );
+
+        if (loaderRef.current) observer.observe(loaderRef.current);
+        return () => observer.disconnect();
+    }, [hasNext, lastId]);  // `hasNext`나 `lastId`가 바뀔 때마다
+
+    // 좋아요 상태 업데이트
+    const handleLikeUpdate = (targetBookId: number, liked: boolean) => {
+        console.log(`Like status updated for book ${targetBookId}:`, liked);
+        setBooks((prevBooks) =>
+            prevBooks.map((book) =>
+                book.targetBookId === targetBookId ? { ...book, isLiked: liked } : book
+            )
+        );
+    };
+
+    return (
+        <div className="flex flex-col gap-[10px] px-[10px] py-[24px] w-full">
+            <div className="flex flex-col items-center gap-[10px] w-full">
+                {/* 추천 도서가 없을 때 */}
+                {books.length === 0 && !isLoading && (
+                    <div className="text-center text-gray-400 py-8">
+                        아직 등록된 추천도서가 없습니다.
+                    </div>
+                )}
+                {books.map((book, index) => (
+                    <div key={`${book.id}-${index}`} className="px-[24px] py-[10px] w-full">
+                        <RecommendBookCard book={book} onLikeUpdate={handleLikeUpdate} />
+                    </div>
+                ))}
+            </div>
 
     if (loaderRef.current) observer.observe(loaderRef.current);
     return () => observer.disconnect();

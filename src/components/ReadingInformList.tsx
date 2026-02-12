@@ -1,16 +1,23 @@
 import ReadingInform from "./ReadingInform";
+import type { LibraryBookSummary } from "../api/libraryApi";
 
-const ReadingInformList = () => {
+interface ReadingInformListProps {
+    books: LibraryBookSummary[];
+}
 
-    const BookInformList = [
-        { bookCover: "도서명", bookName: "도서명", bookAuthor: "작가", readingTime: 100, readingPercent: 100 },
-        { bookCover: "도서명", bookName: "도서명", bookAuthor: "작가", readingTime: 100, readingPercent: 100 },
-        { bookCover: "도서명", bookName: "도서명", bookAuthor: "작가", readingTime: 100, readingPercent: 100 },
-    ]
+const ReadingInformList = ({ books }: ReadingInformListProps) => {
     return (
         <div className="w-full flex flex-col items-center justify-center gap-[5px]">
-            {BookInformList.map((bookInform, index) => (
-                <ReadingInform key={index} bookCover={bookInform.bookCover} bookName={bookInform.bookName} bookAuthor={bookInform.bookAuthor} readingTime={bookInform.readingTime} readingPercent={bookInform.readingPercent} leftDays={null} />
+            {books.map((book) => (
+                <ReadingInform
+                    key={book.bookId}
+                    bookCover={book.coverUrl}
+                    bookName={book.title}
+                    bookAuthor={book.authors.join(", ")}
+                    readingTime={Math.round(book.readingTimeMinutes / 60)}
+                    readingPercent={book.progressPercent}
+                    leftDays={null}
+                />
             ))}
         </div>
     )

@@ -11,10 +11,10 @@ const StartPage = () => {
 
   // 버튼: 폭은 반응형(w-full) + 최대폭(273px)
   const buttonBase =
-    "w-full h-[45px] rounded-[100px] border border-black/25 flex items-center justify-center gap-[10px] px-[10px] py-[12px] items-stretch";
+    "w-full rounded-[100px] border border-black/25 flex items-center justify-center gap-[10px] px-[10px] py-[12px] items-stretch border-b-rgba(0, 0, 0, 0.25)";
 
   const socialBtn = `${buttonBase} ${fontBase} bg-[#827A74] text-white`;
-  const kakaoBtn = `${buttonBase} ${fontBase} bg-[#FFF3D0] text-[#58534E]`;
+  const kakaoBtn = `${buttonBase} ${fontBase} bg-[#FFE8A9] text-[#58534E]`;
   const guestBtn = `${buttonBase} ${fontBase} bg-white text-[#58534E]`;
   const signupText = `${fontBase} text-[#58534E] underline`;
 
@@ -22,7 +22,7 @@ const StartPage = () => {
   const K_REST_API_KEY = import.meta.env.VITE_KAKAO_REST_API_KEY as string;
   const K_REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URI as string;
 
-  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}&response_type=code`;
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${K_REST_API_KEY}&redirect_uri=${K_REDIRECT_URI}`;
 
   const handleKakaoLogin = () => {
     window.location.href = KAKAO_AUTH_URL;
@@ -67,7 +67,7 @@ const StartPage = () => {
         />
       </div>
       <div className="w-full flex flex-col items-center gap-[12px] pb-[20px] px-[64.5px]">
-        <button className={socialBtn} onClick={() => navigate("/auth/login/local")}><img src={socialLoginIcon} alt="" />소셜 로그인</button>
+        <button className={socialBtn} onClick={() => navigate("/auth/login/local")}><img src={socialLoginIcon} alt="" />로그인</button>
         <button className={kakaoBtn} onClick={handleKakaoLogin}><img src={kakaoLoginIcon} alt="" />카카오 로그인</button>
         <button className={guestBtn} onClick={guestLogin}>게스트 로그인</button>
         <div className="w-full h-[45px] flex items-center justify-center">

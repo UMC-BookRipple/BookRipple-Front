@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import Button from '../../../components/Button';
 import Header from '../../../components/Header';
 import ReadCompleteMark from '../../../components/ReadCompleteMark';
@@ -221,14 +226,15 @@ export default function CompletePage() {
     const q = questionSet[questionIndex];
     if (!q) return;
 
-    navigate(`/books/${bookId}/random-question`, {
-      state: {
-        mode: 'after',
-        bookTitle,
-        questionId: q.id,
-        question: q.content,
-      },
-    });
+    const search = createSearchParams({
+      mode: 'after',
+      bookId: String(bookId),
+      questionId: String(q.id),
+      question: q.content,
+      bookTitle: bookTitle,
+    }).toString();
+
+    navigate(`/books/${bookId}/random-question?${search}`);
   };
 
   return (
@@ -402,10 +408,11 @@ export default function CompletePage() {
 
       {/* 토스트 */}
       <div
-        className={`pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 transition-all duration-300 ease-in-out ${toastVisible
+        className={`pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 transition-all duration-300 ease-in-out ${
+          toastVisible
             ? 'bottom-[100px] translate-y-0 opacity-100'
             : 'bottom-[80px] translate-y-[10px] opacity-0'
-          }`}
+        }`}
       >
         <Toast visible={toastVisible} message={toastMessage} />
       </div>

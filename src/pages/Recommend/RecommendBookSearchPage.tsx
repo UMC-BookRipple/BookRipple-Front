@@ -124,10 +124,7 @@ const RecommendBookSearchPage: React.FC<RecommendBookSearchPageProps> = ({
 
             navigate("/recommend/write", {
                 state: {
-                    baseBook: {
-                        bookId: 19,
-                        title: "단종애사",
-                    },          // 기준 도서
+                    baseBook,          // 기준 도서
                     recommendedBook: bookForPage,  // 추천 도서
                 },
             });

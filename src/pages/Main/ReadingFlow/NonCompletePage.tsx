@@ -202,14 +202,16 @@ export default function NonCompletePage() {
                     stop(e);
                     if (!bookId || !ai) return;
 
-                    navigate(`/books/${bookId}/random-question`, {
-                      state: {
-                        mode: 'during',
-                        bookId: Number(bookId),
-                        readingQuestionId: ai.id,
-                        question: ai.content,
-                        bookTitle,
-                      },
+                    const params = new URLSearchParams();
+                    params.set('mode', 'during');
+                    params.set('bookId', String(bookId));
+                    params.set('readingQuestionId', String(ai.id));
+                    params.set('question', ai.content);
+                    params.set('bookTitle', bookTitle);
+
+                    navigate({
+                      pathname: `/books/${bookId}/random-question`,
+                      search: `?${params.toString()}`,
                     });
                   }}
                   className="mt-[34px] text-center text-[16px] leading-normal font-medium text-[#58534E] underline underline-offset-4"

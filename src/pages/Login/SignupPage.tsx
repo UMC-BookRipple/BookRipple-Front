@@ -74,18 +74,18 @@ const SignupPage = () => {
   return (
     <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
       <div className="w-full flex flex-col items-center">
-        <TopLogo />
+        <TopLogo onclick={() => navigate('/start')} />
 
         <div className="w-full px-[20px] pt-[20px] pb-[10px]">
           <SignupLabel />
         </div>
 
         <div className="w-full px-[20px] pt-[20px] pb-[10px]">
-          <FormLabel label="이름 작성" />
+          <FormLabel label="닉네임 작성" />
         </div>
 
         <div className="w-full px-[16px] pt-[4px] pb-[6px]">
-          <LoginTextInput placeholder="이름 입력" value={name} onChange={setName} />
+          <LoginTextInput placeholder="닉네임 입력" value={name} onChange={setName} />
         </div>
 
         <div className="w-full px-[20px] pt-[20px] pb-[10px]">
@@ -152,7 +152,7 @@ const SignupPage = () => {
           <LoginButton
             label="다음 단계로 이동"
             onClick={handleNext}
-            disabled={!isTermsAgreedRequired && name.length > 0 && idCheckStatus === "success"}
+            disabled={!isTermsAgreedRequired || name.length === 0 || idCheckStatus === "error"}
             variant={isTermsAgreedRequired && name.length > 0 && idCheckStatus === "success" ? "brown" : "lightBrown"}
           />
         </div>
