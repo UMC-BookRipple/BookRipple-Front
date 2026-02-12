@@ -78,6 +78,7 @@ const MyPageMenuPage = () => {
       console.error('회원탈퇴 실패:', error);
     }
   };
+
   return (
     <div className="font-weight-[500] flex min-h-dvh w-full flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
       <Header />
@@ -144,7 +145,7 @@ const MyPageMenuPage = () => {
         <span onClick={() => navigate('/questions/me')}>
           질문 전체 기록 관리
         </span>
-        <span onClick={() => navigate('/answer/me')}>답변 전체 기록 관리</span>
+        <span onClick={() => navigate('/answers/me')}>답변 전체 기록 관리</span>
         <span onClick={() => navigate('/mypage/recommend')}>
           추천 도서 기록 관리
         </span>
