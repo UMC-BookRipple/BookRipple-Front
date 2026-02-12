@@ -13,7 +13,7 @@ export default function TabButton({
 }: TabButtonProps) {
   return (
     <button
-      className={`flex w-[180px] flex-shrink-0 items-center justify-center gap-[10px] rounded-[10px] px-[20px] py-[12px] ${active ? 'bg-[#BDB7B2]' : 'bg-white'
+      className={`flex flex-1 items-center justify-center gap-[10px] rounded-[10px] px-[20px] py-[12px] ${active ? 'bg-[#BDB7B2]' : 'bg-white'
         }`}
       onClick={onClick}
     >

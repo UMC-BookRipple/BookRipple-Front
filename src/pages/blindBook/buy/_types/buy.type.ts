@@ -6,6 +6,7 @@ export interface BuyRequestItem {
   id: string;
   titleHint: string;
   authorHint: string;
+  description?: string;
   price: number;
   status: BuyRequestStatus;
   // 결제하기 버튼이 필요한 상태(거래 수락/취소 등)
