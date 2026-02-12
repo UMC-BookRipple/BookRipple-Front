@@ -96,13 +96,15 @@ export const toggleBookLike = async (
  @param status - 도서의 논리적 상태 (READING/LIKED/COMPLETED)
  */
 export const deleteLibraryBooks = async (
-  libraryItemIds: number[],
+  bookIds: number[],
   status: BookStatus,
+  libraryItemIds?: number[],
 ): Promise<void> => {
   try {
-    await http.post(`/api/v1/library/books/delete?status=${status}`, {
-      bookIds: libraryItemIds,
-    });
+    const body: any = { bookIds };
+    if (libraryItemIds && libraryItemIds.length > 0) body.libraryItemIds = libraryItemIds;
+
+    await http.post(`/api/v1/library/books/delete?status=${status}`, body);
   } catch (error) {
     console.error('❌ Delete books error:', error);
     throw error;
