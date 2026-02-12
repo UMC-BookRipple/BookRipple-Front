@@ -29,7 +29,7 @@ const CommunityPage = () => {
             try {
                 setLoadingMyBooks(true);
 
-                const data = await fetchBooksByStatus({ status: "READING" });
+                const data = await fetchBooksByStatus({ status: "COMPLETED" });
 
 
                 setMyBooks(data.result.items);
@@ -72,6 +72,12 @@ const CommunityPage = () => {
     // 뒤로가기 버튼 클릭 시
     const handleBack = () => {
         setView("list");
+    };
+
+    const handleBookSelect = (bookId: number) => {
+        // 책을 선택할 때 책장을 변경하거나 추가하는 로직은 실행하지 않도록 함
+        // 단순히 책 정보 페이지로 이동하게끔 처리
+        navigate(`/community/book/${bookId}`);
     };
 
     if (view === "search") {
@@ -150,6 +156,7 @@ const CommunityPage = () => {
                                         },
                                     }}
                                     className="block"
+                                    onClick={() => handleBookSelect(book.aladinItemId)}
                                 >
                                     <BookCard
                                         title={book.title}
@@ -209,7 +216,8 @@ const CommunityPage = () => {
                             myBooks.map((book) => (
                                 <Link
                                     key={book.libraryItemId}
-                                    to={`/community/book/${book.bookId}`} // aladinItemId 필요
+                                    to={`/community/book/${book.aladinItemId}`} // aladinItemId 필요
+
                                     state={{
                                         book: {
                                             id: book.bookId,

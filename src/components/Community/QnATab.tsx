@@ -27,9 +27,6 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // 하드코딩된 진행률 (50% 이상이라고 가정)
-    const readingProgress = 50; // 실제 진행률을 50으로 하드코딩
-
     const handleUpdateQuestionAnswers = (questionId: number, answers: AnswerItem[]) => {
         setQuestions(prev =>
             prev.map(q => q.id === questionId ? { ...q, answers } : q)
@@ -49,15 +46,20 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                 const res = await getBookQuestions({
 
                     bookId,
-                    onlyMine: false, // 서버에서 all 질문 가져오기
+                    onlyMine: showMyQuestions,
                     keyword: searchQuery || undefined,
                     size: 20,
                 });
 
+                console.log("질문 목록 응답:", res);  // 응답 확인
+
                 // 2️⃣ showMyQuestions 필터 적용
                 const filteredQuestions = showMyQuestions
-                    ? res.result.questionList.filter(q => q.isMine)
+                    ? res.result.questionList.filter(q => q.type === "USER")  // type이 "USER"인 질문만 필터링
                     : res.result.questionList;
+
+
+                console.log("필터링된 질문 목록:", filteredQuestions);
 
                 // 3️⃣ 각 질문별 답변 가져오기
                 const questionsWithAnswers = await Promise.all(
@@ -70,6 +72,8 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
                         }
                     })
                 );
+
+                console.log("질문과 답변:", questionsWithAnswers);
 
                 // 4️⃣ 상태 업데이트
                 setQuestions(questionsWithAnswers);

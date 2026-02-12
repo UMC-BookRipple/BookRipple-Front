@@ -30,13 +30,15 @@ const ReviewTab = ({ bookId }: { bookId: number }) => {
             const newReviews = result.reviewList;
 
             // 중복된 리뷰는 제외하고 추가
-            const filteredReviews = newReviews.filter(
-                (review) => !reviews.some((existingReview) => existingReview.id === review.id)
-            );
+            setReviews((prevReviews) => {
+                const filteredReviews = newReviews.filter(
+                    (review) => !prevReviews.some((existingReview) => existingReview.id === review.id)
+                );
 
-            if (filteredReviews.length > 0) {
-                setReviews((prev) => [...prev, ...filteredReviews]);
-            }
+                // 새로운 리뷰가 있으면 추가
+                return [...prevReviews, ...filteredReviews];
+            });
+
             setLastId(result.lastId);
             setHasNext(result.hasNext);
         } catch (e) {
