@@ -1,5 +1,4 @@
 interface Props {
-  allSelected: boolean;
   onToggleAll: () => void;
   onDelete: () => void;
 }

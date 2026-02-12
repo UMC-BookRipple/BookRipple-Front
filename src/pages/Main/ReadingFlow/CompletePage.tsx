@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import {
+  createSearchParams,
+  useLocation,
+  useNavigate,
+  useParams,
+} from 'react-router-dom';
 import Button from '../../../components/Button';
 import Header from '../../../components/Header';
 import ReadCompleteMark from '../../../components/ReadCompleteMark';
@@ -221,14 +226,15 @@ export default function CompletePage() {
     const q = questionSet[questionIndex];
     if (!q) return;
 
-    navigate(`/books/${bookId}/random-question`, {
-      state: {
-        mode: 'after',
-        bookTitle,
-        questionId: q.id,
-        question: q.content,
-      },
-    });
+    const search = createSearchParams({
+      mode: 'after',
+      bookId: String(bookId),
+      questionId: String(q.id),
+      question: q.content,
+      bookTitle: bookTitle,
+    }).toString();
+
+    navigate(`/books/${bookId}/random-question?${search}`);
   };
 
   return (
@@ -393,7 +399,7 @@ export default function CompletePage() {
         <Button variant="secondary" onClick={() => navigate('/recommend')}>
           추천 도서 보기
         </Button>
-        <Button onClick={() => navigate(`/${tab}/select/${bookId}`)}>
+        <Button onClick={() => navigate(`/bookshelf/${tab}/select/${bookId}`)}>
           나가기
         </Button>
       </section>

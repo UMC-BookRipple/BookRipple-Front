@@ -1,14 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Header from '../../../components/Header';
 import PageHeader from '../../../components/PageHeader';
 import TextInput from '../../../components/TextInput';
 import Toast from '../../../components/Toast';
 import QnACard from '../../../components/QnAcard';
 import BackIcon from '../../../assets/icons/M-Vector.svg';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   createQuestionAnswer,
   patchReadingAnswer,
+  getQuestionAnswers,
+  getReadingQuestions,
+  type AnswerItem,
+  type ReadingAiQnAItem,
 } from '../../../api/questionApi';
 
 type RandomQuestionLocationState = {
@@ -23,9 +27,10 @@ type RandomQuestionLocationState = {
   questionId?: number;
 };
 
-export default function RandomQuestionPage() {
+export default function FinRandomQuestionPage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   const state = (location.state as RandomQuestionLocationState | null) ?? null;
 
@@ -35,25 +40,153 @@ export default function RandomQuestionPage() {
   const toastTimeoutRef = useRef<number | null>(null);
   const inFlightRef = useRef(false);
 
+  const mode = useMemo(() => {
+    return (
+      state?.mode ??
+      (searchParams.get('mode') as 'during' | 'after' | null) ??
+      null
+    );
+  }, [state?.mode, searchParams]);
+
+  const bookTitle = useMemo(() => {
+    return state?.bookTitle ?? searchParams.get('bookTitle') ?? '책 제목';
+  }, [state?.bookTitle, searchParams]);
+
+  const questionText = useMemo(() => {
+    return state?.question ?? searchParams.get('question') ?? '';
+  }, [state?.question, searchParams]);
+
+  const bookId = useMemo(() => {
+    const fromState = state?.bookId;
+    const fromQuery = searchParams.get('bookId');
+    const n =
+      typeof fromState === 'number'
+        ? fromState
+        : fromQuery
+          ? Number(fromQuery)
+          : NaN;
+    return Number.isFinite(n) ? n : null;
+  }, [state?.bookId, searchParams]);
+
+  const readingQuestionId = useMemo(() => {
+    const fromState = state?.readingQuestionId;
+    const fromQuery = searchParams.get('readingQuestionId');
+    const n =
+      typeof fromState === 'number'
+        ? fromState
+        : fromQuery
+          ? Number(fromQuery)
+          : NaN;
+    return Number.isFinite(n) ? n : null;
+  }, [state?.readingQuestionId, searchParams]);
+
+  const questionId = useMemo(() => {
+    const fromState = state?.questionId;
+    const fromQuery = searchParams.get('questionId');
+    const n =
+      typeof fromState === 'number'
+        ? fromState
+        : fromQuery
+          ? Number(fromQuery)
+          : NaN;
+    return Number.isFinite(n) ? n : null;
+  }, [state?.questionId, searchParams]);
+
+  useEffect(() => {
+    if (!state) return;
+
+    const params = new URLSearchParams();
+    params.set('mode', state.mode);
+    if (state.bookTitle) params.set('bookTitle', state.bookTitle);
+    if (state.question) params.set('question', state.question);
+    if (typeof state.bookId === 'number')
+      params.set('bookId', String(state.bookId));
+    if (typeof state.readingQuestionId === 'number')
+      params.set('readingQuestionId', String(state.readingQuestionId));
+    if (typeof state.questionId === 'number')
+      params.set('questionId', String(state.questionId));
+
+    navigate(
+      { pathname: location.pathname, search: `?${params.toString()}` },
+      { replace: true },
+    );
+  }, [state]);
+
+  useEffect(() => {
+    if (!mode || !questionText) {
+      navigate(-1);
+      return;
+    }
+
+    if (mode === 'during') {
+      if (!readingQuestionId || !bookId) {
+        navigate(-1);
+        return;
+      }
+    }
+
+    if (mode === 'after') {
+      if (!questionId) {
+        navigate(-1);
+        return;
+      }
+    }
+  }, [mode, questionText, readingQuestionId, questionId, bookId, navigate]);
+
+  useEffect(() => {
+    let alive = true;
+
+    (async () => {
+      if (!mode) return;
+
+      try {
+        if (mode === 'after' && questionId) {
+          const res = await getQuestionAnswers(questionId);
+          if (!alive) return;
+
+          if (!res?.isSuccess) return;
+          const raw = res.result?.ansList;
+          if (!Array.isArray(raw)) return;
+
+          // 내 답변(isMine=true) 하나만 가져와서 표시
+          const mine = (raw as AnswerItem[]).find((a) => a.isMine);
+          if (mine?.content) setAnswer(mine.content);
+        }
+
+        if (mode === 'during' && bookId && readingQuestionId) {
+          const res = await getReadingQuestions({
+            bookId,
+            lastId: null,
+            size: 50,
+          });
+          if (!alive) return;
+
+          if (!res?.isSuccess) return;
+
+          const list = Array.isArray((res.result as any)?.readingAiQnAS)
+            ? ((res.result as any).readingAiQnAS as ReadingAiQnAItem[])
+            : [];
+
+          const found = list.find((x) => x.id === readingQuestionId);
+          if (typeof found?.answer === 'string' && found.answer.trim()) {
+            setAnswer(found.answer);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [mode, questionId, bookId, readingQuestionId]);
+
   useEffect(() => {
     return () => {
       if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
     };
   }, []);
-
-  const mode = state?.mode;
-  const bookTitle = state?.bookTitle ?? '책 제목';
-  const questionText = state?.question;
-
-  useEffect(() => {
-    if (!state || !questionText || !mode) {
-      navigate(-1);
-      return;
-    }
-
-    if (mode === 'during' && !state.readingQuestionId) navigate(-1);
-    if (mode === 'after' && !state.questionId) navigate(-1);
-  }, [state, questionText, mode, navigate]);
 
   const showToast = () => {
     setToastVisible(true);
@@ -69,10 +202,10 @@ export default function RandomQuestionPage() {
   };
 
   const handleSubmit = async (value: string) => {
-    if (!state) return;
-
     const trimmed = value.trim();
     if (!trimmed) return;
+
+    if (!mode) return;
 
     if (inFlightRef.current) return;
     inFlightRef.current = true;
@@ -80,16 +213,18 @@ export default function RandomQuestionPage() {
     try {
       setAnswer(trimmed);
 
-      if (state.mode === 'during') {
-        // 방향성 질문 답변 저장(PATCH) — 저장(생성+수정 겸)
+      if (mode === 'during') {
+        if (!readingQuestionId) return;
+
         await patchReadingAnswer({
-          readingQuestionId: state.readingQuestionId as number,
+          readingQuestionId,
           body: { content: trimmed },
         });
       } else {
-        // 완독 질문 답변 저장(POST)
+        if (!questionId) return;
+
         await createQuestionAnswer({
-          questionId: state.questionId as number,
+          questionId,
           body: { content: trimmed },
         });
       }
@@ -116,7 +251,7 @@ export default function RandomQuestionPage() {
             className="h-[18px] w-[9px]"
             onClick={() => navigate(-1)}
           />
-          <p className="text-center font-sans text-[18px] leading-normal font-medium text-[#58534E]">
+          <p className="mx-auto max-w-[260px] truncate text-center font-sans text-[18px] leading-normal font-medium text-[#58534E]">
             {bookTitle}
           </p>
         </div>

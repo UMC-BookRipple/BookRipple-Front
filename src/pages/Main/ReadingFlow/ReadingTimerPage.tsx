@@ -55,6 +55,7 @@ export default function ReadingTimerPage() {
   // in-flight guard
   const startInFlightRef = useRef(false);
   const pauseInFlightRef = useRef(false);
+  const endInFlightRef = useRef(false);
 
   // navigate: memo
   const goToMemoList = () => {
@@ -76,19 +77,7 @@ export default function ReadingTimerPage() {
     maxVerticalPx: 60,
   });
 
-  const { status, elapsedSeconds, start, pause, resume, end, tick } =
-    useTimerStore();
-
-  // tick
-  useEffect(() => {
-    if (status !== 'running') return undefined;
-
-    const timerId = window.setInterval(() => {
-      tick();
-    }, 1000);
-
-    return () => window.clearInterval(timerId);
-  }, [status, tick]);
+  const { status, elapsedSeconds, start, pause, resume } = useTimerStore();
 
   const formattedTime = useMemo(
     () => formatTime(elapsedSeconds),
@@ -207,11 +196,41 @@ export default function ReadingTimerPage() {
   };
 
   // 끝내기
-  const handleEnd = () => {
-    end();
-    navigate(`/books/${bookId}/reading/pages`, {
-      state: { sessionId, bookId: numericBookId, bookTitle },
-    });
+  const handleEnd = async () => {
+    if (!bookId) return;
+    if (endInFlightRef.current) return;
+
+    endInFlightRef.current = true;
+    setIsLoading(true);
+
+    try {
+      // 일시정지 중복 호출 방지
+      if (status === 'running') {
+        pause();
+
+        if (sessionId && !pauseInFlightRef.current) {
+          pauseInFlightRef.current = true;
+          try {
+            await pauseReading(sessionId);
+          } finally {
+            pauseInFlightRef.current = false;
+          }
+        }
+      }
+    } catch (e: any) {
+      const statusCode = e?.response?.status;
+      const code = e?.response?.data?.code;
+      if (!(statusCode === 429 && code === 'COMMON_429')) {
+        console.error(e);
+      }
+    } finally {
+      navigate(`/books/${bookId}/reading/pages`, {
+        state: { sessionId, bookId: numericBookId, bookTitle },
+      });
+
+      endInFlightRef.current = false;
+      setIsLoading(false);
+    }
   };
 
   return (

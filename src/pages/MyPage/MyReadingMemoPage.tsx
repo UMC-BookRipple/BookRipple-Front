@@ -13,6 +13,7 @@ import {
   updateMemo as apiUpdateMemo,
   type MemoUpsertReq,
 } from '../../api/memoApi';
+import { useNavigate } from 'react-router-dom';
 
 type MyMemoItem = {
   memoId: number;
@@ -46,6 +47,7 @@ export default function MyReadingMemoPage() {
   const [error, setError] = useState<string | null>(null);
 
   const { open } = useModalStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     void loadFirst();
@@ -221,12 +223,13 @@ export default function MyReadingMemoPage() {
             depth2="독서메모"
             actionLabel={isSelectionMode ? '취소' : '선택'}
             onAction={toggleSelectionMode}
+            onBack={() => navigate(-1)}
           />
         </div>
       </div>
 
       <main
-        className={`flex w-full flex-col items-stretch gap-[10px] px-[16px] py-[10px] ${
+        className={`flex w-full flex-col items-stretch gap-[10px] px-[8px] py-[10px] ${
           isSelectionMode ? 'pb-[90px]' : ''
         }`}
       >
@@ -256,13 +259,13 @@ export default function MyReadingMemoPage() {
 
                   {/* 펼쳐진 경우: 해당 책 메모를 "그 아래"에 렌더 */}
                   {expanded && (
-                    <div className="flex w-full flex-col gap-[16px] pb-[16px]">
+                    <div className="flex w-full flex-col gap-[10px] px-[10px] pb-[16px]">
                       {list.length === 0 ? (
                         <div className="rounded-[10px] bg-white p-[16px] text-[#58534E]">
                           이 책에 작성된 메모가 없어요.
                         </div>
                       ) : (
-                        list.map((memo, index) => (
+                        list.map((memo) => (
                           <Fragment key={memo.memoId}>
                             <MemoCard
                               id={memo.memoId}
@@ -275,9 +278,6 @@ export default function MyReadingMemoPage() {
                               onDelete={handleDeleteOne}
                               onUpdate={editMemo}
                             />
-                            {index < list.length - 1 && (
-                              <div className="h-[1px] w-full bg-[#58534E]" />
-                            )}
                           </Fragment>
                         ))
                       )}

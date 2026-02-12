@@ -1,4 +1,4 @@
-//import api from "../axios";
+import { http } from "../../types/http";
 
 export interface RecommendationResponse {
     isSuccess: boolean;
@@ -9,23 +9,24 @@ export interface RecommendationResponse {
 
 export const submitRecommendation = async (
     baseBookId: number,
-    targetBookId: number,
+    targetBookAladinId: number, // 이름도 맞춰주는 게 좋음
     content: string
 ): Promise<RecommendationResponse> => {
-    console.log("테스트용 submit:", { baseBookId, targetBookId, content });
-    // 서버 호출 없이 바로 성공 응답 반환
-    return {
-        isSuccess: true,
-        code: "SUCCESS",
-        message: "테스트용 저장 완료",
-        result: { id: 999 },
-    };
-    /*const response = await api.post<RecommendationResponse>(
-        `/v1/books/${baseBookId}/recommendations`,
-        {
-            targetBookId,
-            content
-        }
-    );
-    return response.data;*/
+    try {
+        const response = await http.post<RecommendationResponse>(
+            `/api/v1/books/${baseBookId}/recommendations`,
+            {
+                targetBookAladinId, // ✅ 서버 스펙에 맞게 수정
+                content,
+            }
+        );
+
+        return response.data;
+    } catch (error: any) {
+        console.error("추천 저장 실패:", error.response || error.message);
+        throw new Error(
+            error.response?.data?.message || "추천 저장 중 오류가 발생했습니다."
+        );
+    }
 };
+

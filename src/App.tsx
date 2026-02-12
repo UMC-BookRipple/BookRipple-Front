@@ -23,6 +23,7 @@ import PolicyPage from './pages/Login/PolicyPage';
 import NotificationPage from './pages/notification/NotificationPage';
 
 // Reading Flow + Swipe
+import TimerTicker from './components/TimerTicker';
 import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';
 import NonCompletePage from './pages/Main/ReadingFlow/NonCompletePage';
 import ReviewWritePage from './pages/Main/ReadingFlow/ReviewWritePage';
@@ -43,7 +44,7 @@ import RecommendCompletePage from './pages/Recommend/RecommendCompletePage';
 import RecommendBookSearchPage from './pages/Recommend/RecommendBookSearchPage';
 
 // MyPage
-import ProtectedRoute from './components/ProtectedRoute';
+import { ProtectedRoute, PublicRoute } from './components/ProtectedRoute';
 import EditMenuPage from './pages/MyPage/EditMenuPage';
 import ProfileEditIdPage from './pages/MyPage/ProfileEditIdPage';
 import ProfileEditPwPage from './pages/MyPage/ProfileEditPwPage';
@@ -64,6 +65,8 @@ export default function App() {
   return (
     <>
       <GlobalSpinner />
+      <TimerTicker />
+
       <Routes>
         {/* Root redirect */}
         <Route path="/" element={<HomeRoute />} />
@@ -142,24 +145,28 @@ export default function App() {
         />
 
         {/* Auth Routes */}
-        <Route path="/start" element={<StartPage />} />
-        <Route path="/oauth/kakao" element={<KakaoRedirect />} />
-        <Route path="/auth/login/local" element={<LoginPage />} />
-        <Route path="/signup/step1" element={<SignupPage />} />
-        <Route path="/signup/step2" element={<SignupPage2 />} />
-        <Route path="/signup/step3" element={<SignupPage3 />} />
-        <Route path="/signup/complete" element={<SignupCompletePage />} />
-        <Route path="/find/menu" element={<FindPage />} />
-        <Route path="/find-id/email/send" element={<FindIdPage />} />
-        <Route
-          path="/find-password/email/send"
-          element={<FindPasswordPage />}
-        />
-        <Route path="/find-password/reset" element={<ResetPasswordPage />} />
-        <Route path="/policy" element={<PolicyPage />} />
+        <Route element={<PublicRoute />}>
+          <Route path="/start" element={<StartPage />} />
+          <Route path="/auth/login/local" element={<LoginPage />} />
+          <Route path="/signup/step1" element={<SignupPage />} />
+          <Route path="/signup/step2" element={<SignupPage2 />} />
+          <Route path="/signup/step3" element={<SignupPage3 />} />
+          <Route path="/signup/complete" element={<SignupCompletePage />} />
+          <Route path="/find/menu" element={<FindPage />} />
+          <Route path="/find-id/email/send" element={<FindIdPage />} />
+          <Route
+            path="/find-password/email/send"
+            element={<FindPasswordPage />}
+          />
+          <Route path="/find-password/reset" element={<ResetPasswordPage />} />
+          <Route path="/policy" element={<PolicyPage />} />
+        </Route>
 
         {/* Notification */}
         <Route path="/notification" element={<NotificationPage />} />
+
+
+        <Route path="/oauth/kakao" element={<KakaoRedirect />} />
 
         {/* MyPage Routes (Protected) */}
         <Route element={<ProtectedRoute />}>

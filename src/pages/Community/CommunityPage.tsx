@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import logoImg from "/src/assets/icons/logo.svg";
 import SearchBarSimple from "../../components/SearchBar_simple"; // SearchBarSimple 사용
 import BookCard from "../../components/Card/BookCard";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CommunitySearchTab from "../../components/Community/CommunitySearchTab"; // CommunitySearchTab import
 import { type LibraryBook } from "../../types/mybook";
-import { getMyLibraryBooks } from "../../api/Community/mybook";
+import { fetchBooksByStatus } from "../../api/bookshelf.api";
 import { type TodayRecommendBook } from "../../types/todayrecommend";
 import { getTodayRecommendBooks } from "../../api/Community/todayRecommend";
+
+
 
 
 const CommunityPage = () => {
@@ -19,6 +21,7 @@ const CommunityPage = () => {
     const [loadingMyBooks, setLoadingMyBooks] = useState(false);
     const [todayBooks, setTodayBooks] = useState<TodayRecommendBook[]>([]);
     const [loadingToday, setLoadingToday] = useState(false);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -26,9 +29,10 @@ const CommunityPage = () => {
             try {
                 setLoadingMyBooks(true);
 
-                const data = await getMyLibraryBooks("COMPLETED");
+                const data = await fetchBooksByStatus({ status: "COMPLETED" });
 
-                setMyBooks(data.items);
+
+                setMyBooks(data.result.items);
             } catch (error) {
                 console.error("나의 도서 불러오기 실패:", error);
             } finally {
@@ -55,8 +59,9 @@ const CommunityPage = () => {
         fetchTodayBooks();
     }, []);
 
-
-
+    const handleGoToBookshelf = () => {
+        navigate("/bookshelf");
+    };
 
 
     // 검색창을 클릭하면 CommunitySearchTab으로 변경
@@ -67,6 +72,12 @@ const CommunityPage = () => {
     // 뒤로가기 버튼 클릭 시
     const handleBack = () => {
         setView("list");
+    };
+
+    const handleBookSelect = (bookId: number) => {
+        // 책을 선택할 때 책장을 변경하거나 추가하는 로직은 실행하지 않도록 함
+        // 단순히 책 정보 페이지로 이동하게끔 처리
+        navigate(`/community/book/${bookId}`);
     };
 
     if (view === "search") {
@@ -94,7 +105,7 @@ const CommunityPage = () => {
             </div>
 
             {/* COMMUNITY 텍스트 영역 */}
-            <div className="flex justify-center items-center w-full px-[14px] py-[10px] text-[#58534E] font-[GmarketSans] text-[20px] font-bold">
+            <div className="flex justify-center items-center w-full px-[14px] py-[10px] text-[#58534E] font-[GmarketSans TTF] text-[20px] font-bold">
                 COMMUNITY
             </div>
 
@@ -145,6 +156,7 @@ const CommunityPage = () => {
                                         },
                                     }}
                                     className="block"
+                                    onClick={() => handleBookSelect(book.aladinItemId)}
                                 >
                                     <BookCard
                                         title={book.title}
@@ -170,7 +182,7 @@ const CommunityPage = () => {
                     </p>
 
                     {/* 오른쪽 화살표 버튼 */}
-                    <button className="p-1 flex-shrink-0">
+                    <button className="p-1 flex-shrink-0" onClick={handleGoToBookshelf}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="14"
@@ -202,11 +214,26 @@ const CommunityPage = () => {
                             <p className="text-sm text-[#999]">완독한 도서가 없습니다.</p>
                         ) : (
                             myBooks.map((book) => (
-                                <BookCard
+                                <Link
                                     key={book.libraryItemId}
-                                    title={book.title}
-                                    imgSrc={book.coverUrl}
-                                />
+                                    to={`/community/book/${book.aladinItemId}`} // aladinItemId 필요
+
+                                    state={{
+                                        book: {
+                                            id: book.bookId,
+                                            title: book.title,
+                                            author: book.authors,
+                                            imageUrl: book.coverUrl,
+                                        },
+                                    }}
+                                    className="block"
+                                >
+                                    <BookCard
+                                        key={book.libraryItemId}
+                                        title={book.title}
+                                        imgSrc={book.coverUrl}
+                                    />
+                                </Link>
                             ))
                         )}
 

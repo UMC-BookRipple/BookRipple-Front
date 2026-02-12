@@ -200,10 +200,12 @@ export default function BookshelfPage() {
       </div>
       {/* 편집 모드 하단바 */}
       {isEditMode && (
-        <EditBottomBar
-          onSelectAll={handleSelectAll}
-          onDelete={handleDeleteClick}
-        />
+        <div className="fixed right-0 bottom-0 left-0 bg-white shadow-md">
+          <EditBottomBar
+            onSelectAll={handleSelectAll}
+            onDelete={handleDeleteClick}
+          />
+        </div>
       )}
       {/* Modal: store 기반으로 렌더링 */}
       <Modal />

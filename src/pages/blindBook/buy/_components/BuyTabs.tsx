@@ -8,7 +8,7 @@ interface Props {
 
 export default function BuyTabs({ value, onChange }: Props) {
   return (
-    <div className="-mx-5 flex items-center gap-[10px] px-[16px] pt-[4px] pb-[10px]">
+    <div className="flex w-full items-center gap-[10px] pt-[4px] pb-[10px]">
       <TabButton active={value === 'catalog'} onClick={() => onChange('catalog')}>
         블라인드 북 목록
       </TabButton>

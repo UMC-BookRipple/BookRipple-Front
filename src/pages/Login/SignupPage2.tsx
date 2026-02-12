@@ -76,7 +76,7 @@ const SignupPage2 = () => {
 
   return (
     <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-      <TopLogo />
+      <TopLogo onclick={() => navigate('/start')} />
 
       <div className="w-full px-[20px] pt-[20px] pb-[10px]">
         <SignupLabel />

@@ -1,10 +1,11 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from '../../../components/Header';
 import ReadingMark from '../../../components/ReadingMark';
 import useTimerStore from '../../../stores/useTimerStore';
 import logo from '../../../assets/icons/logo.svg';
 import { completeReading, endReading } from '../../../api/timerApi';
+import Button from '../../../components/Button';
 
 type LocationState = {
   sessionId?: number | null;
@@ -18,10 +19,10 @@ export default function ReadingPageRecordPage() {
 
   const numericBookId = Number(bookId);
 
-  const { startPage, endPage, setStartPage, setEndPage } = useTimerStore();
+  const { startPage, endPage, setStartPage, setEndPage, resetPages } =
+    useTimerStore();
 
   const state = (location.state as LocationState | null) ?? null;
-
   const bookTitle = state?.bookTitle ?? '책 제목';
 
   const sessionId: number | null =
@@ -32,6 +33,15 @@ export default function ReadingPageRecordPage() {
     })();
 
   const [isLoading, setIsLoading] = useState(false);
+
+  // 로컬 타이머 일시정지 (후에 정지 처리)
+  useEffect(() => {
+    useTimerStore.setState({ status: 'paused' });
+  }, []);
+
+  useEffect(() => {
+    resetPages();
+  }, [bookId, resetPages]);
 
   const totalPages = useMemo(() => {
     if (startPage == null || endPage == null) return 0;
@@ -68,6 +78,10 @@ export default function ReadingPageRecordPage() {
       const { completed, progress, recordId, readingTime, totalReadingTime } =
         data.result;
 
+      // 서버 세션 종료 성공 후 로컬 정리
+      sessionStorage.removeItem(`reading_session_${bookId ?? ''}`);
+      useTimerStore.setState({ status: 'idle', elapsedSeconds: 0 });
+
       if (completed) {
         try {
           await completeReading(numericBookId);
@@ -103,10 +117,10 @@ export default function ReadingPageRecordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F5F1] pb-30 text-[#4C4540]">
+    <div className="min-h-screen bg-[#F7F5F1] text-[#4C4540]">
       <Header />
 
-      <main>
+      <main className="pb-[110px]">
         <section className="flex flex-col items-center justify-center gap-[10px] self-stretch px-[10px] pt-[26px] pb-[42px]">
           <img src={logo} alt="Book Ripple" className="h-[95px] w-auto" />
         </section>
@@ -115,13 +129,18 @@ export default function ReadingPageRecordPage() {
           <ReadingMark bookName={bookTitle} />
         </section>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+          }}
+        >
           <section className="flex flex-col items-center justify-center gap-[10px] self-stretch px-[20px] py-[10px]">
-            <div className="flex h-[342px] flex-col items-center justify-center gap-[90px] self-stretch rounded-[20px] bg-[#FFFFFF] px-[10px] py-[120px]">
+            <div className="flex w-full flex-col items-center justify-center rounded-[20px] bg-[#FFFFFF] px-[10px] py-[70px]">
               <div className="flex w-[174px] flex-col items-center gap-[22px]">
                 <div className="font-gmarket flex items-center justify-center gap-1 text-[36px] font-bold text-[#58534E]">
                   <input
                     type="number"
+                    inputMode="numeric"
                     min={1}
                     value={startPage ?? ''}
                     onChange={(e) => {
@@ -136,6 +155,7 @@ export default function ReadingPageRecordPage() {
                   <span className="pb-1">-</span>
                   <input
                     type="number"
+                    inputMode="numeric"
                     min={1}
                     value={endPage ?? ''}
                     onChange={(e) => {
@@ -148,20 +168,26 @@ export default function ReadingPageRecordPage() {
                     disabled={isLoading}
                   />
                 </div>
+
                 <p className="h-[21px] w-[156px] text-center font-sans text-[18px] leading-normal font-[500] text-[#58534E]">
                   총 {totalPages} 페이지 읽었어요
                 </p>
               </div>
             </div>
           </section>
-
-          <button
-            type="submit"
-            disabled={!canSubmit || isLoading}
-            className="hidden"
-          />
         </form>
       </main>
+
+      {/* 하단 '다음' 버튼 */}
+      <div className="sticky right-0 bottom-0 left-0 bg-[#F7F5F1] px-[20px] pt-[10px] pb-[calc(env(safe-area-inset-bottom)+14px)]">
+        <Button
+          type="button"
+          onClick={() => handleSubmit()}
+          disabled={!canSubmit || isLoading}
+        >
+          {isLoading ? '처리 중...' : '다음'}
+        </Button>
+      </div>
     </div>
   );
 }

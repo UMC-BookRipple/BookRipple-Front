@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../../../components/Header';
 import SearchBar from '../../../components/SearchBar_deleteButton'; // 검색바 컴포넌트
 import SearchEmpty from '../../../components/Search/SearchEmpty'; // 검색 결과 없을 때

@@ -74,9 +74,11 @@ export const useEmailVerification = ({
                 console.log(message);
             } else {
                 setEmailSendStatus("error");
+                alert("이메일 전송에 실패하였습니다.")
             }
         } catch {
             setEmailSendStatus("error");
+            alert("이메일 전송에 실패하였습니다.")
         }
     };
 
@@ -95,12 +97,12 @@ export const useEmailVerification = ({
                 }
             );
 
-            const { isSuccess, message, result } = res.data;
+            const { isSuccess, message } = res.data;
 
             if (isSuccess) {
                 setEmailVerifyStatus("success");
                 setTimeLeft(0);
-                setResultValue(result ?? "");
+                setResultValue(res.data.result ?? "");
                 console.log(message);
             } else {
                 setEmailVerifyStatus("error");

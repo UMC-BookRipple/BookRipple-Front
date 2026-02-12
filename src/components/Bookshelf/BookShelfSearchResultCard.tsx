@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface BookShelfResultCardProps {
+export interface BookShelfResultCardProps {
   aladinItemId: number;
   imageUrl: string;
   title: string;
   author: string;
   publisher: string;
   pageCount: number;
-  onSelect: (aladinItemId: number) => void;
+  onSelect?: (aladinItemId: number) => void | Promise<void>;
+  disableAutoNavigate?: boolean;
+  hideButton?: boolean;
+  isSmall?: boolean;
+  hidePublisher?: boolean;
+  hidePageCount?: boolean;
+  backgroundColor?: string;
+  hasShadow?: boolean;
 }
 
 const BookShelfResultCard = ({
@@ -19,24 +26,30 @@ const BookShelfResultCard = ({
   publisher,
   pageCount,
   onSelect,
+  disableAutoNavigate = false,
+  hideButton = false,
+  isSmall = false,
+  hidePublisher = false,
+  hidePageCount = false,
+  backgroundColor,
+  hasShadow = false,
 }: BookShelfResultCardProps) => {
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
 
   const handleRegister = async () => {
     try {
-      // 부모로 선택 이벤트 전달 (책장 등록 API 호출)
       console.log('책장에 추가:', aladinItemId);
-      await onSelect(aladinItemId);
+      await onSelect?.(aladinItemId);
 
-      // 토스트 표시
-      setShowToast(true);
-
-      // 2초 후 책장 페이지로 이동
-      setTimeout(() => {
-        setShowToast(false);
-        navigate('/bookshelf/reading');
-      }, 2000);
+      if (!disableAutoNavigate) {
+        // 책장 검색: 토스트 후 책장 페이지로 이동
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+          navigate('/bookshelf/reading');
+        }, 2000);
+      }
     } catch (error) {
       console.error('책장 등록 실패:', error);
       alert('책을 책장에 추가하는데 실패했습니다.');
@@ -45,26 +58,32 @@ const BookShelfResultCard = ({
 
   return (
     <>
-      <div className="flex w-full items-center gap-4 rounded-[10px] bg-[#F5F2EC] p-4">
+      <div
+        className={`flex w-full items-center gap-4 rounded-[10px] p-4 ${
+          backgroundColor ? `bg-[${backgroundColor}]` : 'bg-[#F5F2EC]'
+        } ${hasShadow ? 'shadow-md' : ''}`}
+      >
         <img
           src={imageUrl}
           alt={title}
-          className="h-[116px] w-[78px] rounded-[4px] object-cover shadow-sm"
+          className={`${isSmall ? 'h-[90px] w-[60px]' : 'h-[116px] w-[78px]'} rounded-[4px] object-cover shadow-sm`}
         />
 
         <div className="flex flex-1 flex-col justify-center gap-1 text-[#58534E] min-w-0">
           <p className="text-base leading-tight font-semibold truncate max-w-[140px]">{title}</p>
           <p className="text-sm font-medium truncate max-w-[140px]">{author}</p>
-          <p className="text-xs truncate max-w-[140px]">{publisher}</p>
-          <p className="text-xs">{pageCount}P</p>
+          {!hidePublisher && <p className="text-xs truncate max-w-[140px]">{publisher}</p>}
+          {!hidePageCount && <p className="text-xs">{pageCount}P</p>}
         </div>
 
-        <button
-          onClick={handleRegister}
-          className="rounded-md bg-[#8A877C] px-4 py-2 text-sm text-white hover:opacity-90 shrink-0"
-        >
-          등록하기
-        </button>
+        {!hideButton && (
+          <button
+            onClick={handleRegister}
+            className="rounded-md bg-[#8A877C] px-4 py-2 text-sm text-white hover:opacity-90 shrink-0"
+          >
+            등록하기
+          </button>
+        )}
       </div>
 
       {/* 토스트 알림 */}

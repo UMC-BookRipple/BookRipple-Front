@@ -4,45 +4,46 @@ import Header from "../../components/Header";
 import { submitRecommendation } from "../../api/Recommend/recommendation";
 import { type BookState } from "../../types/bookstate";
 
+interface RecommendWriteState {
+    baseBook: BookState;
+    recommendedBook: BookState;
+}
+
+
 const RecommendWritePage = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const state = location.state as RecommendWriteState | undefined;
 
-    // SearchResultCard에서 전달된 state 받기
-    const book = location.state as BookState | undefined;
+    const baseBook = state?.baseBook;
+    const recommendedBook = state?.recommendedBook;
 
-    // 🔽 임시 baseBook 
-    const baseBook = {
-        id: 12, // ⚠️ 서버에 존재하는 책 ID로 바꿔야 함
-        title: "브람스를 좋아하세요...",
-    };
 
     const [content, setContent] = useState("");
     const [loading] = useState(false);
 
-    if (!book) return <div>선택된 도서 정보가 없습니다.</div>;
+    if (!baseBook || !recommendedBook) {
+        return <div>선택된 도서 정보가 없습니다.</div>;
+    }
 
 
     const handleSubmit = async () => {
-        if (!book) return;
 
-        // book.bookId를 서버 요청 등에서 사용 가능
-        console.log("추천 도서 ID:", book.bookId);
+        console.log("baseBookId:", baseBook.bookId);
+        console.log("targetBookAladinId:", recommendedBook.aladinId);
+        console.log("content:", content);
 
         try {
             await submitRecommendation(
-                baseBook.id, // 기준 도서 (mock)
-                book.bookId,     // 추천 도서 (검색으로 고른 책)
+                baseBook.bookId, // 기준 도서 (mock)
+                recommendedBook.aladinId,     // 추천 도서 (검색으로 고른 책)
                 content
             );
-
-
-
 
             navigate("/recommend/complete", {
                 state: {
                     baseBook,
-                    recommendedBook: book,
+                    recommendedBook,
                     content,
                 },
             });
@@ -64,7 +65,7 @@ const RecommendWritePage = () => {
                 {/* 제목 영역 */}
                 <div className="flex items-center p-[10px] gap-[10px] w-full border-t border-b border-[#58534E]">
                     <p className="text-[#58534E] font-[Freesentation] text-[16px] font-medium">
-                        {baseBook?.title}
+                        {baseBook.title}
                     </p>
                     <p className="text-[#58534E] font-[Freesentation] text-[16px] font-medium">
                         &gt;
@@ -76,7 +77,7 @@ const RecommendWritePage = () => {
             </div>
 
             {/* 🔽 선택 도서 카드 영역 */}
-            {book && (
+            {recommendedBook && (
                 <div
                     className="
           flex flex-col
@@ -99,13 +100,13 @@ const RecommendWritePage = () => {
                         {/* 책 이미지 */}
                         <img
                             src={
-                                book.imageUrl
-                                    ? book.imageUrl.startsWith("http")
-                                        ? book.imageUrl
-                                        : `http://localhost:8080${book.imageUrl}`
+                                recommendedBook.imageUrl
+                                    ? recommendedBook.imageUrl.startsWith("http")
+                                        ? recommendedBook.imageUrl
+                                        : `http://localhost:8080${recommendedBook.imageUrl}`
                                     : "/images/default_book.png"
                             }
-                            alt={book.title || "책 이미지"}
+                            alt={recommendedBook.title || "책 이미지"}
                             className="w-[92px] h-[131px] rounded-[4px] object-cover"
                         />
 
@@ -113,10 +114,10 @@ const RecommendWritePage = () => {
                         {/* 제목 / 작가 */}
                         <div className="flex flex-col items-start gap-[4px] flex-1 ml-[12px]">
                             <p className="text-[#58534E] font-[Freesentation] text-[16px] font-medium">
-                                {book.title}
+                                {recommendedBook.title}
                             </p>
                             <p className="text-[#58534E] font-[Freesentation] text-[16px] font-normal">
-                                {book.author}
+                                {recommendedBook.author}
                             </p>
                         </div>
 

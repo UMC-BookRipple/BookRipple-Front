@@ -78,14 +78,13 @@ const MyPageMenuPage = () => {
       console.error('회원탈퇴 실패:', error);
     }
   };
-
   return (
     <div className="font-weight-[500] flex min-h-dvh w-full flex-col items-center bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
       <Header />
 
       {/* MyPageLabel */}
       <div className="flex w-full flex-row items-center justify-between px-[14px] pt-[30px]">
-        <span className="flex h-[50px] items-center gap-[10px] px-[5px] py-[12px] font-[GmarketSansBold] text-[20px] whitespace-nowrap text-[#58534E]">
+        <span className="flex items-center gap-[10px] px-[5px] py-[12px] font-[GmarketSansBold] text-[20px] whitespace-nowrap text-[#58534E]">
           <img src={arrowIcon} alt="" />
           MY PAGE
         </span>
@@ -145,7 +144,7 @@ const MyPageMenuPage = () => {
         <span onClick={() => navigate('/questions/me')}>
           질문 전체 기록 관리
         </span>
-        <span onClick={() => navigate('/answers/me')}>답변 전체 기록 관리</span>
+        <span onClick={() => navigate('/answer/me')}>답변 전체 기록 관리</span>
         <span onClick={() => navigate('/mypage/recommend')}>
           추천 도서 기록 관리
         </span>

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header.tsx";
 import SearchBar from "../../components/SearchBar_deleteButton.tsx"; // 검색바 컴포넌트
 import SearchEmpty from "../../components/Search/SearchEmpty.tsx"; // 검색 결과 없을 때
 import SearchResult from "../../components/Recommend/RecommendResult.tsx"; // 검색 결과 리스트
 import RecentSearchItem from "../../components/RecentSearchItem.tsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import {
     searchBooks,
@@ -31,6 +31,8 @@ const RecommendBookSearchPage: React.FC<RecommendBookSearchPageProps> = ({
     const [recentSearches, setRecentSearches] = useState<SearchHistoryItem[]>([]);
     const [results, setResults] = useState<Book[]>([]);
     const navigate = useNavigate();
+    const location = useLocation();
+    const baseBook = location.state; // BookshelfSearchPage에서 넘어온 기준 도서
 
 
     // 페이지 로드 시 최근 검색어 불러오기 (book 타입)
@@ -114,13 +116,17 @@ const RecommendBookSearchPage: React.FC<RecommendBookSearchPageProps> = ({
             const detail = await getBookDetailByAladinId(book.aladinItemId);
             const bookForPage = {
                 bookId: detail.bookId,
+                aladinId: book.aladinItemId,
                 title: detail.title,
                 author: detail.author,
                 imageUrl: detail.coverUrl, // coverUrl → imageUrl로 매핑
             };
 
             navigate("/recommend/write", {
-                state: bookForPage
+                state: {
+                    baseBook,          // 기준 도서
+                    recommendedBook: bookForPage,  // 추천 도서
+                },
             });
         } catch (e) {
             console.error("도서 상세 조회 실패", e);

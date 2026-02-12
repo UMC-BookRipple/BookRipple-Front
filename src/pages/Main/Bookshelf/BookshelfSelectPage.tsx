@@ -171,13 +171,30 @@ export default function BookshelfSelectPage() {
       publisher: book.publisher || '',
       pageCount: book.pages || 0,
     };
+    // RecommendWritePage expects { baseBook, recommendedBook }
+    const recommendedBook = {
+      aladinId: book.bookId,
+      bookId: book.bookId,
+      title: book.title,
+      author: book.author || '',
+      imageUrl: book.coverUrl,
+    };
 
-    navigate('/recommend/write', { state: bookState });
+    navigate('/recommend/write', {
+      state: {
+        baseBook: bookState,
+        recommendedBook,
+      },
+    });
   };
 
-  const handleViewRecommendations = () => {
-    // 커뮤니티 홈으로 이동
-    navigate('/community');
+  const handleWriteRecommendations = () => {
+    if (!book) return;
+
+    // Open the book-specific Community page on the '도서별 추천도서' tab
+    navigate(`/community/book/${book.bookId}`, {
+      state: { initialTab: 2 },
+    });
   };
 
   // 로딩 중
@@ -206,6 +223,13 @@ export default function BookshelfSelectPage() {
   const progress = book.progressPercent ?? 0;
   const pages = book.pages ?? 0;
   const current = book.currentPage ?? 0;
+  const pagesLeft = Math.max(0, pages - current);
+  // 사용자 설정(로컬스토리지) 또는 기본값: 20 페이지/일
+  const pagesPerDay = Number(localStorage.getItem('pagesPerDay')) || 20;
+  const estimatedDays =
+    pagesLeft === 0
+      ? 0
+      : Math.max(1, Math.ceil(pagesLeft / (pagesPerDay || 1)));
 
   return (
     <div className="min-h-screen bg-[#F7F5F1]">
@@ -302,7 +326,13 @@ export default function BookshelfSelectPage() {
               </div>
 
               <div className="mt-[6px] flex-[1_0_0] font-[Freesentation] text-[14px] leading-normal font-medium text-[#827A74]">
-                5일 후 완독 가능
+                {progress === 0 ? (
+                  <span>독서를 시작해볼까요?</span>
+                ) : pagesLeft <= 0 ? (
+                  <span>이미 완독한 도서입니다</span>
+                ) : (
+                  <span>{estimatedDays}일 후 완독 가능</span>
+                )}
               </div>
             </div>
           </div>
@@ -315,8 +345,8 @@ export default function BookshelfSelectPage() {
               <Button variant="secondary" onClick={handleWriteReview}>
                 감상평 작성
               </Button>
-              <Button variant="secondary" onClick={handleViewRecommendations}>
-                추천 도서 보기
+              <Button variant="secondary" onClick={handleWriteRecommendations}>
+                추천 도서 작성
               </Button>
             </>
           ) : (
@@ -366,7 +396,9 @@ export default function BookshelfSelectPage() {
             {/* 작성하기 버튼 → 메모 목록 페이지로 이동 */}
             <button
               type="button"
-              onClick={() => navigate(`/books/${bookId}/memos`)}
+              onClick={() =>
+                navigate(`/bookshelf/${tab}/select/${bookId}/memos`)
+              }
               className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[12px] py-[14px]"
             >
               <span className="flex-1 text-center font-[Freesentation] text-[16px] leading-normal font-[500] text-[#58534E]">
@@ -380,8 +412,10 @@ export default function BookshelfSelectPage() {
             title="질문답변"
             type="navigation"
             onClick={() => {
-              // 커뮤니티 홈으로 이동
-              navigate('/community');
+              // 해당 도서의 커뮤니티(Q&A)로 이동 (QnA 탭)
+              navigate(`/community/book/${book.bookId}`, {
+                state: { initialTab: 0 },
+              });
             }}
           />
 
@@ -390,8 +424,10 @@ export default function BookshelfSelectPage() {
             title="사람들의 질문 답변"
             type="navigation"
             onClick={() => {
-              // 커뮤니티 홈으로 이동
-              navigate('/community');
+              // 해당 도서의 커뮤니티(Q&A)로 이동 (QnA 탭)
+              navigate(`/community/book/${book.bookId}`, {
+                state: { initialTab: 0 },
+              });
             }}
           />
         </div>

@@ -1,7 +1,9 @@
 const UserNumber = () => {
+  const nickName = localStorage.getItem('userName') ?? '';
+
   return (
-    <div className="flex h-[29px] w-[134px] items-center justify-center rounded-[20px] bg-[#827A74] px-[10px] py-[5px] font-sans leading-normal font-medium text-[#FFFFFF] text-[14x]">
-      {localStorage.getItem('userName')}
+    <div className="inline-flex max-w-[180px] items-center justify-center rounded-[20px] bg-[#827A74] px-[10px] py-[5px] font-sans text-[14px] leading-normal font-medium text-[#FFFFFF]">
+      <span className="truncate whitespace-nowrap">{nickName}</span>
     </div>
   );
 };
