@@ -372,7 +372,9 @@ export default function BookshelfSelectPage() {
             {/* 작성하기 버튼 → 메모 목록 페이지로 이동 */}
             <button
               type="button"
-              onClick={() => navigate(`/books/${bookId}/memos`)}
+              onClick={() =>
+                navigate(`/bookshelf/${tab}/select/${bookId}/memos`)
+              }
               className="flex w-full items-center gap-[10px] self-stretch rounded-[10px] bg-white px-[12px] py-[14px]"
             >
               <span className="flex-1 text-center font-[Freesentation] text-[16px] leading-normal font-[500] text-[#58534E]">

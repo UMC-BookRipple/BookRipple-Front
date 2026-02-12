@@ -393,7 +393,7 @@ export default function CompletePage() {
         <Button variant="secondary" onClick={() => navigate('/recommend')}>
           추천 도서 보기
         </Button>
-        <Button onClick={() => navigate(`/${tab}/select/${bookId}`)}>
+        <Button onClick={() => navigate(`/bookshelf/${tab}/select/${bookId}`)}>
           나가기
         </Button>
       </section>
