@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header.tsx";
 import SearchBar from "../../components/SearchBar_deleteButton.tsx"; // 검색바 컴포넌트
 import SearchEmpty from "../../components/Search/SearchEmpty.tsx"; // 검색 결과 없을 때

@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface BookShelfResultCardProps {
+export interface BookShelfResultCardProps {
   aladinItemId: number;
   imageUrl: string;
   title: string;
   author: string;
   publisher: string;
   pageCount: number;
-  onSelect: (aladinItemId: number) => Promise<void>;
+  onSelect?: (aladinItemId: number) => void | Promise<void>;
   disableAutoNavigate?: boolean;
+  hideButton?: boolean;
+  isSmall?: boolean;
+  hidePublisher?: boolean;
+  hidePageCount?: boolean;
+  backgroundColor?: string;
+  hasShadow?: boolean;
 }
 
 const BookShelfResultCard = ({
@@ -21,6 +27,12 @@ const BookShelfResultCard = ({
   pageCount,
   onSelect,
   disableAutoNavigate = false,
+  hideButton = false,
+  isSmall = false,
+  hidePublisher = false,
+  hidePageCount = false,
+  backgroundColor,
+  hasShadow = false,
 }: BookShelfResultCardProps) => {
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
@@ -28,7 +40,7 @@ const BookShelfResultCard = ({
   const handleRegister = async () => {
     try {
       console.log('책장에 추가:', aladinItemId);
-      await onSelect(aladinItemId);
+      await onSelect?.(aladinItemId);
 
       if (!disableAutoNavigate) {
         // 책장 검색: 토스트 후 책장 페이지로 이동
@@ -46,26 +58,32 @@ const BookShelfResultCard = ({
 
   return (
     <>
-      <div className="flex w-full items-center gap-4 rounded-[10px] bg-[#F5F2EC] p-4">
+      <div
+        className={`flex w-full items-center gap-4 rounded-[10px] p-4 ${
+          backgroundColor ? `bg-[${backgroundColor}]` : 'bg-[#F5F2EC]'
+        } ${hasShadow ? 'shadow-md' : ''}`}
+      >
         <img
           src={imageUrl}
           alt={title}
-          className="h-[116px] w-[78px] rounded-[4px] object-cover shadow-sm"
+          className={`${isSmall ? 'h-[90px] w-[60px]' : 'h-[116px] w-[78px]'} rounded-[4px] object-cover shadow-sm`}
         />
 
         <div className="flex flex-1 flex-col justify-center gap-1 text-[#58534E] min-w-0">
           <p className="text-base leading-tight font-semibold truncate max-w-[140px]">{title}</p>
           <p className="text-sm font-medium truncate max-w-[140px]">{author}</p>
-          <p className="text-xs truncate max-w-[140px]">{publisher}</p>
-          <p className="text-xs">{pageCount}P</p>
+          {!hidePublisher && <p className="text-xs truncate max-w-[140px]">{publisher}</p>}
+          {!hidePageCount && <p className="text-xs">{pageCount}P</p>}
         </div>
 
-        <button
-          onClick={handleRegister}
-          className="rounded-md bg-[#8A877C] px-4 py-2 text-sm text-white hover:opacity-90 shrink-0"
-        >
-          등록하기
-        </button>
+        {!hideButton && (
+          <button
+            onClick={handleRegister}
+            className="rounded-md bg-[#8A877C] px-4 py-2 text-sm text-white hover:opacity-90 shrink-0"
+          >
+            등록하기
+          </button>
+        )}
       </div>
 
       {/* 토스트 알림 */}

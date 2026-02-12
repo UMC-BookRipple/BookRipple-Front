@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import logoImg from "/src/assets/icons/logo.svg";
 import SearchBarSimple from "../../components/SearchBar_simple"; // SearchBarSimple 사용

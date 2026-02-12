@@ -32,7 +32,7 @@ const ProfileEditPwPage = () => {
                     },
                 });
 
-            const { isSuccess, code, message, result } = response.data;
+            const { isSuccess, message } = response.data;
             console.log(response.data);
 
             if (isSuccess) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import BookShelfResultCard from '././BookShelfSearchResultCard'; // 카드만 변경
 import { searchBooks, type Book } from '../../api/books';
 
@@ -61,7 +61,7 @@ const BookShelfSearchResult: React.FC<BookShelfSearchResultProps> = ({
               author={book.author}
               publisher={book.publisher}
               pageCount={0}
-              onSelect={() => onSelect?.(book)}
+              onSelect={onSelect ? async (_aladinItemId: number) => { await onSelect(book); } : undefined}
               disableAutoNavigate={disableAutoNavigate}
             />
           ))

@@ -99,7 +99,7 @@ const ReviewCommentPage = () => {
         }
       );
 
-      const { isSuccess, message, code, result } = response.data;
+      const { isSuccess, message } = response.data;
 
       if (!isSuccess) {
         if (message) alert(message);

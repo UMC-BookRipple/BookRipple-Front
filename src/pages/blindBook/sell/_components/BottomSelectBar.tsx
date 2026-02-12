@@ -1,11 +1,9 @@
 interface Props {
-  allSelected: boolean;
   onToggleAll: () => void;
   onDelete: () => void;
 }
 
 export default function BottomSelectBar({
-  allSelected,
   onToggleAll,
   onDelete,
 }: Props) {

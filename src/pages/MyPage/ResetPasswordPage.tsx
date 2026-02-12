@@ -65,7 +65,7 @@ const ResetPasswordPage = () => {
                     email: changeData.email,
                     newPassword: password,
                 });
-            const { isSuccess, message, code, result } = response.data;
+            const { isSuccess, message } = response.data;
             if (isSuccess) {
                 setVisible(true);
                 setMessage("변경이 완료되었습니다");

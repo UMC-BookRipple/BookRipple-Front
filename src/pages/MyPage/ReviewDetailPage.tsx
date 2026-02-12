@@ -123,9 +123,9 @@ export default function ReviewDetailPage() {
                     }
                 );
 
-                const { isSuccess, message, result } = res.data;
+                const { isSuccess, message: resMessage } = res.data;
                 if (!isSuccess) {
-                    console.log(message);
+                    console.log(resMessage);
                     return;
                 }
 
