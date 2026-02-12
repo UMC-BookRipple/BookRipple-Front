@@ -106,7 +106,7 @@ export default function NotificationPage() {
       setNotis((prev) =>
         prev.map((noti) => (noti.notificationId === id ? { ...noti, isRead: true } : noti)),
       );
-      navigate(url);
+      navigate(`https://www.bookripple.site${url}`);
     } catch (error) {
       console.error('알림 읽음 처리 실패:', error);
     }

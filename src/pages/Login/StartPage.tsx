@@ -67,7 +67,7 @@ const StartPage = () => {
         />
       </div>
       <div className="w-full flex flex-col items-center gap-[12px] pb-[20px] px-[64.5px]">
-        <button className={socialBtn} onClick={() => navigate("/auth/login/local")}><img src={socialLoginIcon} alt="" />소셜 로그인</button>
+        <button className={socialBtn} onClick={() => navigate("/auth/login/local")}><img src={socialLoginIcon} alt="" />로그인</button>
         <button className={kakaoBtn} onClick={handleKakaoLogin}><img src={kakaoLoginIcon} alt="" />카카오 로그인</button>
         <button className={guestBtn} onClick={guestLogin}>게스트 로그인</button>
         <div className="w-full h-[45px] flex items-center justify-center">

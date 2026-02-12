@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -67,21 +68,21 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
     onClose();
   };
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <>
       {/* background overlay */}
       <div
-        className={`fixed inset-0 top-[49px] z-40 duration-300 ${
-          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
-        }`}
+        className={`fixed inset-0 top-[49px] z-[99998] duration-300 ${isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+          }`}
         onClick={onClose}
       />
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed top-[49px] left-0 z-40 flex h-[calc(100vh-49px)] w-[360px] max-w-[85vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed top-[49px] left-0 z-[99998] flex h-[calc(100vh-49px)] w-[360px] max-w-[85vw] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         {/* Scrollable content */}
         <nav className="flex flex-1 flex-col overflow-y-auto p-[14px]">
@@ -110,11 +111,10 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
                     <li key={itemIndex} className="w-full">
                       <button
                         onClick={() => handleNavigation(item.path)}
-                        className={`/* 2. 피그마 CSS 그대로 반영 */ flex w-full cursor-pointer items-center gap-[10px] self-stretch text-left text-[#58534E] transition-colors hover:bg-gray-50 ${
-                          isFirstItem
-                            ? 'px-[10px] pt-[12px] pb-[4px]' // 첫 번째 아이템 패딩
-                            : 'px-[10px] py-[4px]' // 나머지 아이템 패딩
-                        } `}
+                        className={`/* 2. 피그마 CSS 그대로 반영 */ flex w-full cursor-pointer items-center gap-[10px] self-stretch text-left text-[#58534E] transition-colors hover:bg-gray-50 ${isFirstItem
+                          ? 'px-[10px] pt-[12px] pb-[4px]' // 첫 번째 아이템 패딩
+                          : 'px-[10px] py-[4px]' // 나머지 아이템 패딩
+                          } `}
                       >
                         <span className="font-sans text-[16px] leading-normal font-normal">
                           {item.label}
@@ -128,7 +128,8 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
           ))}
         </nav>
       </aside>
-    </>
+    </>,
+    document.body
   );
 };
 
