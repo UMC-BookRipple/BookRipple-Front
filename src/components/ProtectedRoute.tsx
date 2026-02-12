@@ -1,16 +1,42 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { useEffect } from "react";
 import { useAuthStore } from "../stores/authStore";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = () => {
-    const { isLoggedIn } = useAuthStore();
+export const ProtectedRoute = () => {
+    const { isLoggedIn, isAuthChecked, checkAuth } = useAuthStore();
 
-    if (!isLoggedIn) {
-        // Redirect to login if not authenticated
-        return <Navigate to="/auth/login/local" replace />;
+    useEffect(() => {
+        if (!isAuthChecked) {
+            checkAuth();
+        }
+    }, [isAuthChecked, checkAuth]);
+
+    if (!isAuthChecked) {
+        return null;
     }
 
-    // Render child routes if authenticated
+    if (!isLoggedIn) {
+        return <Navigate to="/start" replace />;
+    }
+
     return <Outlet />;
 };
 
-export default ProtectedRoute;
+export const PublicRoute = () => {
+    const { isLoggedIn, isAuthChecked, checkAuth } = useAuthStore();
+
+    useEffect(() => {
+        if (!isAuthChecked) {
+            checkAuth();
+        }
+    }, [isAuthChecked, checkAuth]);
+
+    if (!isAuthChecked) return null;
+
+    if (isLoggedIn) {
+        return <Navigate to="/bookshelf" replace />;
+    }
+
+    return <Outlet />;
+};
+

@@ -203,11 +203,19 @@ export default function ReadingTimerPage() {
     endInFlightRef.current = true;
     setIsLoading(true);
 
-    if (status === 'running') pause();
-
     try {
-      if (sessionId) {
-        await pauseReading(sessionId);
+      // 일시정지 중복 호출 방지
+      if (status === 'running') {
+        pause();
+
+        if (sessionId && !pauseInFlightRef.current) {
+          pauseInFlightRef.current = true;
+          try {
+            await pauseReading(sessionId);
+          } finally {
+            pauseInFlightRef.current = false;
+          }
+        }
       }
     } catch (e: any) {
       const statusCode = e?.response?.status;
