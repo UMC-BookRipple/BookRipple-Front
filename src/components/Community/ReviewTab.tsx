@@ -27,7 +27,16 @@ const ReviewTab = ({ bookId }: { bookId: number }) => {
                 return;
             }
 
-            setReviews((prev) => [...prev, ...result.reviewList]);
+            const newReviews = result.reviewList;
+
+            // 중복된 리뷰는 제외하고 추가
+            const filteredReviews = newReviews.filter(
+                (review) => !reviews.some((existingReview) => existingReview.id === review.id)
+            );
+
+            if (filteredReviews.length > 0) {
+                setReviews((prev) => [...prev, ...filteredReviews]);
+            }
             setLastId(result.lastId);
             setHasNext(result.hasNext);
         } catch (e) {
@@ -44,6 +53,8 @@ const ReviewTab = ({ bookId }: { bookId: number }) => {
 
     // 무한 스크롤
     useEffect(() => {
+        if (!hasNext || isLoading) return;
+
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
@@ -55,7 +66,7 @@ const ReviewTab = ({ bookId }: { bookId: number }) => {
 
         if (loaderRef.current) observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, [lastId, hasNext]);
+    }, [hasNext, isLoading]);
 
     return (
         <div className="flex flex-col gap-[10px] px-[10px] py-[16px] w-full">

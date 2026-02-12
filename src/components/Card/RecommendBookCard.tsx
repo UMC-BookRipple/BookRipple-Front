@@ -20,15 +20,15 @@ const RecommendBookCard = ({ book, onLikeUpdate }: RecommendBookCardProps) => {
             let result;
             if (liked) {
                 // 좋아요 상태가 true라면, 취소
-                result = await cancelLikeBook(book.id); // 좋아요 취소 API 호출
+                result = await cancelLikeBook(book.targetBookId); // 좋아요 취소 API 호출
             } else {
                 // 좋아요 상태가 false라면, 추가
-                result = await toggleLikeBook(book.id); // 좋아요 추가 API 호출
+                result = await toggleLikeBook(book.targetBookId); // 좋아요 추가 API 호출
             }
 
 
             setLiked(result.liked);
-            onLikeUpdate(book.id, result.liked);
+            onLikeUpdate(book.targetBookId, result.liked);
 
             setShowToast(true);
             setTimeout(() => {

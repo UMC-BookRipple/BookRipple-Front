@@ -402,11 +402,10 @@ export default function CompletePage() {
 
       {/* 토스트 */}
       <div
-        className={`pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 transition-all duration-300 ease-in-out ${
-          toastVisible
+        className={`pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 transition-all duration-300 ease-in-out ${toastVisible
             ? 'bottom-[100px] translate-y-0 opacity-100'
             : 'bottom-[80px] translate-y-[10px] opacity-0'
-        }`}
+          }`}
       >
         <Toast visible={toastVisible} message={toastMessage} />
       </div>

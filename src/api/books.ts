@@ -93,15 +93,22 @@ export const getBookDetailByAladinId = async (
 };
 
 // 내부 bookId로 책 상세 정보 조회 (aladinItemId 포함)
-export const getBookDetailByBookId = async (
+/*export const getBookDetailByBookId = async (
     bookId: number
 ): Promise<BookDetail> => {
-    const response = await http.get<BookDetailResponse>(
-        `/api/v1/books/${bookId}`
-    );
-
-    return response.data.result;
-};
+    try {
+        const response = await http.get<BookDetailResponse>(
+            `/api/v1/books/${bookId}`
+        );
+        if (!response.data.isSuccess) {
+            throw new Error(`API 호출 실패: ${response.data.message}`);
+        }
+        return response.data.result;
+    } catch (error) {
+        console.error("책 상세 조회 실패:", error);
+        throw error;
+    }
+};*/
 
 
 // searchBooks 함수

@@ -1,5 +1,6 @@
 export interface BookState {
-    bookId: number;
+    bookId: number;          // DB PK
+    aladinId: number;
     imageUrl: string;
     title: string;
     author: string;

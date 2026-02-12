@@ -27,6 +27,8 @@ const QnATab: React.FC<QnATabProps> = ({ bookId }) => {
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    // 하드코딩된 진행률 (50% 이상이라고 가정)
+    const readingProgress = 50; // 실제 진행률을 50으로 하드코딩
 
     const handleUpdateQuestionAnswers = (questionId: number, answers: AnswerItem[]) => {
         setQuestions(prev =>

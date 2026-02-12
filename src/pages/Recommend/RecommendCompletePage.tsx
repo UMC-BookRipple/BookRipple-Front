@@ -24,13 +24,15 @@ const RecommendCompletePage = () => {
         return <div>잘못된 접근입니다.</div>;
     }
 
+    const recommenderName = localStorage.getItem("userName") || "익명";
+
     const cardData = {
         id: recommendedBook.id,
         imageUrl: recommendedBook.imageUrl,
         title: recommendedBook.title,
         author: recommendedBook.author,
         recommendationContent: content,
-        recommenderName: "닉네임", // 추후 API
+        recommenderName,
         baseBookTitle: baseBook.title,
     };
 
