@@ -14,6 +14,8 @@ interface BookshelfState {
   error: string | null;
   hasNext: boolean;
   lastId: number | null;
+  // 최근 삭제된 bookId 목록 (클라이언트 필터링용)
+  deletedBookIds: number[];
 
   /*
    탭별 도서 목록 조회 (READING/FINISHED/LIKED)
@@ -40,6 +42,7 @@ export const useBookshelfStore = create<BookshelfState>((set, get) => ({
   error: null,
   hasNext: false,
   lastId: null,
+  deletedBookIds: [],
 
   fetchBooksByTab: async (tab: BookshelfTabKey) => {
     set({ isLoading: true, error: null });
@@ -67,7 +70,7 @@ export const useBookshelfStore = create<BookshelfState>((set, get) => ({
       }
 
       // bookId를 기준으로 isLiked 설정
-      const books = response.result.items.map((apiBook) => {
+      const allBooks = response.result.items.map((apiBook) => {
         const bookItem = convertApiBookToBookItem(apiBook);
         // API에 isLiked가 없으므로, 좋아요한 책 목록에서 확인
         bookItem.isLiked = apiBook.bookId
@@ -75,6 +78,10 @@ export const useBookshelfStore = create<BookshelfState>((set, get) => ({
           : false;
         return bookItem;
       });
+
+      // 클라이언트에서 최근 삭제한 도서는 필터링하여 어떤 탭으로 가더라도 보이지 않게 함
+      const deleted = get().deletedBookIds || [];
+      const books = allBooks.filter((b) => !(b.bookId && deleted.includes(b.bookId)));
 
       set({
         books,
@@ -103,11 +110,13 @@ export const useBookshelfStore = create<BookshelfState>((set, get) => ({
     try {
       const currentBooks = get().books;
       const targetBookIds: number[] = [];
+      const targetLibraryItemIds: number[] = [];
 
       for (const id of bookIds) {
         const book = currentBooks.find((b) => b.id === id);
-        if (book && book.bookId) {
-          targetBookIds.push(book.bookId);
+        if (book) {
+          if (book.bookId) targetBookIds.push(book.bookId);
+          if (book.libraryItemId) targetLibraryItemIds.push(book.libraryItemId);
         }
       }
 
@@ -115,10 +124,13 @@ export const useBookshelfStore = create<BookshelfState>((set, get) => ({
         return;
       }
 
-      await deleteLibraryBooks(targetBookIds, status);
+      await deleteLibraryBooks(targetBookIds, status, targetLibraryItemIds);
 
+      // 클라이언트에서 삭제 처리: 현재 스토어에서 제거하고 삭제된 bookId를 기록하여
+      // 이후 서버에서 다시 fetch 되더라도 잠시 동안 화면에 보이지 않도록 함.
       set((state) => ({
         books: state.books.filter((book) => !bookIds.includes(book.id)),
+        deletedBookIds: Array.from(new Set([...(state.deletedBookIds || []), ...targetBookIds])),
       }));
     } catch (error) {
       console.error('❌ Failed to delete books:', error);

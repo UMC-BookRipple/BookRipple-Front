@@ -232,7 +232,59 @@ const BookCommunityPage = () => {
 
             </div>
         </div>
-    );
+      </div>
+      {/* 선택된 책 제목 영역 */}
+      <div className="flex w-full items-center gap-2 self-stretch px-[20px] py-[10px]">
+        {/* 왼쪽 화살표 버튼 */}
+        <button className="flex-shrink-0 p-0" onClick={() => navigate(-1)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 8 15"
+            fill="none"
+            className="rotate-180"
+          >
+            <path
+              d="M0.5 14.5L7.5 7.5L0.5 0.5"
+              stroke="#58534E"
+              strokeWidth={1}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+
+        {/* 책 제목 텍스트 */}
+        <p
+          className="flex-1 truncate text-[18px] leading-normal font-[500] text-[#58534E]"
+          style={{ fontFamily: 'Freesentation' }}
+        >
+          {loading ? '불러오는 중...' : (book?.title ?? '책 정보 없음')}
+        </p>
+      </div>
+      <div className="sticky top-0 z-10">
+        <TopBar
+          mainButtons={TABS}
+          activeIndex={activeIndex}
+          onChange={setActiveIndex}
+        />
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        {!loading && book && activeIndex === 0 && (
+          <QnATab bookId={book.bookId} />
+        )}
+
+        {!loading && book && activeIndex === 1 && (
+          <ReviewTab bookId={book.bookId} />
+        )}
+
+        {!loading && book && activeIndex === 2 && (
+          <RecommendTab bookId={book.bookId} />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default BookCommunityPage;
