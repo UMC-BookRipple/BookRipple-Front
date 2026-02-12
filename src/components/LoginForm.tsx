@@ -11,6 +11,7 @@ type LoginFormBodyProps = {
   wrongLogin?: boolean;
   onToggle?: () => void;
   showPassword: boolean;
+  handleSubmit: (e: React.FormEvent) => void;
 };
 
 const LoginFormBody = ({
@@ -21,6 +22,7 @@ const LoginFormBody = ({
   wrongLogin = false,
   onToggle,
   showPassword,
+  handleSubmit,
 }: LoginFormBodyProps) => {
   return (
     <div className="w-full flex flex-col items-center bg-[#F7F5F1]">
@@ -37,37 +39,39 @@ const LoginFormBody = ({
       </div>
 
       {/* 아이디 */}
-      <div className="w-full px-[20px] pt-[20px] pb-[10px]">
-        <FormLabel label="아이디" />
-      </div>
-      <div className="w-full px-[16px] py-[4px]">
-        <LoginTextInput
-          placeholder="아이디를 입력하세요"
-          value={userId}
-          onChange={onChangeUserId}
-        />
-      </div>
+      <form onSubmit={handleSubmit} className="w-full">
+        <div className="w-full px-[20px] pt-[20px] pb-[10px]">
+          <FormLabel label="아이디" />
+        </div>
+        <div className="w-full px-[16px] py-[4px]">
+          <LoginTextInput
+            placeholder="아이디를 입력하세요"
+            value={userId}
+            onChange={onChangeUserId}
+          />
+        </div>
 
-      {/* 비밀번호 */}
-      <div className="w-full px-[20px] pt-[20px] pb-[10px]">
-        <FormLabel label="비밀번호" />
-      </div>
-      <div className="w-full px-[16px] py-[4px]">
-        <LoginTextInput
-          type={showPassword ? "text" : "password"}
-          placeholder="비밀번호를 입력하세요"
-          value={password}
-          onChange={onChangePassword}
-          onToggle={onToggle}
-        />
+        {/* 비밀번호 */}
+        <div className="w-full px-[20px] pt-[20px] pb-[10px]">
+          <FormLabel label="비밀번호" />
+        </div>
+        <div className="w-full px-[16px] py-[4px]">
+          <LoginTextInput
+            type={showPassword ? "text" : "password"}
+            placeholder="비밀번호를 입력하세요"
+            value={password}
+            onChange={onChangePassword}
+            onToggle={onToggle}
+          />
 
-        {wrongLogin && (
-          <p className="flex flex-row itmes-start mt-[6px] text-[#DC3545] text-[16px]">
-            <img src={CheckIconRed} alt="" />
-            입력된 정보가 올바르지 않습니다
-          </p>
-        )}
-      </div>
+          {wrongLogin && (
+            <p className="flex flex-row itmes-start mt-[6px] text-[#DC3545] text-[16px]">
+              <img src={CheckIconRed} alt="" />
+              입력된 정보가 올바르지 않습니다
+            </p>
+          )}
+        </div>
+      </form>
 
       {/* 하단 구분선 */}
       <div className="w-full px-[16px] pt-[30px] pb-[20px]">

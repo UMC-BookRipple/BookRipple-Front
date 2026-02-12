@@ -84,7 +84,7 @@ const MyPageMenuPage = () => {
 
       {/* MyPageLabel */}
       <div className="flex w-full flex-row items-center justify-between px-[14px] pt-[30px]">
-        <span className="flex h-[50px] items-center gap-[10px] px-[5px] py-[12px] font-[GmarketSansBold] text-[20px] whitespace-nowrap text-[#58534E]">
+        <span className="flex items-center gap-[10px] px-[5px] py-[12px] font-[GmarketSansBold] text-[20px] whitespace-nowrap text-[#58534E]">
           <img src={arrowIcon} alt="" />
           MY PAGE
         </span>

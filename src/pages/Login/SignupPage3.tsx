@@ -147,6 +147,7 @@ const SignupPage3 = () => {
 
             if (!res.data.isSuccess) {
                 console.log(res.data.message || "회원가입에 실패했습니다.");
+                alert("회원가입에 실패했습니다.");
                 return;
             }
 
@@ -155,6 +156,7 @@ const SignupPage3 = () => {
         } catch (e) {
             console.error(e);
             console.log("회원가입 중 오류가 발생했습니다.");
+            alert("회원가입 중 오류가 발생했습니다.");
         }
     };
 
@@ -162,7 +164,7 @@ const SignupPage3 = () => {
 
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-            <TopLogo />
+            <TopLogo onclick={() => navigate('/start')} />
             <div className="fixed top-[100px] left-1/2 -translate-x-1/2 z-50">
                 <Toast visible={toastVisible} message={toastMessage} />
             </div>

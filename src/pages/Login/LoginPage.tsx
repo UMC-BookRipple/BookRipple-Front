@@ -50,7 +50,7 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-dvh w-full flex flex-col items-center bg-[#F7F5F1] font-[Freesentation]">
-            <TopLogo />
+            <TopLogo onclick={() => navigate('/start')} />
 
             <LoginFormBody
                 userId={loginId}
@@ -67,7 +67,6 @@ const LoginPage = () => {
                 showPassword={showPassword}
                 onToggle={() => setShowPassword((prev) => !prev)}
             />
-
 
             <div className="w-full h-[104px] pt-[45px] pb-[10px] px-[16px] flex items-center justify-center">
                 <LoginButton label="로그인하기" onClick={handleLogin} />
