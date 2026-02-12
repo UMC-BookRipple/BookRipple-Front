@@ -23,3 +23,26 @@ export const getLibraryBookDetail = (bookId: number) => {
     `/api/v1/library/books/${bookId}`,
   );
 };
+
+export type LibraryBookSummary = {
+  bookId: number;
+  coverUrl: string;
+  title: string;
+  authors: string[];
+  status: 'LIKED' | 'READING' | 'COMPLETED';
+  progressPercent: number;
+  readingTimeMinutes: number;
+  estimatedDaysToCompletion: number | null;
+};
+
+export type LibraryBookSummaryListRes = {
+  books: LibraryBookSummary[];
+  totalCount: number;
+};
+
+/** 마이페이지 읽고 있는 책 요약 조회 */
+export const getBooksSummary = () => {
+  return http.get<ApiResponse<LibraryBookSummaryListRes>>(
+    '/api/v1/library/books-summary',
+  );
+};
