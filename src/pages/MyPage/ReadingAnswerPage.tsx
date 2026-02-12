@@ -124,7 +124,7 @@ const ReadingQuestionPage = () => {
                 <Divider />
                 <MenuBarItems
                     mainLabel="내 기록 확인"
-                    MenuBarLabel="독서 질문"
+                    MenuBarLabel="독서 답변"
                     plusMenuLabel="선택"
                 />
                 <Divider />

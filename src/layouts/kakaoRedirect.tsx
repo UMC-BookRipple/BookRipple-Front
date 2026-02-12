@@ -19,7 +19,9 @@ const KakaoRedirect: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const kakaoCode = new URL(window.location.search).searchParams.get("code");
+    const params = new URLSearchParams(window.location.search);
+    const kakaoCode = params.get("code");
+
     console.log("추출한 code:", kakaoCode);
 
     if (kakaoCode) {
