@@ -1,4 +1,4 @@
-import api from "./axios";
+import { http } from "../types/http";
 
 // 추천글 항목 타입
 export interface MyRecommendation {
@@ -53,7 +53,7 @@ export const getMyRecommendations = async (
         if (lastId) params.lastId = lastId;
         if (lastSourceBookTitle) params.lastSourceBookTitle = lastSourceBookTitle;
 
-        const res = await api.get("/v1/recommendations/me", { params });
+        const res = await http.get("/api/v1/recommendations/me", { params });
 
         if (!res.data?.isSuccess || !res.data.result) {
             throw new Error(res.data?.message || "추천글 조회 실패");
@@ -75,7 +75,7 @@ export const updateRecommendation = async (
     body: UpdateRecommendationBody
 ): Promise<UpdateRecommendationResult> => {
     try {
-        const res = await api.patch(`/v1/recommendations/${recommendationId}`, body);
+        const res = await http.patch(`/api/v1/recommendations/${recommendationId}`, body);
 
         if (!res.data?.isSuccess || !res.data.result) {
             throw new Error(res.data?.message || "추천글 수정 실패");
@@ -93,7 +93,7 @@ export const deleteRecommendation = async (
     recommendationId: number
 ): Promise<DeleteRecommendationResult> => {
     try {
-        const res = await api.delete(`/v1/recommendations/${recommendationId}`);
+        const res = await http.delete(`/api/v1/recommendations/${recommendationId}`);
 
         if (!res.data?.isSuccess || !res.data.result) {
             throw new Error(res.data?.message || "추천글 삭제 실패");
@@ -115,7 +115,7 @@ export const bulkDeleteRecommendations = async (
     recommendationIds: number[]
 ): Promise<BulkDeleteRecommendationResult> => {
     try {
-        const res = await api.delete(`/v1/recommendations`, {
+        const res = await http.delete(`/api/v1/recommendations`, {
             data: { ids: recommendationIds }, // DELETE 요청은 body에 data 전달
         });
 

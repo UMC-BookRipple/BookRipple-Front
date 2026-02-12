@@ -225,14 +225,14 @@ export async function batchDeleteMyQuestions(body: IdListReq) {
 //GET 커뮤니티- 도서 질문 검색
 export const searchQuestions = async (
     bookId: number,
-    keyword: string
-
+    keyword: string,
+    onlyMine: boolean,
 ): Promise<BookQuestionItem[]> => {
     try {
         const response = await http.get<ApiResponse<BookQuestionListResult>>(
             `/api/v1/books/${bookId}/search`,
             {
-                params: { query: keyword },
+                params: { query: keyword, onlyMine },
             }
         );
 

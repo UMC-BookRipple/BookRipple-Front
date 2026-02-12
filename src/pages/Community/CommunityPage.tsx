@@ -12,6 +12,8 @@ import { type TodayRecommendBook } from "../../types/todayrecommend";
 import { getTodayRecommendBooks } from "../../api/Community/todayRecommend";
 
 
+
+
 const CommunityPage = () => {
     const [view, setView] = useState<"list" | "search">("list"); // 뷰 상태 관리
     const [searchQuery, setSearchQuery] = useState<string>(""); // 검색어 상태
@@ -28,6 +30,7 @@ const CommunityPage = () => {
                 setLoadingMyBooks(true);
 
                 const data = await fetchBooksByStatus({ status: "READING" });
+
 
                 setMyBooks(data.result.items);
             } catch (error) {
@@ -204,11 +207,25 @@ const CommunityPage = () => {
                             <p className="text-sm text-[#999]">완독한 도서가 없습니다.</p>
                         ) : (
                             myBooks.map((book) => (
-                                <BookCard
+                                <Link
                                     key={book.libraryItemId}
-                                    title={book.title}
-                                    imgSrc={book.coverUrl}
-                                />
+                                    to={`/community/book/${book.bookId}`} // aladinItemId 필요
+                                    state={{
+                                        book: {
+                                            id: book.bookId,
+                                            title: book.title,
+                                            author: book.authors,
+                                            imageUrl: book.coverUrl,
+                                        },
+                                    }}
+                                    className="block"
+                                >
+                                    <BookCard
+                                        key={book.libraryItemId}
+                                        title={book.title}
+                                        imgSrc={book.coverUrl}
+                                    />
+                                </Link>
                             ))
                         )}
 

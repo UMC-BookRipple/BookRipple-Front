@@ -5,5 +5,6 @@ interface LibraryBook {
     coverUrl: string;
     authors: string[];
     status: string;
+    aladinItemId?: number;
 }
 export type { LibraryBook };

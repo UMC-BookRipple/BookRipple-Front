@@ -11,12 +11,17 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
 
     const loaderRef = useRef<HTMLDivElement | null>(null);
 
+    // 추천 책을 불러오는 함수
     const loadRecommendBooks = async () => {
         if (!hasNext || isLoading) return;
 
         setIsLoading(true);
+
         try {
             const data = await fetchRecommendBooks({ bookId, lastId });
+
+            // 데이터 확인
+            console.log("API Response Data:", data);
 
             if (!data.isSuccess || !data.result) {
                 console.error("API 실패:", data);
@@ -24,14 +29,30 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
                 return;
             }
 
-            const { recommendList, lastId: nextLastId, hasNext: nextHasNext } =
-                data.result;
+            const { recommendList, lastId: nextLastId, hasNext: nextHasNext } = data.result || {};
 
-            setBooks((prev) => [...prev, ...recommendList]);
-            setLastId(nextLastId);
-            setHasNext(nextHasNext);
+            if (recommendList && recommendList.length > 0) {
+                // 중복 처리 후 새 책 목록 추가
+                setBooks((prevBooks) => {
+                    const newBooks = recommendList.filter((book) =>
+                        !prevBooks.some((existingBook) => existingBook.id === book.id)
+                    );
+
+                    console.log("Existing books:", prevBooks);
+                    console.log("New books to be added:", newBooks);
+
+                    const updatedBooks = [...prevBooks, ...newBooks];
+                    console.log("Updated books:", updatedBooks);
+
+                    return updatedBooks;
+                });
+            }
+
+            // 상태 업데이트: lastId와 hasNext를 제대로 갱신
+            setLastId(nextLastId);  // 새로 받은 lastId를 setLastId로 갱신
+            setHasNext(nextHasNext);  // 새로 받은 hasNext 값을 갱신
         } catch (error) {
-            console.error(error);
+            console.error("추천 책 불러오기 실패:", error);
         } finally {
             setIsLoading(false);
         }
@@ -40,29 +61,31 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
     // 최초 로딩
     useEffect(() => {
         loadRecommendBooks();
-    }, [bookId]);
+    }, [bookId]);  // bookId가 변경되면 새로 불러오기
 
-    // 무한 스크롤
+    // 무한 스크롤 감지
     useEffect(() => {
         if (!hasNext) return;
 
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (entry.isIntersecting) {
-                    loadRecommendBooks();
+                    loadRecommendBooks();  // 더 많은 책을 불러오기
                 }
             },
-            { threshold: 1 }
+            { threshold: 1 }  // 요소가 100% 화면에 보일 때 실행
         );
 
         if (loaderRef.current) observer.observe(loaderRef.current);
         return () => observer.disconnect();
-    }, [hasNext, lastId]);
+    }, [hasNext, lastId]);  // `hasNext`나 `lastId`가 바뀔 때마다
 
-    const handleLikeUpdate = (bookId: number, liked: boolean) => {
+    // 좋아요 상태 업데이트
+    const handleLikeUpdate = (targetBookId: number, liked: boolean) => {
+        console.log(`Like status updated for book ${targetBookId}:`, liked);
         setBooks((prevBooks) =>
             prevBooks.map((book) =>
-                book.id === bookId ? { ...book, isLiked: liked } : book
+                book.targetBookId === targetBookId ? { ...book, isLiked: liked } : book
             )
         );
     };
@@ -72,13 +95,12 @@ const RecommendTab = ({ bookId }: { bookId: number }) => {
             <div className="flex flex-col items-center gap-[10px] w-full">
                 {books.map((book, index) => (
                     <div key={`${book.id}-${index}`} className="px-[24px] py-[10px] w-full">
-                        <RecommendBookCard book={book}
-                            onLikeUpdate={handleLikeUpdate} />
+                        <RecommendBookCard book={book} onLikeUpdate={handleLikeUpdate} />
                     </div>
                 ))}
             </div>
 
-            {hasNext && <div ref={loaderRef} className="h-[40px]" />}
+            {hasNext && <div ref={loaderRef} className="h-[40px]" />}  {/* 무한 스크롤 로딩 트리거 */}
         </div>
     );
 };
