@@ -93,7 +93,8 @@ const ResetPasswordPage = () => {
                 <img src={arrowIcon} className="mb-[3px]"
                     onClick={() => navigate(-1)} />
                 <div
-                    className="text-[18px] font-weight-[500] text-[#58534E] whitespace-nowrap">비밀번호 찾기</div>
+                    className="text-[18px] font-weight-[500] text-[#58534E] whitespace-nowrap"
+                    onClick={() => navigate(-1)}>비밀번호 찾기</div>
             </div>
             <div className="w-full px-[16px] py-[10px] flex items-center justify-center gap-[10px]">
                 <Divider />
