@@ -11,10 +11,10 @@ const StartPage = () => {
 
   // 버튼: 폭은 반응형(w-full) + 최대폭(273px)
   const buttonBase =
-    "w-full h-[45px] rounded-[100px] border border-black/25 flex items-center justify-center gap-[10px] px-[10px] py-[12px] items-stretch";
+    "w-full rounded-[100px] border border-black/25 flex items-center justify-center gap-[10px] px-[10px] py-[12px] items-stretch border-b-rgba(0, 0, 0, 0.25)";
 
   const socialBtn = `${buttonBase} ${fontBase} bg-[#827A74] text-white`;
-  const kakaoBtn = `${buttonBase} ${fontBase} bg-[#FFF3D0] text-[#58534E]`;
+  const kakaoBtn = `${buttonBase} ${fontBase} bg-[#FFE8A9] text-[#58534E]`;
   const guestBtn = `${buttonBase} ${fontBase} bg-white text-[#58534E]`;
   const signupText = `${fontBase} text-[#58534E] underline`;
 

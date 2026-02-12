@@ -74,9 +74,11 @@ export const useEmailVerification = ({
                 console.log(message);
             } else {
                 setEmailSendStatus("error");
+                alert("이메일 전송에 실패하였습니다.")
             }
         } catch {
             setEmailSendStatus("error");
+            alert("이메일 전송에 실패하였습니다.")
         }
     };
 
