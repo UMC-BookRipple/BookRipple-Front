@@ -1,19 +1,155 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 
 import BlindBookShell from '../../_components/BlindBookShell';
 import Divider from '../../_components/Divider';
 import BottomButton from '../../_components/BottomButton';
 import Input from '../_components/Input';
-import BookListItem from '../_components/BookListItem';
+import BookShelfResultCard from '../../../../components/Bookshelf/BookShelfSearchResultCard';
 import ConditionSelector from '../_components/ConditionSelector';
+import Toast from '../../../../components/Toast'; // Toast 추가
 
-import { MOCK_SELL_ITEMS } from '../../_mocks/blindBook.mock';
+import { createBlindBook, updateBlindBook } from '../../../../api/blindBook.api';
 
 export default function SellRegisterPage() {
   const nav = useNavigate();
+  const location = useLocation();
 
-  // UI 우선이라 mock로 "선택된 책" 하나를 고정으로 보여줌
-  const selected = MOCK_SELL_ITEMS[0];
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const [selectedBook, setSelectedBook] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [targetId, setTargetId] = useState<number | null>(null);
+
+  // Toast 상태
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 2000);
+  };
+
+  // 입력 상태
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [price, setPrice] = useState('');
+  const [condition, setCondition] = useState<'상' | '중' | '하'>('중');
+
+  // 초기 로드 및 상태 복원
+  useEffect(() => {
+    if (location.state) {
+      if (location.state.blindBookId) {
+        setIsEditMode(true);
+        setTargetId(location.state.blindBookId);
+      }
+
+      if (location.state.selectedBook) {
+        setSelectedBook(location.state.selectedBook);
+      }
+
+      // 책 검색에서 돌아왔을 때 입력했던 내용 복원
+      if (location.state.formState) {
+        const { title, subtitle, description, price, condition } = location.state.formState;
+        if (title !== undefined) setTitle(title);
+        if (subtitle !== undefined) setSubtitle(subtitle);
+        if (description !== undefined) setDescription(description);
+        if (price !== undefined) setPrice(price);
+        if (condition !== undefined) setCondition(condition);
+      }
+    } else {
+      if (!isEditMode) setSelectedBook(null);
+    }
+  }, [location.state, isEditMode]);
+
+  const handleRegister = async () => {
+    // 1. 유효성 검사
+    if (!selectedBook && !isEditMode) {
+      showToast('책을 먼저 검색하여 선택해주세요!');
+      return;
+    }
+    if (!title.trim()) {
+      showToast('제목을 입력해주세요.');
+      return;
+    }
+    if (!subtitle.trim()) {
+      showToast('부제를 입력해주세요.');
+      return;
+    }
+    if (!description.trim()) {
+      showToast('블라인드 북 문구를 입력해주세요.');
+      return;
+    }
+    if (!price.toString().trim()) {
+      showToast('가격을 입력해주세요.');
+      return;
+    }
+
+    // 2. 상태 매핑 (상/중/하 -> API Enum)
+    const conditionMap: Record<string, string> = {
+      '상': 'HIGH',
+      '중': 'MEDIUM', 
+      '하': 'LOW',
+    };
+
+    try {
+      // 3. 수정 모드
+      if (isEditMode && targetId) {
+        const requestBody = {
+          title,
+          subtitle,
+          description,
+          bookCondition: conditionMap[condition] || 'MEDIUM',
+          price: Number(price),
+        };
+        
+        console.log('Sending Update Blind Book Request:', requestBody);
+        const response = await updateBlindBook(targetId, requestBody);
+
+        if (response.isSuccess) {
+          showToast('수정이 완료되었습니다!');
+          setTimeout(() => nav(-1), 1000); // Toast 보여줄 시간 확보 후 이동
+        } else {
+          showToast(`수정 실패: ${response.message}`);
+        }
+
+      } else {
+        // 4. 등록 모드
+        const actualBookId = selectedBook?.bookId;
+
+        if (!actualBookId) {
+          showToast('책 정보 오류: 다시 검색해주세요.');
+          return;
+        }
+
+        const requestBody = {
+          actualBookId: Number(actualBookId),
+          title,
+          subtitle,
+          description,
+          bookCondition: conditionMap[condition] || 'MEDIUM',
+          price: Number(price),
+        };
+
+        console.log('Sending Create Blind Book Request:', requestBody);
+        const response = await createBlindBook(requestBody);
+
+        if (response.isSuccess) {
+          showToast('블라인드 북 등록 완료!');
+          setTimeout(() => nav('/blind-book/sell'), 1000); // 목록으로 이동
+        } else {
+          showToast(`등록 실패: ${response.message}`);
+        }
+      }
+    } catch (error: any) {
+      console.error('Failed to save blind book:', error);
+      const serverMessage = error.response?.data?.message || '알 수 없는 오류';
+      showToast(`저장 중 오류가 발생했습니다: ${serverMessage}`);
+    }
+  };
 
   return (
     <BlindBookShell
@@ -25,95 +161,81 @@ export default function SellRegisterPage() {
       <div className="pt-[14px] pb-[140px]">
         {/* Page Title */}
         <div
-          className="text-[#58534E]"
-          style={{
-            fontFamily: 'Freesentation',
-            fontSize: '18px',
-            fontStyle: 'normal',
-            fontWeight: 500,
-            lineHeight: 'normal',
-            padding: '6px 6px',
-          }}
+          className="text-[#58534E] px-[6px] py-[6px]"
+          style={{ fontFamily: 'Freesentation', fontSize: '18px', fontWeight: 500 }}
         >
-          블라인드 도서 등록
+          {isEditMode ? '블라인드 도서 수정' : '블라인드 도서 등록'}
         </div>
 
-        {/* 제목 입력 */}
-        <div className="mt-[10px] flex flex-col items-start justify-center gap-[14px] self-stretch">
-          <div
-            className="flex items-center gap-[10px] self-stretch"
-            style={{ padding: '6px 6px' }}
-          >
-            <div
-              className="text-[#58534E]"
-              style={{
-                fontFamily: 'Freesentation',
-                fontSize: '16px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-              }}
-            >
+        {/* --- 제목 입력 --- */}
+        <div className="mt-[10px] flex flex-col gap-[14px]">
+          <div className="flex items-center gap-[10px] px-[6px]">
+            <div className="text-[#58534E] text-[16px] font-medium" style={{ fontFamily: 'Freesentation' }}>
               제목 입력
             </div>
           </div>
-          <div
-            className="text-[#BDB7B2]"
-            style={{
-              fontFamily: 'Freesentation',
-              fontSize: '14px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              padding: '0 6px',
-            }}
-          >
+          <div className="text-[#BDB7B2] text-[14px] font-medium px-[6px]" style={{ fontFamily: 'Freesentation' }}>
             책 제목을 직접적으로 나타내지 말아주세요!
           </div>
           <div className="mb-[5px] w-full">
-            <Input placeholder="제목을 입력하세요" />
+            <Input
+              placeholder="제목을 입력하세요"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
           </div>
         </div>
 
         <Divider />
 
-        {/* 책 정보 입력 */}
-        <div className="flex flex-col items-start justify-center gap-[14px] self-stretch">
-          <div
-            className="flex items-center gap-[10px] self-stretch"
-            style={{ padding: '6px 6px' }}
-          >
-            <div
-              className="text-[#58534E]"
-              style={{
-                fontFamily: 'Freesentation',
-                fontSize: '16px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-              }}
-            >
+        {/* --- 부제 입력 --- */}
+        <div className="flex flex-col gap-[14px]">
+          <div className="flex items-center gap-[10px] px-[6px]">
+            <div className="text-[#58534E] text-[16px] font-medium" style={{ fontFamily: 'Freesentation' }}>
+              부제 입력
+            </div>
+          </div>
+          <div className="text-[#BDB7B2] text-[14px] font-medium px-[6px]" style={{ fontFamily: 'Freesentation' }}>
+            구매자에게 보여질 한 줄 소개글입니다.
+          </div>
+          <div className="mb-[5px] w-full">
+            <Input
+              placeholder="부제를 입력하세요"
+              value={subtitle}
+              onChange={(e) => setSubtitle(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <Divider />
+
+        {/* --- 책 정보 입력 --- */}
+        <div className="flex flex-col gap-[14px]">
+          <div className="flex items-center gap-[10px] px-[6px]">
+            <div className="text-[#58534E] text-[16px] font-medium" style={{ fontFamily: 'Freesentation' }}>
               책 정보 입력
             </div>
           </div>
         </div>
 
+        {/* 검색 버튼 (클릭 시 이동) */}
         <div
-          onClick={() => nav('/blind-book/sell/search')}
-          style={{ cursor: 'pointer' }}
-          className="mt-[12px]"
+          onClick={() => {
+            // 현재 입력된 상태를 state로 넘겨주어, 돌아왔을 때 복원되도록 함
+            nav('/blind-book/sell/search', {
+              state: {
+                formState: { title, subtitle, description, price, condition },
+                isEditMode // 수정 모드 여부도 전달
+              },
+            });
+          }}
+          className="mt-[12px] cursor-pointer"
         >
           <Input
             placeholder="책 검색하기"
             readOnly
             icon={
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 30 30"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg width="20" height="20" viewBox="0 0 30 30" fill="none">
                 <path
                   fillRule="evenodd"
                   clipRule="evenodd"
@@ -125,119 +247,100 @@ export default function SellRegisterPage() {
           />
         </div>
 
-        <div className="mt-[12px] mb-[5px]">
-          <BookListItem
-            item={selected}
-            onClick={() => {}}
-            hidePrice
-            hideBadge
-            fullWidth
-          />
-        </div>
+        {/* 선택된 책 미리보기 */}
+        {selectedBook && (
+          <div className="mt-[12px] mb-[5px]">
+            <BookShelfResultCard
+              aladinItemId={selectedBook.aladinItemId}
+              imageUrl={selectedBook.imageUrl || selectedBook.coverUrl}
+              title={selectedBook.title}
+              author={selectedBook.author}
+              publisher={selectedBook.publisher}
+              pageCount={selectedBook.totalPage || 0}
+              hideButton={true}
+              isSmall={true}
+              hidePublisher={true}
+              hidePageCount={true}
+              backgroundColor="white"
+              hasShadow={true}
+            />
+          </div>
+        )}
 
         <Divider />
 
-        {/* 블라인드 북 문구 작성 */}
-        <div className="flex flex-col items-start justify-center gap-[14px] self-stretch">
-          <div
-            className="flex items-center gap-[10px] self-stretch"
-            style={{ padding: '6px 6px' }}
-          >
-            <div
-              className="text-[#58534E]"
-              style={{
-                fontFamily: 'Freesentation',
-                fontSize: '16px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-              }}
-            >
+        {/* --- 문구 작성 --- */}
+        <div className="flex flex-col gap-[14px]">
+          <div className="flex items-center gap-[10px] px-[6px]">
+            <div className="text-[#58534E] text-[16px] font-medium" style={{ fontFamily: 'Freesentation' }}>
               블라인드 북 문구 작성
             </div>
           </div>
-          <div
-            className="text-[#BDB7B2]"
-            style={{
-              fontFamily: 'Freesentation',
-              fontSize: '14px',
-              fontStyle: 'normal',
-              fontWeight: 500,
-              lineHeight: 'normal',
-              padding: '0 6px',
-            }}
-          >
+          <div className="text-[#BDB7B2] text-[14px] font-medium px-[6px]" style={{ fontFamily: 'Freesentation' }}>
             책 내용을 직접적으로 드러내지 말아주세요!
           </div>
         </div>
 
-        <div className="mt-[12px] mb-[8px]">
+        <div className="mt-[12px] mb-[8px] relative">
           <Input
             multiline
             rows={5}
-            defaultValue="사랑처럼 프랑스 문학 특유의 냉소적이면서도 따뜻한 시선이 담겨 있습니다. 사랑받고 싶어 하는 인간의 근원적인 외로움을 다루며, 브람스를 좋아하세요...가 연인 간의 고독을 다룬다면 이 책은 삶 전체에 놓인 고독을 다룹니다."
+            maxLength={100}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="내용을 입력하세요"
           />
+          <div className="absolute bottom-2 right-4 text-xs text-gray-400">
+            {description.length}/100
+          </div>
         </div>
 
         <Divider />
 
-        {/* 책 상태 */}
-        <div className="flex flex-col items-start justify-center gap-[14px] self-stretch">
-          <div
-            className="flex items-center gap-[10px] self-stretch"
-            style={{ padding: '6px 6px' }}
-          >
-            <div
-              className="text-[#58534E]"
-              style={{
-                fontFamily: 'Freesentation',
-                fontSize: '16px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-              }}
-            >
+        {/* --- 책 상태 --- */}
+        <div className="flex flex-col gap-[14px]">
+          <div className="flex items-center gap-[10px] px-[6px]">
+            <div className="text-[#58534E] text-[16px] font-medium" style={{ fontFamily: 'Freesentation' }}>
               책 상태
             </div>
           </div>
         </div>
         <div className="mt-[12px]">
-          <ConditionSelector />
+          <ConditionSelector
+            value={condition}
+            onChange={(val) => setCondition(val)}
+          />
         </div>
 
         <Divider />
 
-        {/* 가격 입력 */}
-        <div className="flex flex-col items-start justify-center gap-[14px] self-stretch">
-          <div
-            className="flex items-center gap-[10px] self-stretch"
-            style={{ padding: '6px 6px' }}
-          >
-            <div
-              className="text-[#58534E]"
-              style={{
-                fontFamily: 'Freesentation',
-                fontSize: '16px',
-                fontStyle: 'normal',
-                fontWeight: 500,
-                lineHeight: 'normal',
-              }}
-            >
+        {/* --- 가격 입력 --- */}
+        <div className="flex flex-col gap-[14px]">
+          <div className="flex items-center gap-[10px] px-[6px]">
+            <div className="text-[#58534E] text-[16px] font-medium" style={{ fontFamily: 'Freesentation' }}>
               가격 입력
             </div>
           </div>
         </div>
         <div className="mt-[12px]">
-          <Input placeholder="가격을 입력하세요" />
+          <Input
+            placeholder="가격을 입력하세요"
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+          />
         </div>
 
+        {/* --- 하단 버튼 --- */}
         <BottomButton
-          label="블라인드북 등록하기"
-          onClick={() => {
-            alert('등록(목업)');
-            nav('/blind-book/sell');
-          }}
+          label={isEditMode ? '수정 완료' : '블라인드북 등록하기'}
+          onClick={handleRegister}
         />
+      </div>
+
+      {/* Toast 메시지 */}
+      <div className="fixed bottom-[100px] left-1/2 z-50 -translate-x-1/2 transform">
+        <Toast visible={toastVisible} message={toastMessage} />
       </div>
     </BlindBookShell>
   );

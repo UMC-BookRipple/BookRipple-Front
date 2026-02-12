@@ -6,6 +6,7 @@ import SellDetailPage from './pages/SellDetailPage';
 import SellRequestsPage from './pages/SellRequestsPage';
 import SellWaitingPage from './pages/SellWaitingPage';
 import SellShippingPage from './pages/SellShippingPage';
+import SellSearchPage from './pages/SellSearchPage';
 
 export default function BlindBookSellRouter() {
   return (
@@ -20,10 +21,7 @@ export default function BlindBookSellRouter() {
       <Route path=":postId/shipping" element={<SellShippingPage />} />
 
       {/* 검색 페이지는 팀원 구현 예정: 이동만 가능하게 placeholder */}
-      <Route
-        path="search"
-        element={<div className="p-6">검색 페이지(팀원 담당)</div>}
-      />
+      <Route path="search" element={<SellSearchPage />} />
 
       <Route path="*" element={<Navigate to="." replace />} />
     </Routes>

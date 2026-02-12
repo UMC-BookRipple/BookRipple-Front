@@ -1,9 +1,10 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import BlindBookShell from '../../_components/BlindBookShell';
 import Divider from '../../_components/Divider';
-// import UserInfoCard from '../../_components/UserInfoCard'; // Removed unused import
+import Toast from '../../../../components/Toast';
 
-import { MOCK_SELL_ITEMS } from '../../_mocks/blindBook.mock';
+import { getTradeDetail } from '../../../../api/trade.api';
 import { formatPrice } from '../../_utils/blindBook.util';
 
 import arrowIcon from '../../../../assets/icons/arrowIcon.svg';
@@ -12,15 +13,90 @@ import memoPaper from '../../../../assets/icons/memoPaper.svg';
 export default function BuyShippingStartedPage() {
   const nav = useNavigate();
   const { postId } = useParams();
+  const location = useLocation();
 
-  // Mock data based on id (fallback to first item if not found, but logic should be sound)
-  const item =
-    MOCK_SELL_ITEMS.find((i) => i.id === postId) || MOCK_SELL_ITEMS[0];
+  // ✅ FIXED: Mock 데이터 제거, API 연동
+  const [item, setItem] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2000);
+  };
+
+  // ✅ FIXED: 실제 API로 배송 정보 조회
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!postId) return;
+      
+      try {
+        // location.state에서 tradeId 받아오기
+        const tradeId = location.state?.tradeId;
+        
+        if (!tradeId) {
+          showToast('배송 정보를 찾을 수 없습니다.');
+          setLoading(false);
+          return;
+        }
+        
+        const response = await getTradeDetail(tradeId);
+        console.log('Trade Detail Response:', response);
+        
+        if (response.isSuccess) {
+          const detail = response.result;
+          setItem({
+            titleHint: detail.bookTitle || '도서',
+            price: detail.price || 0,
+            stickyText: detail.description || '',
+            memo: detail.description || '',
+            // 배송 정보
+            shippingCompany: detail.companyName || 'CONVENIENCE',
+            trackingNumber: detail.shippingNumber || '',
+            // 판매자 정보 (있다면)
+            sellerName: detail.sellerName || '익명의 사용자',
+          });
+        } else {
+          showToast('배송 정보를 불러오는데 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('Failed to fetch shipping info:', error);
+        showToast('오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [postId, location.state]);
+
+  // 배송사 이름 변환
+  const getCompanyDisplayName = (companyName: string) => {
+    const companyMap: Record<string, string> = {
+      'CONVENIENCE': '편의점 반택',
+      'POSTOFFICE': '우체국 택배',
+      'POST_OFFICE': '우체국 택배',
+      'CJ': 'CJ대한통운',
+      'HANJIN': '한진택배',
+    };
+    return companyMap[companyName] || companyName;
+  };
+
+  if (loading) {
+    return (
+      <BlindBookShell activeMode="buy" showHero={false}>
+        <div className="py-10 text-center">로딩 중...</div>
+      </BlindBookShell>
+    );
+  }
 
   if (!item) {
     return (
       <BlindBookShell activeMode="buy" showHero={false}>
-        <div className="py-10 text-center">존재하지 않는 도서입니다.</div>
+        <div className="py-10 text-center">배송 정보를 찾을 수 없습니다.</div>
       </BlindBookShell>
     );
   }
@@ -65,7 +141,7 @@ export default function BuyShippingStartedPage() {
           <div className="flex flex-1 items-center justify-between">
             <div className="flex flex-col gap-[0px]">
               <div className="font-[Freesentation] text-[18px] leading-normal font-medium text-[#58534E]">
-                {item.titleHint.replace('...', '')}
+                {item.titleHint?.replace('...', '')}
               </div>
               <div className="font-[Freesentation] text-[22px] leading-normal font-semibold text-[#58534E]">
                 {formatPrice(item.price)}
@@ -179,7 +255,7 @@ export default function BuyShippingStartedPage() {
                 backgroundColor: '#E6E6E6',
               }}
             >
-              {/* showIcon={false}, so no icon */}
+              {/* No icon */}
             </div>
 
             <div className="flex flex-col gap-[2px]">
@@ -187,7 +263,7 @@ export default function BuyShippingStartedPage() {
                 판매자
               </span>
               <span className="font-[Freesentation] text-[16px] leading-normal font-medium text-[#58534E]">
-                익명의 사용자 1325
+                {item.sellerName}
               </span>
             </div>
           </div>
@@ -200,7 +276,7 @@ export default function BuyShippingStartedPage() {
             height: '3px',
             opacity: 0.7,
             background: '#E6E6E6',
-            margin: '10px -20px 20px -20px', // Negative margin to extend full width. Redeced margin-bottom
+            margin: '10px -20px 20px -20px',
           }}
         />
 
@@ -231,7 +307,7 @@ export default function BuyShippingStartedPage() {
               }}
             >
               <span className="font-[Freesentation] text-[16px] font-medium text-[#58534E]">
-                편의점 반택
+                {getCompanyDisplayName(item.shippingCompany)}
               </span>
             </div>
 
@@ -249,11 +325,16 @@ export default function BuyShippingStartedPage() {
               }}
             >
               <span className="font-[Freesentation] text-[16px] font-normal text-[#58534E]">
-                6543-2109-8765
+                {item.trackingNumber || '배송 준비 중'}
               </span>
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Toast */}
+      <div className="fixed bottom-[100px] left-1/2 z-[60] -translate-x-1/2 transform">
+        <Toast visible={toastVisible} message={toastMessage} />
       </div>
     </BlindBookShell>
   );

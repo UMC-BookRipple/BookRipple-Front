@@ -5,11 +5,13 @@ import { searchBooks, type Book } from '../../api/books';
 interface BookShelfSearchResultProps {
   query: string; // 검색어
   onSelect?: (book: Book) => void; // 선택된 책 전달
+  disableAutoNavigate?: boolean;
 }
 
 const BookShelfSearchResult: React.FC<BookShelfSearchResultProps> = ({
   query,
   onSelect,
+  disableAutoNavigate = false,
 }) => {
   const [results, setResults] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
@@ -60,6 +62,7 @@ const BookShelfSearchResult: React.FC<BookShelfSearchResultProps> = ({
               publisher={book.publisher}
               pageCount={0}
               onSelect={() => onSelect?.(book)}
+              disableAutoNavigate={disableAutoNavigate}
             />
           ))
         ) : (
