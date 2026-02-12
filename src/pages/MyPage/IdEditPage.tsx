@@ -27,8 +27,8 @@ const IdEditPage = () => {
     const [idCheckStatus, setIdCheckStatus] =
         useState<"idle" | "success" | "error">("idle");
 
-    const [toastVisible, setToastVisible] = useState(false);
-    const [toastMessage, setToastMessage] = useState<string>("");
+    const [, setToastVisible] = useState(false);
+    const [, setToastMessage] = useState<string>("");
 
     const showToast = useCallback((msg: string) => {
         setToastMessage(msg);
@@ -53,7 +53,7 @@ const IdEditPage = () => {
                     },
                 }
             );
-            const { isSuccess, code, message, result } = response.data;
+            const { isSuccess, code, message } = response.data;
 
             if (isSuccess) {
                 setIdCheckStatus('success');

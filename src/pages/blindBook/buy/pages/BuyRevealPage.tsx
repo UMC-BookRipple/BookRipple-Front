@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../../../components/Header';
 import Button from '../../../../components/Button';
 
@@ -10,7 +10,6 @@ const DESCRIPTION_MESSAGE =
 
 export default function BuyRevealPage() {
     const nav = useNavigate();
-    const { postId } = useParams();
 
     return (
         <div className="min-h-screen bg-[#F1F0EE] font-[Freesentation] text-[#58534E]">

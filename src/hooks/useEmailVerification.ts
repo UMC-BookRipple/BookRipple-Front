@@ -64,7 +64,7 @@ export const useEmailVerification = ({
                 }
             );
 
-            const { isSuccess, code, message, result } = res.data;
+            const { isSuccess, message } = res.data;
 
             if (isSuccess) {
                 setEmailSendStatus("success");
@@ -95,7 +95,7 @@ export const useEmailVerification = ({
                 }
             );
 
-            const { isSuccess, code, message, result } = res.data;
+            const { isSuccess, message, result } = res.data;
 
             if (isSuccess) {
                 setEmailVerifyStatus("success");

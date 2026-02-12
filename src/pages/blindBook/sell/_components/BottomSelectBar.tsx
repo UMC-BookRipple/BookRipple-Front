@@ -5,7 +5,6 @@ interface Props {
 }
 
 export default function BottomSelectBar({
-  allSelected,
   onToggleAll,
   onDelete,
 }: Props) {

@@ -20,7 +20,7 @@ import FindIdPage from './pages/Login/FIndIdPage';
 import FindPasswordPage from './pages/Login/FindPasswordPage';
 import ResetPasswordPage from './pages/MyPage/ResetPasswordPage';
 import PolicyPage from './pages/Login/PolicyPage';
-import NotificationPage from './pages/Notification/NotificationPage';
+import NotificationPage from './pages/notification/NotificationPage';
 
 // Reading Flow + Swipe
 import ReadingTimerPage from './pages/Main/ReadingFlow/ReadingTimerPage';

@@ -30,7 +30,6 @@ const FindPasswordPage = () => {
         setAuthCode,
         sendEmail,
         verifyEmailCode,
-        getFullEmail,
         toastVisible,
         toastMessage,
     } = useEmailVerification({

@@ -32,7 +32,7 @@ const StartPage = () => {
     try {
       const res = await http.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login/guest`);
-      const { isSuccess, code, message, result } = res.data;
+      const { isSuccess, message, result } = res.data;
 
       localStorage.setItem("accessToken", result.accessToken);
       localStorage.setItem("refreshToken", result.refreshToken);

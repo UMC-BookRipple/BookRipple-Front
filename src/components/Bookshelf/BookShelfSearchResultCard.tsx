@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface BookShelfResultCardProps {
@@ -8,7 +8,7 @@ interface BookShelfResultCardProps {
   author: string;
   publisher: string;
   pageCount: number;
-  onSelect: (aladinItemId: number) => Promise<void>;
+  onSelect: (aladinItemId: number) => void;
 }
 
 const BookShelfResultCard = ({
