@@ -60,6 +60,7 @@ const SignupPage3 = () => {
     // 오늘 날짜 (미래 선택 방지)
     const maxDate = useMemo<string>(() => {
         const d = new Date();
+        d.setDate(d.getDate() - 1);
         const yyyy = d.getFullYear();
         const mm = String(d.getMonth() + 1).padStart(2, "0");
         const dd = String(d.getDate()).padStart(2, "0");
@@ -113,9 +114,20 @@ const SignupPage3 = () => {
 
     const handleSignup = async () => {
 
-        const birthDate = dateRef.current?.value || "";
+        const birthDate = toISO(birthDisplay);
         if (!birthDate) {
             alert("생년월일을 입력해주세요.");
+            return;
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const bd = new Date(birthDate);
+        bd.setHours(0, 0, 0, 0);
+
+        if (bd >= today) {
+            alert("이전 날짜만 입력 가능합니다.");
             return;
         }
 
@@ -153,6 +165,7 @@ const SignupPage3 = () => {
 
             resetSignupData();
             navigate("/signup/complete");
+
         } catch (e) {
             console.error(e);
             console.log("회원가입 중 오류가 발생했습니다.");

@@ -17,6 +17,11 @@ const LoginPage = () => {
     const [wrongLogin, setWrongLogin] = useState(false);
 
     const handleLogin = async () => {
+        if (!loginId || !password) {
+            alert("아이디와 비밀번호를 모두 입력해주세요.");
+            return;
+        }
+
         setWrongLogin(false);
         try {
             const response = await http.post(
