@@ -1,9 +1,10 @@
 import LoginButton from "../../components/LoginButton";
 import LoginFormBody from "../../components/LoginForm";
-import { useState } from "react";
+import { use, useState } from "react";
 import TopLogo from "../../components/TopLogo";
 import { useNavigate } from "react-router-dom";
 import { http } from "../../types/http";
+import { useAuthStore } from "../../stores/authStore";
 
 const LoginPage = () => {
     const [loginId, setLoginId] = useState("");
@@ -39,6 +40,8 @@ const LoginPage = () => {
                 localStorage.setItem("refreshToken", result.refreshToken);
                 localStorage.setItem("userName", result.userName);
                 localStorage.setItem("memberId", result.memberId);
+
+                useAuthStore.getState().login();
 
                 console.log("로그인 성공", result);
                 navigate("/bookshelf/reading");

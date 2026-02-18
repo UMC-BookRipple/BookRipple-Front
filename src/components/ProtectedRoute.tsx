@@ -3,40 +3,38 @@ import { useAuthStore } from "../stores/authStore";
 import { Navigate, Outlet } from "react-router-dom";
 
 export const ProtectedRoute = () => {
-    const { isLoggedIn, isAuthChecked, checkAuth } = useAuthStore();
+  const { isLoggedIn, isAuthChecked, checkAuth } = useAuthStore();
 
-    useEffect(() => {
-        if (!isAuthChecked) {
-            checkAuth();
-        }
-    }, [isAuthChecked, checkAuth]);
-
+  useEffect(() => {
     if (!isAuthChecked) {
-        return null;
+      checkAuth();
     }
+  }, [isAuthChecked, checkAuth]);
 
-    if (!isLoggedIn) {
-        return <Navigate to="/start" replace />;
-    }
+  // auth 체크 완료 전까지 대기
+  if (!isAuthChecked) return null;
 
-    return <Outlet />;
+  if (!isLoggedIn) {
+    return <Navigate to="/start" replace />;
+  }
+
+  return <Outlet />;
 };
 
 export const PublicRoute = () => {
-    const { isLoggedIn, isAuthChecked, checkAuth } = useAuthStore();
+  const { isLoggedIn, isAuthChecked, checkAuth } = useAuthStore();
 
-    useEffect(() => {
-        if (!isAuthChecked) {
-            checkAuth();
-        }
-    }, [isAuthChecked, checkAuth]);
-
-    if (!isAuthChecked) return null;
-
-    if (isLoggedIn) {
-        return <Navigate to="/bookshelf" replace />;
+  useEffect(() => {
+    if (!isAuthChecked) {
+      checkAuth();
     }
+  }, [isAuthChecked, checkAuth]);
 
-    return <Outlet />;
+  if (!isAuthChecked) return null;
+
+  if (isLoggedIn) {
+    return <Navigate to="/bookshelf" replace />;
+  }
+
+  return <Outlet />;
 };
-
