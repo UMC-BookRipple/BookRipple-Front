@@ -2,8 +2,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import BlindBookSellRouter from './sell/router';
 import BlindBookBuyRouter from './buy/router';
 
-// 구매는 나중에 만들 예정이라 자리만
-// import BlindBookBuyRouter from './buy/router';
 
 export default function BlindBookRouter() {
   return (

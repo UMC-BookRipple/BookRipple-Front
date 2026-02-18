@@ -1,8 +1,8 @@
 // router/index.tsx (예시)
-import { createBrowserRouter, createRoutesFromElements, Navigate, Route } from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 
 import StartPage from "../pages/Login/StartPage";
-import ProtectedRoute from "../components/ProtectedRoute";
+import { ProtectedRoute } from "../components/ProtectedRoute";
 import LoginPage from "../pages/Login/LoginPage";
 import SignupPage from "../pages/Login/SignupPage";
 import SignupPage2 from "../pages/Login/SignupPage2";

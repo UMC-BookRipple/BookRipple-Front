@@ -42,8 +42,7 @@ const QnASearchTab: React.FC<QnASearchTabProps> = ({
     const [recentSearches, setRecentSearches] =
         useState<SearchHistoryItem[]>([]);
     const [results, setResults] = useState<BookQuestionItem[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [questions, setQuestions] = useState<BookQuestionItem[]>([]); // 질문 상태
+    const [, setLoading] = useState(false);
 
     // 질문 검색 함수
     const fetchQuestions = async (keyword: string) => {

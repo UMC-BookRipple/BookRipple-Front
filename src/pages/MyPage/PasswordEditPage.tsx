@@ -71,8 +71,8 @@ const PasswordEditPage = () => {
     verifyUrl: `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/find-pw/email/verify`,
   });
 
-  const [toastVisible2, setToastVisible2] = useState(false);
-  const [toastMessage2, setToastMessage2] = useState<string>("");
+  const [, setToastVisible2] = useState(false);
+  const [, setToastMessage2] = useState<string>("");
 
   const showToast2 = useCallback((msg: string) => {
     setToastMessage2(msg);

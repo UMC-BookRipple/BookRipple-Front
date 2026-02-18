@@ -46,11 +46,16 @@ export default function BuyRequestCard({ item, onClick, fullWidth = false }: Pro
             />
           </div>
 
-          {/* 제목 + 작가 */}
+          {/* 제목 + 소개 + 작가 */}
           <div className="flex flex-col items-start gap-[0px] min-w-0">
             <div className="w-[126px] text-left text-[16px] font-medium font-[Freesentation] text-[#58534E] line-clamp-1">
               {item.titleHint}
             </div>
+            {item.description && (
+              <div className="self-stretch text-left text-[13px] font-normal font-[Freesentation] text-[#827A74] line-clamp-1">
+                {item.description}
+              </div>
+            )}
             <div className="self-stretch text-left text-[16px] font-normal font-[Freesentation] text-[#58534E] line-clamp-1">
               {item.authorHint}
             </div>

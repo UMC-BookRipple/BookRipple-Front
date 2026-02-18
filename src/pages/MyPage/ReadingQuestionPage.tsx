@@ -41,7 +41,7 @@ const ReadingQuestionPage = () => {
     const renderQuestionsByBook = () => {
         const bookTitles = Array.from(new Set(questions.map((q) => q.bookTitle))); // 중복 제거한 책 제목
 
-        return bookTitles.map((bookTitle, index) => {
+        return bookTitles.map((bookTitle) => {
             const filteredQuestions = questions.filter((q) => q.bookTitle === bookTitle);
 
             return (

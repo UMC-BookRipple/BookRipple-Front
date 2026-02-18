@@ -1,8 +1,10 @@
-export default function Divider() {
+import type React from 'react';
+
+export default function Divider({ style }: { style?: React.CSSProperties } = {}) {
   return (
     <div
       className="flex flex-col items-center justify-center gap-[10px] self-stretch"
-      style={{ padding: '15px 0' }}
+      style={{ padding: '15px 0', ...style }}
     >
       <div
         style={{

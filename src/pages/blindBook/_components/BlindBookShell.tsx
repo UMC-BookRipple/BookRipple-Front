@@ -10,6 +10,7 @@ interface Props {
   showHero?: boolean;
   heroVariant?: 'default' | 'minimal';
   noBottomPadding?: boolean;
+  hideTabs?: boolean;
 }
 
 export default function BlindBookShell({
@@ -18,17 +19,20 @@ export default function BlindBookShell({
   showHero = true,
   heroVariant = 'default',
   noBottomPadding = false,
+  hideTabs = false,
 }: Props) {
   return (
     <div className="min-h-dvh bg-[#F7F5F1] font-[Freesentation] text-[#58534E]">
       <div className="mx-auto min-h-dvh w-full max-w-[430px]">
         <Header />
         {showHero && <BlindBookHero variant={heroVariant} />}
-        <div className="px-5">
-          <div className="mt-1">
-            <BlindBookModeTabs active={activeMode} />
+        {!hideTabs && (
+          <div className="px-5">
+            <div className="mt-1">
+              <BlindBookModeTabs active={activeMode} />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={`px-5 ${noBottomPadding ? '' : 'pb-24'}`}>
           {children}

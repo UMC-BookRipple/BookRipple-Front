@@ -1,6 +1,6 @@
 import { Route } from 'react-router-dom';
 
-import ProtectedRoute from '../components/ProtectedRoute';
+import { ProtectedRoute } from '../components/ProtectedRoute';
 import EditMenuPage from '../pages/MyPage/EditMenuPage';
 import ProfileEditIdPage from '../pages/MyPage/ProfileEditIdPage';
 import ProfileEditPwPage from '../pages/MyPage/ProfileEditPwPage';

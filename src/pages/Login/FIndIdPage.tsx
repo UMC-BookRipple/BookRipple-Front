@@ -8,13 +8,11 @@ import CheckIconGreen from "../../assets/icons/checkIconGreen.svg";
 import CheckIconRed from "../../assets/icons/checkIconRed.svg";
 import CheckIcon from "../../assets/icons/checkIcon.svg";
 import arrowIcon from "../../assets/icons/arrowIcon.svg";
-import { useChangeStore } from "../../stores/changeStore";
 import { useNavigate } from "react-router-dom";
 import { useEmailVerification } from "../../hooks/useEmailVerification";
 import Toast from "../../components/Toast";
 
 const FindIdPage = () => {
-    const { setChangeData } = useChangeStore();
     const navigate = useNavigate();
 
     const {

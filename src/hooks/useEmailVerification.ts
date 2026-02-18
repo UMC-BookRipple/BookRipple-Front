@@ -64,7 +64,7 @@ export const useEmailVerification = ({
                 }
             );
 
-            const { isSuccess, code, message, result } = res.data;
+            const { isSuccess, message } = res.data;
 
             if (isSuccess) {
                 setEmailSendStatus("success");
@@ -97,12 +97,12 @@ export const useEmailVerification = ({
                 }
             );
 
-            const { isSuccess, code, message, result } = res.data;
+            const { isSuccess, message } = res.data;
 
             if (isSuccess) {
                 setEmailVerifyStatus("success");
                 setTimeLeft(0);
-                setResultValue(result ?? "");
+                setResultValue(res.data.result ?? "");
                 console.log(message);
             } else {
                 setEmailVerifyStatus("error");

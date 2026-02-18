@@ -5,7 +5,7 @@ import GlobalSpinner from './components/common/GlobalSpinner';
 import HomeRoute from './components/HomeRoute';
 import BookShelfSearchPage from './pages/Main/Bookshelf/BookShelfSearchPage';
 import BookshelfRouter from './pages/Main/Bookshelf/router';
-import BlindBookRouter from './pages/BlindBook/router';
+import BlindBookRouter from './pages/blindBook/router';
 
 // Auth
 import StartPage from './pages/Login/StartPage';
