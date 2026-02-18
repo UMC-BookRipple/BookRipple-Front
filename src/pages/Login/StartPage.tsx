@@ -3,6 +3,7 @@ import socialLoginIcon from "../../assets/icons/socialLoginIcon.svg"
 import kakaoLoginIcon from "../../assets/icons/kakaoLoginIcon.svg";
 import logo from "../../assets/icons/logo.svg";
 import { http } from "../../types/http";
+import { useAuthStore } from "../../stores/authStore";
 
 const StartPage = () => {
   const navigate = useNavigate();
@@ -28,34 +29,39 @@ const StartPage = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
 
-  const guestLogin = async () => {
-    try {
-      const res = await http.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login/guest`);
-      const { isSuccess, message, result } = res.data;
+const guestLogin = async () => {
+  try {
+    const res = await http.post(
+      `${import.meta.env.VITE_API_BASE_URL}/api/v1/auth/login/guest`
+    );
 
-      localStorage.setItem("accessToken", result.accessToken);
-      localStorage.setItem("refreshToken", result.refreshToken);
-      localStorage.setItem("userName", result.userName);
-      localStorage.setItem("memberId", result.memberId);
+    const { isSuccess, message, result } = res.data;
 
-      console.log("guest login success", message);
-      navigate("/bookshelf/reading");
-
-      if (!isSuccess) {
-        console.log(`${result.memberId}, ${message}`);
-        alert(message);
-        navigate("/start");
-        return;
-      }
-
-    } catch (error) {
-      console.log("guest login error", error);
-      alert("로그인에 실패했습니다.");
+    // ✅ 실패면 바로 처리하고 종료 (result가 없을 수도 있으니 안전)
+    if (!isSuccess) {
+      console.log("guest login failed:", message);
+      alert(message);
       navigate("/start");
+      return;
     }
-  };
 
+    // ✅ 성공 처리
+    localStorage.setItem("accessToken", result.accessToken);
+    localStorage.setItem("refreshToken", result.refreshToken);
+    localStorage.setItem("userName", result.userName);
+    localStorage.setItem("memberId", String(result.memberId));
+
+    // ✅ zustand auth 상태 갱신 (중요)
+    useAuthStore.getState().login(); // 또는 .checkAuth()
+
+    console.log("guest login success:", message);
+    navigate("/bookshelf/reading");
+  } catch (error) {
+    console.log("guest login error", error);
+    alert("로그인에 실패했습니다.");
+    navigate("/start");
+  }
+};
 
   return (
     <div className="min-h-dvh w-full bg-[#F7F5F1] flex flex-col items-center">
