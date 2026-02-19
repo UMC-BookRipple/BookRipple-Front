@@ -43,7 +43,7 @@ const KakaoRedirect: React.FC = () => {
           content: kakaoCode,
         });
 
-      const { isSuccess, message, result, code } = res.data;
+      const { isSuccess, message, result } = res.data;
 
       if (!isSuccess) {
       alert(message);
