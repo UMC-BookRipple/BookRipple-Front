@@ -26,20 +26,20 @@ export default function BookListItem({
 }: Props) {
   return (
     <div
-      className={`flex flex-col items-start gap-[10px] self-stretch ${fullWidth ? '' : '-mx-5 px-[16px]'} py-[6px]`}
+      className={`flex flex-col items-start gap-[10px] self-stretch ${fullWidth ? '' : '-mx-3 px-[12px] sm:-mx-5 sm:px-[16px]'} py-[6px]`}
     >
       <button
         onClick={() => {
           if (selectable) onToggleSelect?.();
           else onClick?.();
         }}
-        className={`flex items-center justify-between self-stretch rounded-[15px] px-[16px] py-[10px] transition-colors ${
+        className={`flex items-center justify-between gap-[10px] self-stretch rounded-[15px] px-[12px] py-[10px] sm:px-[16px] transition-colors ${
           selectable && selected ? 'bg-[#E6E6E6]' : 'bg-white'
         }`}
       >
         {/* 아이콘 + 제목 + 작가 */}
         <div
-          className={`flex items-center gap-[18px] ${
+          className={`flex min-w-0 flex-1 items-center gap-[12px] sm:gap-[18px] ${
             item.badge === '거래완료' ? 'opacity-60' : ''
           }`}
         >
@@ -48,17 +48,17 @@ export default function BookListItem({
             <img
               src={blindBookIcon}
               alt="Blind Book"
-              className="h-[68.814px] w-[70px]"
+              className="h-[60px] w-[61px] shrink-0 sm:h-[68.814px] sm:w-[70px]"
               style={{ aspectRatio: '59/58' }}
             />
           </div>
 
           {/* 제목 + 작가 */}
-          <div className="flex flex-col items-start gap-[0px]">
-            <div className="w-[126px] text-left text-[16px] leading-normal font-medium text-[#58534E]">
+          <div className="flex min-w-0 flex-1 flex-col items-start gap-[0px]">
+            <div className="w-full text-left text-[15px] leading-normal font-medium text-[#58534E] sm:text-[16px] break-words">
               {item.titleHint}
             </div>
-            <div className="self-stretch text-left text-[16px] leading-normal font-normal text-[#58534E]">
+            <div className="self-stretch text-left text-[14px] leading-normal font-normal text-[#58534E] sm:text-[16px] break-words">
               {item.authorHint}
             </div>
           </div>
@@ -66,9 +66,9 @@ export default function BookListItem({
 
         {/* 거래상태 + 가격 */}
         {!hidePrice && !hideBadge && (
-          <div className="flex flex-col items-end justify-center gap-[1px]">
+          <div className="shrink-0 flex flex-col items-end justify-center gap-[1px]">
             {item.badge === '거래완료' ? (
-              <span className="text-center text-[18px] leading-normal font-semibold text-[#BDB7B2]">
+              <span className="text-center text-[16px] leading-normal font-semibold text-[#BDB7B2] sm:text-[18px]">
                 거래완료
               </span>
             ) : (
@@ -82,7 +82,7 @@ export default function BookListItem({
                     {item.badge}
                   </Badge>
                 )}
-                <div className="text-center text-[18px] leading-normal font-semibold text-[#58534E]">
+                <div className="text-center text-[16px] leading-normal font-semibold text-[#58534E] sm:text-[18px]">
                   {formatPrice(item.price)}
                 </div>
               </>

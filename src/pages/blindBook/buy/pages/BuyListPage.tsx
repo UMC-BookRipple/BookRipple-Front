@@ -169,8 +169,8 @@ export default function BuyListPage() {
         )}
 
         {tab === 'requested' && (
-          <div className="space-y-[10px] pt-[2px] pb-[100px]">
-            <div className="py-[2px] -mt-[2px]">
+          <div className="space-y-[0px] pt-[2px] pb-[100px]">
+            <div className="py-[2px] -mt-[10px]">
               <Divider />
             </div>
 
