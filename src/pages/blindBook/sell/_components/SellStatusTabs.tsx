@@ -8,7 +8,7 @@ interface Props {
 
 export default function SellStatusTabs({ value, onChange }: Props) {
   return (
-    <div className="-mx-5 flex items-center gap-[10px] px-[16px] pt-[4px] pb-[10px]">
+    <div className="-mx-3 flex items-center gap-[8px] px-[12px] pt-[4px] pb-[10px] sm:-mx-5 sm:gap-[10px] sm:px-[16px]">
       <TabButton
         active={value === 'selling'}
         onClick={() => onChange('selling')}

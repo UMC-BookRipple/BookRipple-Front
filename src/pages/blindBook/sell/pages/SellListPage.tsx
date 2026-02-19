@@ -211,14 +211,14 @@ export default function SellListPage() {
     <BlindBookShell activeMode="sell">
       {/* ✅ 반응형 중앙 정렬 래퍼: 가로 오버플로우 방지 + 중앙 정렬 */}
       <div className="w-full max-w-full overflow-x-hidden box-border">
-        <div className="flex flex-col items-start justify-center gap-[10px] py-[20px]">
-          <div className="flex items-center gap-[10px] self-stretch px-[10px]">
-            <div className="flex-1 text-[18px] leading-normal font-medium text-[#58534E]">
+        <div className="flex flex-col items-start justify-center gap-[10px] py-[16px] sm:py-[20px]">
+          <div className="flex items-center gap-[10px] self-stretch px-[4px] sm:px-[10px]">
+            <div className="flex-1 text-[17px] leading-normal font-medium text-[#58534E] sm:text-[18px]">
               판매중 도서
             </div>
             {statusTab === 'selling' && (
               <button
-                className="text-right text-[16px] leading-normal font-medium text-[#58534E] flex-shrink-0"
+                className="shrink-0 text-right text-[15px] leading-normal font-medium text-[#58534E] sm:text-[16px]"
                 onClick={() => {
                   setSelectMode((v) => !v);
                   setSelectedIds([]);
@@ -232,7 +232,7 @@ export default function SellListPage() {
 
         <SellStatusTabs value={statusTab} onChange={setStatusTab} />
 
-        <div className="space-y-[2px] mb-[100px]">
+        <div className="mb-[112px] space-y-[2px] sm:mb-[120px]">
           {loading ? (
             <div className="py-10 text-center text-gray-500">목록을 불러오고 있습니다...</div>
           ) : items.length === 0 ? (
@@ -273,7 +273,7 @@ export default function SellListPage() {
 
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 px-4">
-          <div className="w-full max-w-[320px] rounded-[16px] bg-white p-[24px] shadow-lg animate-fade-in-up">
+          <div className="animate-fade-in-up w-full max-w-[360px] rounded-[16px] bg-white p-[20px] shadow-lg sm:p-[24px]">
             <h3 className="text-[18px] font-bold text-[#58534E] text-center mb-[8px]">판매글 삭제</h3>
             <p className="text-[15px] text-[#827A74] text-center mb-[24px] leading-relaxed">
               선택한 {selectedIds.length}개의 판매글을<br />
@@ -297,7 +297,7 @@ export default function SellListPage() {
         </div>
       )}
 
-      <div className="fixed bottom-[100px] left-1/2 z-[110] -translate-x-1/2 transform">
+      <div className="fixed bottom-[104px] left-1/2 z-[110] flex w-[calc(100%-24px)] max-w-[320px] -translate-x-1/2 justify-center transform sm:bottom-[112px]">
         <Toast visible={toastVisible} message={toastMessage} />
       </div>
     </BlindBookShell>

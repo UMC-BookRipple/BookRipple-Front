@@ -56,8 +56,7 @@ const BottomButton = ({
 }: BottomButtonProps & { children?: React.ReactNode }) => {
   return (
     <div
-      className="fixed bottom-0 flex h-auto min-h-[85px] w-[402px] flex-col items-center justify-center gap-[10px] bg-[#F7F5F1] px-[20px] pt-[12px] pb-[20px] shadow-[0_0_10px_0_rgba(0,0,0,0.10)]"
-      style={{ left: '50%', transform: 'translateX(-50%)' }}
+      className="fixed bottom-0 left-1/2 z-50 flex h-auto min-h-[85px] w-full max-w-[430px] -translate-x-1/2 flex-col items-center justify-center gap-[10px] bg-[#F7F5F1] px-[12px] pt-[12px] pb-[calc(20px+env(safe-area-inset-bottom))] shadow-[0_0_10px_0_rgba(0,0,0,0.10)] sm:px-[20px]"
     >
       {children ? (
         children
