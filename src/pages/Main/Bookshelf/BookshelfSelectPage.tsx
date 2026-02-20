@@ -162,38 +162,24 @@ export default function BookshelfSelectPage() {
   const handleWriteReview = () => {
     if (!book || !book.bookId) return;
 
-    // BookState 형식으로 데이터 변환하여 감상평 작성 페이지로 이동
-    const bookState = {
-      bookId: book.bookId,
-      imageUrl: book.coverUrl,
-      title: book.title,
-      author: book.author || '',
-      publisher: book.publisher || '',
-      pageCount: book.pages || 0,
-    };
-    // RecommendWritePage expects { baseBook, recommendedBook }
-    const recommendedBook = {
-      aladinId: book.bookId,
-      bookId: book.bookId,
-      title: book.title,
-      author: book.author || '',
-      imageUrl: book.coverUrl,
-    };
-
-    navigate('/recommend/write', {
-      state: {
-        baseBook: bookState,
-        recommendedBook,
-      },
+    navigate(`/books/${book.bookId}/review/new`, {
+      state: { bookTitle: book.title },
     });
   };
 
   const handleWriteRecommendations = () => {
     if (!book) return;
 
-    // Open the book-specific Community page on the '도서별 추천도서' tab
-    navigate(`/community/book/${book.bookId}`, {
-      state: { initialTab: 2 },
+    navigate('/recommend/search', {
+      state: {
+        bookId: book.bookId,
+        aladinId: 0,
+        title: book.title,
+        author: book.author || '',
+        imageUrl: book.coverUrl,
+        publisher: book.publisher || '',
+        pageCount: book.pages || 0,
+      },
     });
   };
 
